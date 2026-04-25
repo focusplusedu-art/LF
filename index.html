@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liora Fashion - Smart Manager</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#FF1493">
+    <link rel="icon" type="image/jpeg" href="logo.jpg">
+    <link rel="apple-touch-icon" href="logo.jpg">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+        :root {
+            /* අලුත් Pink Theme වර්ණ */
+            --primary: #FF1493;         /* Deep Pink */
+            --primary-light: #ffe4e1;   /* Light Pink background */
+            --bg: #FFF0F5;              /* Lavender Blush (Very light pink) */
+            --card-bg: #ffffff;         
+            --text-main: #3d0c20;       /* Dark pinkish text */
+            --text-muted: #9e4770;      
+            --success: #2e7d32;         
+            --danger: #c62828;          
+            --warning: #f57c00;         
+            --info: #1976d2;
+            --border: #ffb3c6;          /* Pink border */
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); padding: 15px; }
+        .container { max-width: 600px; margin: 0 auto; position: relative; }
+        
+        .header { text-align: center; margin-bottom: 20px; position: relative; }
+        .logo-img { height: 90px; border-radius: 12px; margin-bottom: 5px; object-fit: contain; box-shadow: 0 4px 6px rgba(255, 20, 147, 0.2); background: black; padding: 5px; }
+        .header h2 { color: var(--primary); font-size: 26px; font-weight: 700; letter-spacing: 1px; }
+        
+        .lock-btn { position: absolute; right: 0; top: 0; background: var(--primary-light); color: var(--primary); border: none; border-radius: 50%; width: 40px; height: 40px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        .nav-tabs {
+            display: flex; background: var(--card-bg); border-radius: 12px;
+            padding: 6px; margin-bottom: 20px; border: 1px solid var(--border); gap: 4px; box-shadow: 0 2px 8px rgba(255, 20, 147, 0.1);
+        }
+        .tab-btn {
+            flex: 1; padding: 10px 2px; border: none; border-radius: 8px;
+            font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer; background: transparent; transition: 0.3s;
+        }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 2px 4px rgba(255, 20, 147, 0.3); }
+
+        .card { background: var(--card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px; border: 1px solid var(--border); box-shadow: 0 6px 16px rgba(255, 20, 147, 0.08); }
+        .card h3 { font-size: 18px; margin-bottom: 15px; color: var(--primary); display: flex; align-items: center; gap: 8px; }
+        
+        .type-switch { display: flex; background: var(--primary-light); border-radius: 12px; padding: 6px; margin-bottom: 20px; gap: 4px; }
+        .type-switch button { flex: 1; padding: 12px 5px; border: none; background: transparent; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.3s; color: var(--text-muted); }
+        .type-switch button.active-in { background: var(--success); color: white; box-shadow: 0 2px 6px rgba(46, 125, 50, 0.3); }
+        .type-switch button.active-out { background: var(--danger); color: white; box-shadow: 0 2px 6px rgba(198, 40, 40, 0.3); }
+
+        .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .cat-item { padding: 12px; border: 2px solid var(--primary-light); border-radius: 12px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; color: var(--text-muted); background: #fafafa; transition: 0.2s; }
+        .cat-item span { font-size: 20px; margin-bottom: 5px; }
+        .cat-item.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); transform: scale(1.02); }
+
+        .amount-wrapper { display: flex; align-items: center; border-bottom: 3px solid var(--primary); margin-bottom: 20px; padding-bottom: 8px; }
+        .amount-wrapper span { font-size: 24px; font-weight: 700; color: var(--primary); margin-right: 12px; }
+        .amount-wrapper input { border: none; background: transparent; font-size: 36px; font-weight: 700; width: 100%; outline: none; margin: 0; padding: 0; color: var(--primary); }
+
+        input[type="text"], input[type="number"], input[type="date"], input[type="month"], select {
+            width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; background: #fafafa; outline: none; margin-bottom: 12px; color: var(--text-main);
+        }
+
+        .btn-action {
+            width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: 10px; font-weight: 700; font-size: 16px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 12px rgba(255, 20, 147, 0.2); margin-bottom: 10px;
+        }
+        .btn-action:active { transform: scale(0.98); }
+        .btn-cancel { background: transparent; color: var(--text-muted); border: 2px solid var(--border); box-shadow: none; padding: 12px; font-size: 14px; }
+
+        .summary-box { background: linear-gradient(135deg, var(--primary), #ff66b2); color: white; text-align: center; border: none; }
+        .summary-box h3 { border: none; color: #ffe4e1; justify-content: center; font-size: 14px; margin-bottom: 5px;}
+        .profit-amount { font-size: 32px; font-weight: 700; margin: 5px 0; text-shadow: 1px 1px 2px rgba(0,0,0,0.2); }
+
+        .record-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid var(--border); background: var(--bg); border-radius: 8px; margin-bottom: 8px; transition: 0.3s; }
+        .record-details strong { display: block; font-size: 13px; color: var(--text-main); }
+        .record-details span { font-size: 11px; color: var(--text-muted); display: block; margin-top: 3px; }
+        .amount-in { color: var(--success); font-weight: 700; font-size: 14px; }
+        .amount-out { color: var(--danger); font-weight: 700; font-size: 14px; }
+        .amount-bill { color: var(--warning); font-weight: 700; font-size: 14px; }
+        
+        .action-btns button { background: none; border: none; font-size: 16px; cursor: pointer; margin-left: 8px; opacity: 0.8; }
+
+        .filter-section { display: flex; gap: 10px; margin-bottom: 15px; }
+        .filter-section > div { flex: 1; }
+        .filter-section label { display: block; font-size: 12px; font-weight: bold; color: var(--primary); margin-bottom: 5px; }
+
+        .search-box { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 8px; background: #fafafa; padding: 0 10px; margin-bottom: 15px; }
+        .search-box span { font-size: 18px; color: var(--primary); }
+        .search-box input { border: none; background: transparent; margin-bottom: 0; padding: 12px; outline: none; width: 100%; }
+
+        #pin-screen {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); z-index: 9999; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+        .pin-box { background: white; padding: 40px 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(255, 20, 147, 0.15); width: 100%; max-width: 360px; text-align: center; border: 2px solid var(--primary-light); }
+        #pin-input { text-align: center; font-size: 32px; letter-spacing: 8px; font-weight: bold; margin-bottom: 25px; border: none; border-bottom: 3px solid var(--primary); background: transparent; width: 100%; outline: none; }
+    </style>
+</head>
+<body>
+
+<div id="pin-screen">
+    <img src="logo.jpg" class="logo-img" onerror="this.style.display='none'" style="margin-bottom: 20px;">
+    <div class="pin-box">
+        <h2 style="color: var(--primary); margin-bottom: 10px;">Liora Fashion</h2>
+        <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 25px;">Enter PIN to Unlock</p>
+        <input type="password" id="pin-input" inputmode="numeric" placeholder="••••">
+        <button class="btn-action" onclick="checkPin()">Unlock App</button>
+    </div>
+</div>
+
+<div class="container" id="main-app" style="display: none;">
+    <div class="header">
+        <button class="lock-btn" onclick="location.reload()">🔒</button>
+        <img src="logo.jpg" class="logo-img" onerror="this.style.display='none'">
+        <h2>Liora Fashion</h2>
+        <p style="font-size: 11px; color: var(--text-muted); font-weight: 700; letter-spacing: 2px;">SMART FINANCE</p>
+    </div>
+
+    <div class="nav-tabs">
+        <button class="tab-btn active" id="tab-btn-entry" onclick="showTab('entry')">🏠 Home</button>
+        <button class="tab-btn" id="tab-btn-orders" onclick="showTab('orders')">✂️ Orders</button>
+        <button class="tab-btn" id="tab-btn-bills" onclick="showTab('bills')">🧾 Bills</button>
+        <button class="tab-btn" id="tab-btn-reports" onclick="showTab('reports')">📊 Reps</button>
+    </div>
+
+    <div id="tab-entry">
+        <div class="card summary-box" style="margin-bottom: 15px; padding: 15px;">
+            <h3>Today's Income 💰</h3>
+            <div class="profit-amount" id="home-today-income">Rs. 0.00</div>
+        </div>
+
+        <div class="card">
+            <h3 id="entry-title">⚡ Quick Entry</h3>
+            
+            <div class="type-switch">
+                <button id="btn-in" class="active-in" onclick="setType('INCOME')">INCOME</button>
+                <button id="btn-out" onclick="setType('EXPENSE')">EXPENSE</button>
+            </div>
+            
+            <div class="cat-grid" id="grid-income">
+                <div class="cat-item selected" id="cat-Tailoring" onclick="setCat('Tailoring')"><span>✂️</span> Tailoring</div>
+                <div class="cat-item" id="cat-Fabrics" onclick="setCat('Fabrics')"><span>🧵</span> Fabric Sales</div>
+            </div>
+            <div class="cat-grid" id="grid-expense" style="display: none;">
+                <div class="cat-item" id="cat-Shop" onclick="setCat('Shop')"><span>🏪</span> Shop</div>
+                <div class="cat-item" id="cat-Personal" onclick="setCat('Personal')"><span>👤</span> Personal</div>
+            </div>
+
+            <div class="amount-wrapper">
+                <span>Rs.</span><input type="number" id="amt" placeholder="0.00">
+            </div>
+            
+            <select id="note-select" onchange="handleNoteSelect()">
+                <option value="" disabled selected>Select Item (Optional)</option>
+                <option value="Frocks">Frocks</option>
+                <option value="Skirts">Skirts</option>
+                <option value="Pants">Pants</option>
+                <option value="Shorts">Shorts</option>
+                <option value="Night Dress">Night Dress</option>
+                <option value="Jacket">Jacket</option>
+                <option value="Underskirts">Underskirts</option>
+                <option value="School Uniform (Frocks)">School Uniform (Frocks)</option>
+                <option value="School Uniform (Shirt)">School Uniform (Shirt)</option>
+                <option value="School Uniform (Short)">School Uniform (Short)</option>
+                <option value="Lama Saree">Lama Saree</option>
+                <option value="Saree Madeup">Saree Madeup</option>
+                <option value="Kandyan Madeup">Kandyan Madeup</option>
+                <option value="Curtains">Curtains</option>
+                <option value="Pillow Case">Pillow Case</option>
+                <option value="Blouse">Blouse</option>
+                <option value="Kids Frocks">Kids Frocks</option>
+                <option value="Jumper Suit">Jumper Suit</option>
+                <option value="Wrap Dress">Wrap Dress</option>
+                <option value="Wraparound">Wraparound</option>
+                <option value="OTHER">✏️ Type Other Item...</option>
+            </select>
+            
+            <input type="text" id="note-text" placeholder="Type detail here..." style="display: none;">
+            
+            <button class="btn-action" id="save-btn" onclick="saveData()">💾 Save Entry</button>
+            <button class="btn-action btn-cancel" id="cancel-edit-btn" style="display: none;" onclick="cancelEdit()">❌ Cancel Edit</button>
+        </div>
+
+        <div class="card">
+            <h3>📝 Today's Activity</h3>
+            <div id="home-today-list">
+                <p style="text-align:center; color: var(--text-muted); font-size: 13px;">Loading data...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-orders" style="display: none;">
+        
+        <div class="search-box" style="margin-bottom: 20px; background: var(--card-bg); box-shadow: 0 4px 10px rgba(0,0,0,0.05); padding: 5px 15px; border-radius: 12px;">
+            <span>🔎</span>
+            <input type="text" id="search-order" placeholder="Search Order Code (e.g. 1005)..." onkeyup="searchOrders()">
+        </div>
+
+        <div class="card" style="border-top: 4px solid var(--info);">
+            <h3>✂️ New Order (Advance)</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 12px;">Add advances here. It will be added to today's income automatically.</p>
+            
+            <input type="text" id="ord-name" placeholder="Customer Name">
+            <input type="number" id="ord-phone" placeholder="Phone Number (Optional)">
+            
+            <select id="ord-item" onchange="handleOrdItemSelect()" style="margin-bottom: 12px;">
+                <option value="" disabled selected>Select Category</option>
+                <option value="Frocks">Frocks</option>
+                <option value="Skirts">Skirts</option>
+                <option value="Pants">Pants</option>
+                <option value="Shorts">Shorts</option>
+                <option value="Night Dress">Night Dress</option>
+                <option value="Jacket">Jacket</option>
+                <option value="Underskirts">Underskirts</option>
+                <option value="School Uniform">School Uniform</option>
+                <option value="Lama Saree">Lama Saree</option>
+                <option value="Saree Madeup">Saree Madeup</option>
+                <option value="Kandyan Madeup">Kandyan Madeup</option>
+                <option value="Curtains">Curtains</option>
+                <option value="Pillow Case">Pillow Case</option>
+                <option value="Blouse">Blouse</option>
+                <option value="Kids Frocks">Kids Frocks</option>
+                <option value="Jumper Suit">Jumper Suit</option>
+                <option value="Wrap Dress">Wrap Dress</option>
+                <option value="OTHER">✏️ Type Other Item...</option>
+            </select>
+            
+            <input type="text" id="ord-item-text" placeholder="Type custom category here..." style="display: none; margin-bottom: 20px;">
+
+            <div class="amount-wrapper" style="border-color: #555; margin-bottom: 10px; padding-bottom: 5px;">
+                <span style="color: #555; font-size: 16px;">Total Rs.</span>
+                <input type="number" id="ord-total" placeholder="0.00" style="color: var(--text-main); font-size: 28px;">
+            </div>
+
+            <div class="amount-wrapper" style="border-color: var(--info); margin-bottom: 20px; padding-bottom: 5px;">
+                <span style="color: var(--info); font-size: 16px;">Advance Rs.</span>
+                <input type="number" id="ord-adv" placeholder="0.00" style="color: var(--info); font-size: 28px;">
+            </div>
+            
+            <button class="btn-action" id="save-ord-btn" style="background: var(--info);" onclick="saveAdvance()">💾 Save Order</button>
+        </div>
+
+        <div class="card">
+            <h3>⏳ Pending Orders</h3>
+            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">Pending balances to receive.</p>
+            <div id="pending-orders-list">
+                <p style="text-align:center; color: var(--text-muted); font-size: 13px;">Loading orders...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-bills" style="display: none;">
+        <div class="card" style="border-top: 4px solid var(--warning);">
+            <h3 id="bill-title">🧾 Add New Bill</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px;">Enter business bills and expenses here.</p>
+            
+            <div class="cat-grid" id="grid-bill">
+                <div class="cat-item selected" id="cat-Fabric_Bill" onclick="setBillCat('Fabric_Bill')"><span>🛍️</span> Fabric Bills</div>
+                <div class="cat-item" id="cat-Other_Bill" onclick="setBillCat('Other_Bill')"><span>📦</span> Other Bills</div>
+            </div>
+
+            <div class="amount-wrapper" style="border-color: var(--warning);">
+                <span style="color: var(--warning);">Rs.</span>
+                <input type="number" id="bill-amt" placeholder="0.00" style="color: var(--warning);">
+            </div>
+            
+            <input type="text" id="bill-note" placeholder="Bill No. or Item Details">
+            
+            <button class="btn-action" id="save-bill-btn" style="background: var(--warning);" onclick="saveBillData()">💾 Save Bill</button>
+            <button class="btn-action btn-cancel" id="cancel-bill-edit-btn" style="display: none;" onclick="cancelBillEdit()">❌ Cancel Edit</button>
+        </div>
+
+        <div class="card">
+            <h3>📝 Today's Bills</h3>
+            <div id="bills-today-list">
+                <p style="text-align:center; color: var(--text-muted); font-size: 13px;">Loading today's bills...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-reports" style="display: none;">
+        <div class="card summary-box">
+            <h3 id="report-title">Monthly Summary</h3>
+            <div class="profit-amount" id="total-profit">Rs. 0.00</div>
+            <p id="total-bills" style="font-size: 13px; margin-top: 5px; background: rgba(0,0,0,0.2); padding: 5px; border-radius: 5px; display: inline-block;">Total Bills: Rs. 0.00</p>
+        </div>
+        
+        <div class="card">
+            <h3>🔍 Filter Past Records</h3>
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; font-size: 12px; font-weight: bold; color: var(--primary); margin-bottom: 5px;">Record Type</label>
+                <select id="filter-type" onchange="renderData()">
+                    <option value="ALL">All Records</option>
+                    <option value="INCOME">Income & Orders 💰</option>
+                    <option value="BILL">Bills Only 🧾</option>
+                    <option value="EXPENSE">Expense Only 📉</option>
+                </select>
+            </div>
+            <div class="filter-section">
+                <div>
+                    <label>Month</label>
+                    <input type="month" id="filter-month" onchange="renderData()">
+                </div>
+                <div>
+                    <label>Day</label>
+                    <input type="date" id="filter-date" onchange="renderData()">
+                </div>
+            </div>
+            <div id="report-list" style="margin-top: 15px;">
+                <p style="text-align:center; color: var(--text-muted); font-size: 14px;">Please wait...</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ---------------------------------------------------------------------
+    // YOUR GOOGLE APPS SCRIPT WEB APP URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbxiNrs-TuIUmAYkefTKcXyZfeFqaoh_TLoeRDdiS5h5oGNs24E_6-_n0M_9HZTwHJhl/exec';
+    // ---------------------------------------------------------------------
+
+    let currentFilterMode = 'month'; 
+    let editingId = null; 
+    let globalMaxOrderId = 1000;
+    
+    // FAST DATA CACHE (Instant UI Updates)
+    let localData = [];
+
+    // PIN Logic
+    let pin = localStorage.getItem('liora_pin');
+    function checkPin() {
+        const i = document.getElementById('pin-input').value;
+        if(!pin) { if(i.length>=4) { localStorage.setItem('liora_pin', i); pin=i; unlock(); } }
+        else { if(i===pin) unlock(); else alert("Wrong PIN!"); }
+    }
+    
+    function unlock() {
+        document.getElementById('pin-screen').style.display='none';
+        document.getElementById('main-app').style.display='block';
+        
+        const now = new Date();
+        const monthStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0');
+        const dateStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0') + "-" + String(now.getDate()).padStart(2, '0');
+        
+        document.getElementById('filter-month').value = monthStr;
+        document.getElementById('filter-date').value = dateStr;
+
+        fetchInitialData(); 
+    }
+
+    // Search Order Logic (Instant)
+    function searchOrders() {
+        let input = document.getElementById('search-order').value.toUpperCase();
+        let items = document.querySelectorAll('#pending-orders-list .record-item');
+        items.forEach(item => {
+            let text = item.innerText.toUpperCase();
+            if (text.indexOf(input) > -1) {
+                item.style.display = 'flex';
+            } else {
+                item.style.display = 'none';
+            }
+        });
+    }
+
+    // UI Logic (Tabs & Forms)
+    let currentType = 'INCOME';
+    let currentCat = 'Tailoring';
+    let currentBillCat = 'Fabric_Bill';
+
+    function setType(t) {
+        currentType = t;
+        document.getElementById('btn-in').className = t==='INCOME' ? 'active-in' : '';
+        document.getElementById('btn-out').className = t==='EXPENSE' ? 'active-out' : '';
+        document.getElementById('grid-income').style.display = t==='INCOME' ? 'grid' : 'none';
+        document.getElementById('grid-expense').style.display = t==='EXPENSE' ? 'grid' : 'none';
+        
+        const sel = document.getElementById('note-select');
+        const txt = document.getElementById('note-text');
+
+        if(t === 'INCOME') {
+            setCat('Tailoring');
+            sel.style.display = 'block';
+            handleNoteSelect(); 
+        } else {
+            setCat('Shop');
+            sel.style.display = 'none';
+            txt.style.display = 'block';
+            txt.placeholder = "Type Expense Detail...";
+        }
+    }
+
+    function setCat(c) {
+        currentCat = c;
+        document.querySelectorAll('#grid-income .cat-item, #grid-expense .cat-item').forEach(el => el.classList.remove('selected'));
+        const catElement = document.getElementById('cat-' + c);
+        if(catElement) catElement.classList.add('selected');
+    }
+
+    function handleNoteSelect() {
+        const sel = document.getElementById('note-select');
+        const txt = document.getElementById('note-text');
+        if (sel.value === 'OTHER') {
+            txt.style.display = 'block';
+            txt.focus();
+        } else {
+            txt.style.display = 'none';
+            txt.value = '';
+        }
+    }
+
+    function handleOrdItemSelect() {
+        const sel = document.getElementById('ord-item');
+        const txt = document.getElementById('ord-item-text');
+        if (sel.value === 'OTHER') {
+            txt.style.display = 'block';
+            txt.focus();
+        } else {
+            txt.style.display = 'none';
+            txt.value = '';
+        }
+    }
+
+    function setBillCat(c) {
+        currentBillCat = c;
+        document.querySelectorAll('#grid-bill .cat-item').forEach(el => el.classList.remove('selected'));
+        const catElement = document.getElementById('cat-' + c);
+        if(catElement) catElement.classList.add('selected');
+    }
+
+    function showTab(t) {
+        document.getElementById('tab-entry').style.display = t==='entry' ? 'block' : 'none';
+        document.getElementById('tab-bills').style.display = t==='bills' ? 'block' : 'none';
+        document.getElementById('tab-orders').style.display = t==='orders' ? 'block' : 'none';
+        document.getElementById('tab-reports').style.display = t==='reports' ? 'block' : 'none';
+        
+        document.getElementById('tab-btn-entry').className = t==='entry' ? 'tab-btn active' : 'tab-btn';
+        document.getElementById('tab-btn-bills').className = t==='bills' ? 'tab-btn active' : 'tab-btn';
+        document.getElementById('tab-btn-orders').className = t==='orders' ? 'tab-btn active' : 'tab-btn';
+        document.getElementById('tab-btn-reports').className = t==='reports' ? 'tab-btn active' : 'tab-btn';
+        
+        renderData(); 
+    }
+
+    // --- INSTANT DATA RENDERING SYSTEM ---
+    async function fetchInitialData() {
+        try {
+            const response = await fetch(scriptURL);
+            localData = await response.json();
+            renderData();
+        } catch (error) {
+            document.getElementById('home-today-list').innerHTML = "<p style='text-align:center; color: red;'>Offline or Error. Check Connection.</p>";
+        }
+    }
+
+    function renderData() {
+        // Clear search box on refresh UI
+        const searchBox = document.getElementById('search-order');
+        if(searchBox) searchBox.value = '';
+
+        const listHome = document.getElementById('home-today-list');
+        const listBills = document.getElementById('bills-today-list');
+        const listOrders = document.getElementById('pending-orders-list');
+        
+        const now = new Date();
+        const todayStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0') + "-" + String(now.getDate()).padStart(2, '0');
+        
+        let todayIncome = 0;
+        let htmlHome = "";
+        let htmlBills = "";
+        let pendingHtml = "";
+        let ordersMap = {};
+        globalMaxOrderId = 1000; // Reset calculation
+
+        // Process Orders first
+        localData.forEach(r => {
+            if(r.type === 'ADVANCE' && r.note.includes('|')) {
+                const parts = r.note.split('|');
+                const oId = parts[0].trim();
+                const num = parseInt(oId); 
+                if(!isNaN(num) && num > globalMaxOrderId) globalMaxOrderId = num;
+
+                let totalAmt = parseFloat(parts[3]) || parseFloat(r.amount);
+
+                ordersMap[oId] = {
+                    id: r.id, date: r.date, oId: oId,
+                    name: parts[1] ? parts[1].trim() : 'Unknown', 
+                    phone: parts[2] ? parts[2].trim() : '',
+                    item: r.category, advAmt: parseFloat(r.amount), 
+                    totalAmt: totalAmt, isCompleted: false
+                };
+            }
+            if(r.type === 'BALANCE' && r.note.includes('|')) {
+                const oId = r.note.split('|')[0].trim();
+                if(ordersMap[oId]) ordersMap[oId].isCompleted = true; 
+            }
+        });
+
+        // Build Pending Orders UI
+        Object.values(ordersMap).reverse().forEach(o => {
+            if(!o.isCompleted) {
+                let balanceDue = o.totalAmt - o.advAmt;
+                pendingHtml += `
+                <div class="record-item" style="border-left: 4px solid var(--info); align-items: flex-start; padding-right: 5px;" id="pending-${o.id}">
+                    <div class="record-details">
+                        <strong style="color:var(--info); font-size:14px;">Code: ${o.oId} | ${o.name}</strong>
+                        <span>Tel: ${o.phone}</span>
+                        <span>Item: ${o.item}</span>
+                        <span style="display:block; margin-top:5px; font-size:11px; color:#555;">Total: Rs. ${o.totalAmt.toFixed(2)} | Adv: Rs. ${o.advAmt.toFixed(2)}</span>
+                        <span style="color:var(--danger); font-weight:bold; display:block; margin-top:2px;">Due Balance: Rs. ${balanceDue.toFixed(2)}</span>
+                        <span style="font-size:9px; margin-top:4px;">${o.date.split(',')[0]}</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; justify-content: center;">
+                        <button onclick="deleteEntry('${o.id}')" style="background:none; border:none; font-size:18px; cursor:pointer; opacity:0.8;">🗑️</button>
+                        <button onclick="payBalance('${o.oId}', '${o.name}', '${o.item}', ${balanceDue})" style="background:var(--success); color:white; border:none; padding:8px 12px; border-radius:6px; font-weight:bold; cursor:pointer; font-size:11px;">Pay Bal</button>
+                    </div>
+                </div>`;
+            }
+        });
+        listOrders.innerHTML = pendingHtml || "<p style='text-align:center; color: var(--text-muted); font-size: 13px;'>No pending orders.</p>";
+
+        // Build Home and Bills UI
+        let reversedData = [...localData].reverse();
+        reversedData.forEach(r => {
+            const rDate = new Date(r.date);
+            const rDateStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0') + "-" + String(rDate.getDate()).padStart(2, '0');
+            
+            if (rDateStr === todayStr) {
+                const val = parseFloat(r.amount);
+                let catName = r.category.replace('_', ' ').toUpperCase();
+                let displayNote = r.note;
+
+                if (r.type === 'ADVANCE' || r.type === 'BALANCE') {
+                    const parts = r.note.split('|');
+                    displayNote = "Code: " + parts[0] + " | " + (parts[1] || '');
+                    if(r.type === 'ADVANCE') displayNote += " <span style='color:var(--info);'>(Advance)</span>";
+                    if(r.type === 'BALANCE') displayNote += " <span style='color:var(--success);'>(Balance Paid)</span>";
+                }
+
+                let actionBtns = r.id ? `<div class="action-btns"><button onclick="deleteEntry('${r.id}')">🗑️</button></div>` : "";
+                if(r.type === 'INCOME' || r.type === 'EXPENSE') {
+                    actionBtns = r.id ? `<div class="action-btns"><button onclick="editEntry('${r.id}', '${r.type}', '${r.category}', '${r.amount}', '${r.note}')">✏️</button><button onclick="deleteEntry('${r.id}')">🗑️</button></div>` : "";
+                }
+
+                if (r.type !== 'BILL') {
+                    if(r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') todayIncome += val;
+                    let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : 'amount-out';
+                    let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-';
+                    htmlHome += `<div class="record-item" id="row-${r.id}"><div class="record-details"><strong>${catName}</strong><span>${displayNote}</span><span style="font-size:9px;">${rDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div><div style="display:flex; align-items:center;"><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
+                } else {
+                    htmlBills += `<div class="record-item" id="row-${r.id}"><div class="record-details"><strong>${catName} | ${r.note}</strong><span>${rDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div><div style="display:flex; align-items:center;"><div class="amount-bill">- Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
+                }
+            }
+        });
+
+        document.getElementById('home-today-income').innerText = "Rs. " + todayIncome.toFixed(2);
+        listHome.innerHTML = htmlHome || "<p style='text-align:center; color: var(--text-muted); font-size: 13px;'>No entries today yet.</p>";
+        listBills.innerHTML = htmlBills || "<p style='text-align:center; color: var(--text-muted); font-size: 13px;'>No bills today yet.</p>";
+
+        renderReports(); // Update reports based on current filter
+    }
+
+    // --- INSTANT ACTION FUNCTIONS ---
+
+    function saveData() {
+        const amtInput = document.getElementById('amt');
+        const noteSel = document.getElementById('note-select').value;
+        const noteTxt = document.getElementById('note-text').value;
+        const btn = document.getElementById('save-btn');
+        
+        if(!amtInput.value) return alert("Please enter amount!");
+
+        let finalNote = "-";
+        if (currentType === 'INCOME') {
+            if (noteSel === 'OTHER') finalNote = noteTxt || "-";
+            else if (noteSel) finalNote = noteSel;
+        } else {
+            finalNote = noteTxt || "-";
+        }
+
+        const isEdit = !!editingId;
+        const targetId = editingId || ("ID_" + Date.now());
+        const newData = {
+            id: targetId,
+            date: new Date().toLocaleString('en-US'),
+            amount: parseFloat(amtInput.value),
+            note: finalNote,
+            type: currentType,
+            category: currentCat
+        };
+
+        if (isEdit) {
+            const index = localData.findIndex(x => x.id === editingId);
+            if (index > -1) {
+                newData.date = localData[index].date; 
+                localData[index] = newData;
+            }
+        } else {
+            localData.push(newData);
+        }
+
+        renderData(); 
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: isEdit ? 'edit' : 'add', ...newData }) });
+        
+        amtInput.value = ""; 
+        cancelEdit();
+        btn.innerText = "✅ Done!";
+        btn.style.backgroundColor = "var(--success)";
+        setTimeout(() => { btn.innerText = "💾 Save Entry"; btn.style.backgroundColor = ""; }, 1500);
+    }
+
+    function saveBillData() {
+        const amtInput = document.getElementById('bill-amt');
+        const noteInput = document.getElementById('bill-note');
+        const btn = document.getElementById('save-bill-btn');
+        if(!amtInput.value) return alert("Please enter bill amount!");
+        
+        const isEdit = !!editingId;
+        const targetId = editingId || ("ID_" + Date.now());
+        const newData = {
+            id: targetId,
+            date: new Date().toLocaleString('en-US'),
+            amount: parseFloat(amtInput.value),
+            note: noteInput.value || "-",
+            type: 'BILL',
+            category: currentBillCat
+        };
+
+        if (isEdit) {
+            const index = localData.findIndex(x => x.id === editingId);
+            if (index > -1) { newData.date = localData[index].date; localData[index] = newData; }
+        } else {
+            localData.push(newData);
+        }
+
+        renderData();
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: isEdit ? 'edit' : 'add', ...newData }) });
+        
+        amtInput.value = ""; noteInput.value = "";
+        btn.innerText = "✅ Bill Saved!";
+        btn.style.backgroundColor = "var(--success)";
+        if(isEdit) cancelBillEdit();
+        setTimeout(() => { btn.innerText = "💾 Save Bill"; btn.style.backgroundColor = "var(--warning)"; }, 1500);
+    }
+
+    function saveAdvance() {
+        const name = document.getElementById('ord-name').value;
+        const phone = document.getElementById('ord-phone').value;
+        const itemSel = document.getElementById('ord-item').value;
+        const itemTxt = document.getElementById('ord-item-text').value;
+        const finalItem = itemSel === 'OTHER' ? (itemTxt || "Custom Item") : itemSel;
+        const totalAmt = parseFloat(document.getElementById('ord-total').value);
+        const advAmt = parseFloat(document.getElementById('ord-adv').value);
+        const btn = document.getElementById('save-ord-btn');
+
+        if(!name || !finalItem || isNaN(totalAmt) || isNaN(advAmt)) {
+            return alert("Please enter Name, Item, Total and Advance amounts!");
+        }
+        if(advAmt > totalAmt) return alert("Advance amount cannot be greater than Total amount!");
+
+        globalMaxOrderId++;
+        const newOrderId = globalMaxOrderId.toString(); 
+        const combinedNote = `${newOrderId} | ${name} | ${phone || '-'} | ${totalAmt}`;
+        
+        const newData = {
+            id: "ID_" + Date.now(),
+            date: new Date().toLocaleString('en-US'),
+            amount: advAmt,
+            note: combinedNote,
+            type: 'ADVANCE',
+            category: finalItem
+        };
+
+        localData.push(newData);
+        renderData();
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'add', ...newData }) });
+
+        document.getElementById('ord-name').value = ""; document.getElementById('ord-phone').value = "";
+        document.getElementById('ord-item').value = ""; document.getElementById('ord-item-text').value = "";
+        document.getElementById('ord-item-text').style.display = 'none';
+        document.getElementById('ord-total').value = ""; document.getElementById('ord-adv').value = "";
+        
+        btn.innerText = "✅ Order Saved!";
+        btn.style.backgroundColor = "var(--success)";
+        setTimeout(() => { btn.innerText = "💾 Save Order"; btn.style.backgroundColor = "var(--info)"; }, 1500);
+    }
+
+    function payBalance(oId, name, item, balDue) {
+        let balStr = prompt(`Order Code: ${oId}\nCustomer: ${name}\n\nEnter Balance Amount (Rs):`, balDue);
+        if (balStr !== null) {
+            let balAmt = parseFloat(balStr);
+            if (!isNaN(balAmt) && balAmt > 0) {
+                const combinedNote = `${oId} | ${name} | Balance Paid`;
+                const newData = {
+                    id: "ID_" + Date.now(),
+                    date: new Date().toLocaleString('en-US'),
+                    amount: balAmt,
+                    note: combinedNote,
+                    type: 'BALANCE',
+                    category: item
+                };
+                
+                localData.push(newData);
+                renderData();
+                fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'add', ...newData }) });
+                
+                document.getElementById('search-order').value = '';
+                searchOrders();
+                
+                alert("✅ Balance Paid! Amount added to today's income instantly.");
+            } else {
+                alert("Please enter a valid amount!");
+            }
+        }
+    }
+
+    function deleteEntry(id) {
+        if(confirm("Are you sure you want to delete this record?")) {
+            localData = localData.filter(r => r.id !== id);
+            renderData();
+            fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', id: id }) });
+        }
+    }
+
+    // --- UTILS ---
+    function editEntry(id, type, cat, amt, note) {
+        showTab('entry');
+        editingId = id;
+        document.getElementById('amt').value = amt;
+        setType(type);
+        
+        const sel = document.getElementById('note-select');
+        const txt = document.getElementById('note-text');
+
+        if (type === 'INCOME') {
+            let optionExists = false;
+            for(let i=0; i<sel.options.length; i++) {
+                if(sel.options[i].value === note) { optionExists = true; break; }
+            }
+            if (optionExists && note !== "-") { sel.value = note; txt.style.display = 'none'; }
+            else if (note !== "-") { sel.value = 'OTHER'; txt.value = note; txt.style.display = 'block'; }
+            else { sel.value = ""; txt.value = ""; txt.style.display = 'none'; }
+        } else {
+            txt.value = note !== "-" ? note : "";
+        }
+        
+        document.getElementById('entry-title').innerText = "✏️ Edit Entry";
+        document.getElementById('save-btn').innerText = "🔄 Update Entry";
+        document.getElementById('save-btn').style.background = "var(--warning)";
+        document.getElementById('cancel-edit-btn').style.display = "block";
+        window.scrollTo(0, 0);
+    }
+
+    function cancelEdit() {
+        editingId = null;
+        document.getElementById('amt').value = "";
+        document.getElementById('note-select').value = "";
+        document.getElementById('note-text').value = "";
+        setType('INCOME');
+        document.getElementById('entry-title').innerText = "⚡ Quick Entry";
+        document.getElementById('save-btn').innerText = "💾 Save Entry";
+        document.getElementById('save-btn').style.background = "var(--primary)";
+        document.getElementById('cancel-edit-btn').style.display = "none";
+    }
+
+    function cancelBillEdit() {
+        editingId = null;
+        document.getElementById('bill-amt').value = "";
+        document.getElementById('bill-note').value = "";
+        setBillCat('Fabric_Bill');
+        document.getElementById('bill-title').innerText = "🧾 Add New Bill";
+        document.getElementById('save-bill-btn').innerText = "💾 Save Bill";
+        document.getElementById('save-bill-btn').style.background = "var(--warning)";
+        document.getElementById('cancel-bill-edit-btn').style.display = "none";
+    }
+
+    function renderReports() {
+        const list = document.getElementById('report-list');
+        const title = document.getElementById('report-title');
+        const recordType = document.getElementById('filter-type').value; 
+        const monthInput = document.getElementById('filter-month').value; 
+        const dateInput = document.getElementById('filter-date').value;   
+        
+        if (monthInput) title.innerText = "Summary for " + monthInput;
+        else if (dateInput) title.innerText = "Summary for " + dateInput;
+
+        let totalProfit = 0, totalBillsAmount = 0, html = "";
+        let reversedData = [...localData].reverse();
+        
+        reversedData.forEach(r => {
+            const rDate = new Date(r.date);
+            const rMonthStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0');
+            const rDateStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0') + "-" + String(rDate.getDate()).padStart(2, '0');
+            
+            let matchDate = false;
+            if(monthInput && rMonthStr === monthInput) matchDate = true;
+            if(!monthInput && dateInput && rDateStr === dateInput) matchDate = true;
+
+            if(matchDate) {
+                const val = parseFloat(r.amount);
+                
+                if(r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') totalProfit += val; 
+                else if(r.type === 'EXPENSE') totalProfit -= val;
+                if(r.type === 'BILL') totalBillsAmount += val;
+
+                let showByType = false;
+                if(recordType === 'ALL') showByType = true;
+                else if(recordType === 'INCOME' && (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE')) showByType = true;
+                else if(recordType === r.type) showByType = true;
+
+                if(showByType) {
+                    let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : (r.type === 'EXPENSE' ? 'amount-out' : 'amount-bill');
+                    let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-';
+                    
+                    let displayNote = r.note;
+                    if (r.type === 'ADVANCE' || r.type === 'BALANCE') {
+                        const parts = r.note.split('|');
+                        displayNote = "Code: " + parts[0] + " | " + (parts[1] || '');
+                    }
+
+                    html += `<div class="record-item"><div class="record-details"><strong>${r.category.replace('_', ' ').toUpperCase()}</strong><span>${displayNote}</span><span style="font-size:9px;">${r.date}</span></div><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div></div>`;
+                }
+            }
+        });
+        document.getElementById('total-profit').innerText = "Net: Rs. " + totalProfit.toFixed(2);
+        document.getElementById('total-bills').innerText = "Total Bills: Rs. " + totalBillsAmount.toFixed(2);
+        list.innerHTML = html || "<p style='text-align:center;'>No records found.</p>";
+    }
+</script>
+
+</body>
+</html>
