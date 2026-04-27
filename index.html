@@ -547,6 +547,7 @@
     let localData = [];
     let billBuffer = []; 
     let currentGeneratedBillData = null;
+    let isSeqIncremented = false; // Bug fix helper
 
     const swipeWrapper = document.getElementById('swipe-wrapper');
     const tabsArr = ['tab-entry', 'tab-orders', 'tab-invoice', 'tab-bills', 'tab-reports'];
@@ -841,6 +842,7 @@
             playDeleteSound();
             billBuffer = [];
             currentGeneratedBillData = null;
+            isSeqIncremented = false; // Reset incrementer
             document.getElementById('invoice-bill-name').value = '';
             document.getElementById('invoice-bill-whatsapp').value = '';
             setAutoInvoiceId();
@@ -885,6 +887,7 @@
         document.getElementById('invoice-bill-whatsapp').value = phone || '';
         document.getElementById('invoice-id-input').value = oId;
         
+        isSeqIncremented = false; // Reset incrementer
         currentGeneratedBillData = { 
             id: oId, 
             name: name, 
@@ -920,6 +923,7 @@
                 document.getElementById('invoice-bill-whatsapp').value = phone || '';
                 document.getElementById('invoice-id-input').value = oId;
                 
+                isSeqIncremented = false; // Reset incrementer
                 currentGeneratedBillData = { 
                     id: oId, 
                     name: name, 
@@ -995,6 +999,7 @@
         let subtotal = 0;
         billBuffer.forEach(i => subtotal += (parseFloat(i.amount) || 0));
 
+        isSeqIncremented = false; // Reset incrementer
         currentGeneratedBillData = { 
             id: invoiceId, 
             name: customerName, 
@@ -1105,7 +1110,7 @@
         let url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
         window.open(url, '_blank');
         
-        incrementInvoiceSeq(currentGeneratedBillData.id);
+        incrementInvoiceSeqOnce();
         billBuffer = [];
         currentGeneratedBillData = null;
         document.getElementById('invoice-bill-name').value = '';
@@ -1115,9 +1120,7 @@
         document.getElementById('invoice-action-btns').style.display = 'none';
     }
 
-    // --- 100% BULLETPROOF IMAGE SAVE LOGIC FOR ANDROID WEBVIEW ---
-    let currentImageFile = null;
-
+    // --- 100% BUG FIX: BULLETPROOF SAVE MODAL FOR ANDROID WEBVIEW ---
     function openSaveModal() {
         if(!document.getElementById('invoice-preview-capture')) { playPopSound(); return alert("මුලින්ම බිල් එක Generate කරන්න!"); }
         playSuccessSound(); 
@@ -1125,25 +1128,27 @@
         const previewElement = document.getElementById('invoice-preview-capture');
         const filename = currentGeneratedBillData ? `LioraBill_${currentGeneratedBillData.id}.png` : 'LioraBill.png';
 
-        html2canvas(previewElement, { scale: 2, logging: false, useCORS: true }).then(canvas => {
+        html2canvas(previewElement, { scale: 3, logging: false, useCORS: true }).then(canvas => {
             canvas.toBlob(blob => {
-                const dataUrl = URL.createObjectURL(blob);
-                currentImageFile = new File([blob], filename, { type: "image/png" });
+                const blobUrl = URL.createObjectURL(blob);
                 
                 const modalHtml = `
                 <div id="img-save-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter: blur(5px);">
                     <p style="color:#10b981; font-weight:800; font-size:18px; text-align:center; margin-bottom:15px;">✅ Bill Ready!</p>
                     
-                    <div style="max-height:50vh; overflow:auto; border-radius:10px; box-shadow:0 10px 30px rgba(232,30,109,0.3); margin-bottom:25px; border: 2px solid white;">
-                        <img src="${dataUrl}" style="max-width:100%; height:auto; display:block;">
+                    <div style="max-height:45vh; overflow:auto; border-radius:10px; box-shadow:0 10px 30px rgba(232,30,109,0.3); margin-bottom:20px; border: 2px solid white; background: white;">
+                        <img src="${blobUrl}" style="max-width:100%; height:auto; display:block; touch-action:default; -webkit-touch-callout:default; pointer-events:auto;">
                     </div>
                     
-                    <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px;">
-                        <button onclick="nativeShareImage()" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #3b82f6, #2563eb); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(59,130,246,0.4); cursor:pointer;">📤 Share / Save to Phone</button>
+                    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px;">
+                        
+                        <a href="${blobUrl}" download="${filename}" onclick="playTabSound(); incrementInvoiceSeqOnce();" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #e81e6d, #ff5e98); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(232,30,109,0.4); cursor:pointer; text-align:center; text-decoration:none; display:block;">⬇️ Download Image</a>
+                        
+                        <button onclick="nativeShareImage('${blobUrl}', '${filename}')" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #3b82f6, #2563eb); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(59,130,246,0.4); cursor:pointer;">📤 Share to Apps</button>
                         
                         <button onclick="saveAsPdf()" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #10b981, #059669); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(16,185,129,0.4); cursor:pointer;">🖨️ Save as PDF</button>
 
-                        <button onclick="closeSaveModal()" style="padding:14px; border-radius:12px; border:none; background:#333; color:white; font-weight:bold; font-size:15px; cursor:pointer;">❌ Close</button>
+                        <button onclick="closeSaveModal()" style="padding:14px; border-radius:12px; border:none; background:#333; color:white; font-weight:bold; font-size:15px; cursor:pointer; margin-top:5px;">❌ Close</button>
                     </div>
                 </div>`;
                 
@@ -1156,25 +1161,39 @@
         });
     }
 
-    function nativeShareImage() {
+    function incrementInvoiceSeqOnce() {
+        if(currentGeneratedBillData && !isSeqIncremented) {
+            incrementInvoiceSeq(currentGeneratedBillData.id);
+            isSeqIncremented = true;
+        }
+    }
+
+    async function nativeShareImage(blobUrl, filename) {
         playTabSound();
-        if (navigator.share && currentImageFile) {
-            navigator.share({
-                files: [currentImageFile],
-                title: 'Liora Fashion Bill',
-                text: 'Here is your invoice from Liora Fashion.'
-            }).then(() => {
-                if(currentGeneratedBillData) incrementInvoiceSeq(currentGeneratedBillData.id);
-            }).catch(e => console.log("Share cancelled/failed"));
-        } else {
-            alert("Share feature not supported on this device/app.");
+        try {
+            const response = await fetch(blobUrl);
+            const blob = await response.blob();
+            const file = new File([blob], filename, { type: blob.type });
+
+            if (navigator.share && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    files: [file],
+                    title: 'Liora Fashion Bill',
+                    text: 'Here is your invoice from Liora Fashion.'
+                });
+                incrementInvoiceSeqOnce();
+            } else {
+                alert("ෆෝන් එකේ Share පහසුකම මේ ඇප් එකට සපෝට් කරන්නේ නෑ. කරුණාකර 'Download' හෝ 'Save as PDF' පාවිච්චි කරන්න.");
+            }
+        } catch (e) {
+            alert("ෂෙයාර් කිරීමේ දෝෂයක්. කරුණාකර 'Download' හෝ 'Save as PDF' පාවිච්චි කරන්න.");
         }
     }
 
     function saveAsPdf() {
         playTabSound();
+        incrementInvoiceSeqOnce();
         window.print();
-        if(currentGeneratedBillData) incrementInvoiceSeq(currentGeneratedBillData.id);
     }
 
     function closeSaveModal() {
