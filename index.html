@@ -213,11 +213,11 @@
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* FULLSCREEN SCREENSHOT MODAL */
+        /* COMPLETELY CLEAN FULLSCREEN SCREENSHOT MODAL */
         .fullscreen-modal {
             position: fixed;
             top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #ffffff;
+            background: #ffffff; /* Pure white background */
             z-index: 999999;
             display: flex;
             flex-direction: column;
@@ -225,12 +225,22 @@
             justify-content: center;
             box-sizing: border-box;
             overflow-y: auto;
+            padding: 40px 15px; /* Adds top and bottom space for the bill */
         }
         .fullscreen-bill-container {
             width: 100%;
-            max-width: 450px;
+            max-width: 600px;
             background: #ffffff;
-            padding: 20px;
+            margin: auto;
+            box-sizing: border-box;
+            /* Remove outer dashed borders in fullscreen for a clean look */
+            border: none !important;
+            box-shadow: none !important;
+        }
+        
+        .fullscreen-modal #invoice-preview {
+            border: 2px solid var(--primary); /* Keep the pink border of the bill itself */
+            padding: 30px;
         }
 
     </style>
@@ -420,16 +430,15 @@
                     <p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #f9f5f7; padding: 15px; border-radius: 12px;">Add items in Home Tab with "Prepare Bill" ON, or Pay an Order Balance to see the bill here.</p>
                 </div>
                 
-                <div id="invoice-instruction" style="display:none; text-align:center; color:var(--primary); font-size:12px; font-weight:bold; margin-top:5px; animation: fadeIn 1s infinite alternate;">👆 Tap the bill to view Full Screen for Screenshot!</div>
+                <div id="invoice-instruction" style="display:none; text-align:center; color:var(--primary); font-size:12px; font-weight:bold; margin-top:10px; animation: fadeIn 1s infinite alternate;">
+                    👆 බිල් එක උඩ ඔබලා Full Screen ගන්න.
+                </div>
 
                 <div id="invoice-action-btns" style="margin-top: 15px; display: none; flex-direction: column; gap: 10px;">
                     <button class="btn-action" style="background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; font-size: 15px;" onclick="sendWhatsAppInvoice()">📱 Send WhatsApp Message</button>
                 </div>
             </div>
         </div>
-
-        <div id="fullscreen-modal" class="fullscreen-modal" style="display:none;" onclick="history.back()">
-             </div>
 
         <div id="tab-bills" class="swipe-tab">
             <div class="card" style="border-top: 4px solid var(--warning);">
@@ -504,6 +513,9 @@
     </div> 
 </div>
 
+<div id="fullscreen-modal" class="fullscreen-modal" style="display:none;" ontouchstart="handleDoubleTap(event)" ondblclick="closeFullscreen()">
+     </div>
+
 <script>
     // --- SOUND EFFECTS (Web Audio API) ---
     let audioCtx;
@@ -555,16 +567,25 @@
         }
     }
 
-    // --- Native Back Button Handling for Fullscreen Modal ---
+    // --- NATIVE BACK BUTTON & DOUBLE TAP TO CLOSE FULLSCREEN ---
     window.addEventListener('popstate', function(event) {
         const fsModal = document.getElementById('fullscreen-modal');
         if (fsModal && fsModal.style.display === 'flex') {
             fsModal.style.display = 'none';
-            if (document.fullscreenElement) {
-                document.exitFullscreen().catch(e => {});
-            }
+            if (document.fullscreenElement) { document.exitFullscreen().catch(e => {}); }
         }
     });
+
+    let lastTap = 0;
+    function handleDoubleTap(e) {
+        const currentTime = new Date().getTime();
+        const tapLength = currentTime - lastTap;
+        if (tapLength < 500 && tapLength > 0) {
+            closeFullscreen();
+            e.preventDefault();
+        }
+        lastTap = currentTime;
+    }
 
     // --- APP LOGIC ---
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxiNrs-TuIUmAYkefTKcXyZfeFqaoh_TLoeRDdiS5h5oGNs24E_6-_n0M_9HZTwHJhl/exec';
@@ -869,7 +890,7 @@
             playDeleteSound();
             billBuffer = [];
             currentGeneratedBillData = null;
-            isSeqIncremented = false; // Reset incrementer
+            isSeqIncremented = false; 
             document.getElementById('invoice-bill-name').value = '';
             document.getElementById('invoice-bill-whatsapp').value = '';
             setAutoInvoiceId();
@@ -1163,7 +1184,7 @@
         document.getElementById('invoice-action-btns').style.display = 'none';
     }
 
-    // --- FULLSCREEN SCREENSHOT FEATURE ---
+    // --- FULLSCREEN SCREENSHOT FEATURE WITH DOUBLE TAP ---
     function openFullscreen() {
         if(!currentGeneratedBillData) return;
         playPopSound();
@@ -1185,6 +1206,14 @@
         else if (fsModal.msRequestFullscreen) { fsModal.msRequestFullscreen(); }
         
         incrementInvoiceSeqOnce();
+    }
+
+    function closeFullscreen() {
+        const fsModal = document.getElementById('fullscreen-modal');
+        if (fsModal.style.display === 'flex') {
+            playPopSound();
+            history.back(); // This safely hides the modal via the popstate listener
+        }
     }
 
     function incrementInvoiceSeqOnce() {
