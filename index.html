@@ -180,7 +180,7 @@
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(20px); }
 
-        /* PURE WHITE & PINK TWO-COLOR INVOICE STYLES (UPDATED AS REQUESTED) */
+        /* PURE WHITE & PINK TWO-COLOR INVOICE STYLES */
         #invoice-preview-capture { background: #ffffff; padding: 15px; border-radius: 8px; }
         #invoice-preview { width: 100%; font-family: 'Inter', sans-serif; background: #ffffff; padding: 30px; border: 2px solid var(--primary); display: none; color: var(--primary); }
         
@@ -204,7 +204,7 @@
         
         #invoice-totals { text-align: right; font-size: 13px; font-weight: 600; color: var(--primary); }
         #invoice-totals div { display: flex; justify-content: flex-end; gap: 30px; margin-bottom: 8px; }
-        #invoice-totals .grand-total { font-weight: 800; color: var(--primary); border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary); padding: 12px 0; margin-top: 10px; font-size: 16px; text-transform: uppercase; }
+        #invoice-totals .grand-total { font-weight: 800; color: var(--primary); border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary); padding: 12px 0; margin-top: 10px; font-size: 18px; text-transform: uppercase; }
         
         .invoice-footer-msg { text-align: center; font-size: 14px; margin-top: 40px; color: var(--primary); font-weight: 600; }
 
@@ -401,7 +401,7 @@
 
                 <div id="invoice-action-btns" style="margin-top: 15px; display: none; gap: 10px;">
                     <button class="btn-action" style="background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; font-size: 14px;" onclick="sendWhatsAppInvoice()">📱 WhatsApp</button>
-                    <button class="btn-action" style="background:var(--primary-gradient); font-size: 14px;" onclick="downloadInvoiceImage()">⬇️ Save Image</button>
+                    <button class="btn-action" style="background:var(--primary-gradient); font-size: 14px;" onclick="downloadInvoiceImage()">⬇️ Save / Share</button>
                 </div>
             </div>
         </div>
@@ -1013,17 +1013,22 @@
             tableRows += `<tr><td>${index + 1}</td><td>${desc}</td><td class="total-col">Rs. ${parseFloat(item.amount).toFixed(2)}</td></tr>`;
         });
 
-        let totalsHtml = `<div><span>Total Amount:</span><span>Rs. ${currentGeneratedBillData.total.toFixed(2)}</span></div>`;
-        
-        if (currentGeneratedBillData.adv > 0) {
-            totalsHtml += `<div><span>Advance Paid:</span><span>Rs. ${currentGeneratedBillData.adv.toFixed(2)}</span></div>`;
+        // BUG FIX: Proper Invoice Balance display
+        let totalsHtml = ``;
+        if (currentGeneratedBillData.bal > 0) {
+            totalsHtml += `<div><span>Sub Total:</span><span>Rs. ${currentGeneratedBillData.total.toFixed(2)}</span></div>`;
+            if (currentGeneratedBillData.adv > 0) {
+                totalsHtml += `<div><span>Advance:</span><span>Rs. ${currentGeneratedBillData.adv.toFixed(2)}</span></div>`;
+            }
+            if (currentGeneratedBillData.paidNow > 0 && currentGeneratedBillData.paidNow !== currentGeneratedBillData.total && currentGeneratedBillData.adv !== currentGeneratedBillData.paidNow) {
+                totalsHtml += `<div><span>Paid Now:</span><span>Rs. ${currentGeneratedBillData.paidNow.toFixed(2)}</span></div>`;
+            }
+            totalsHtml += `<div class="grand-total"><span>Balance Due:</span><span>Rs. ${currentGeneratedBillData.bal.toFixed(2)}</span></div>`;
+        } else {
+            // Fully paid - Just show the grand total
+            totalsHtml += `<div class="grand-total"><span>TOTAL AMOUNT:</span><span>Rs. ${currentGeneratedBillData.total.toFixed(2)}</span></div>`;
         }
-        if (currentGeneratedBillData.paidNow > 0 && currentGeneratedBillData.paidNow !== currentGeneratedBillData.total) {
-            totalsHtml += `<div><span>Paid Now:</span><span>Rs. ${currentGeneratedBillData.paidNow.toFixed(2)}</span></div>`;
-        }
-        totalsHtml += `<div class="grand-total"><span>Balance Due:</span><span>Rs. ${currentGeneratedBillData.bal.toFixed(2)}</span></div>`;
 
-        // FULLY CENTERED LIORA FASHION NO INVOICE TEXT DESIGN
         const billHtml = `
         <div id="invoice-preview-capture">
             <div id="invoice-preview">
@@ -1080,9 +1085,14 @@
         text += `\n💳 *Total Bill:* Rs. ${currentGeneratedBillData.total.toFixed(2)}\n`;
         
         if (currentGeneratedBillData.adv > 0) text += `✅ *Advance Paid:* Rs. ${currentGeneratedBillData.adv.toFixed(2)}\n`;
-        if (currentGeneratedBillData.paidNow > 0 && currentGeneratedBillData.paidNow !== currentGeneratedBillData.total) text += `✅ *Paid Now:* Rs. ${currentGeneratedBillData.paidNow.toFixed(2)}\n`;
+        if (currentGeneratedBillData.paidNow > 0 && currentGeneratedBillData.paidNow !== currentGeneratedBillData.total && currentGeneratedBillData.adv !== currentGeneratedBillData.paidNow) text += `✅ *Paid Now:* Rs. ${currentGeneratedBillData.paidNow.toFixed(2)}\n`;
         
-        text += `⚠️ *Balance Due:* Rs. ${currentGeneratedBillData.bal.toFixed(2)}\n\n`;
+        if (currentGeneratedBillData.bal > 0) {
+            text += `⚠️ *Balance Due:* Rs. ${currentGeneratedBillData.bal.toFixed(2)}\n\n`;
+        } else {
+            text += `🎉 *Payment Status:* Fully Paid\n\n`;
+        }
+        
         text += `📞 +94 78 663 2336\n`;
         text += `Thank you for choosing us! 💖`;
         
@@ -1099,19 +1109,53 @@
         document.getElementById('invoice-action-btns').style.display = 'none';
     }
 
+    // --- BUG FIX: RELIABLE IMAGE DOWNLOAD FOR ANDROID WEBVIEWS ---
     function downloadInvoiceImage() {
         if(!document.getElementById('invoice-preview-capture')) { playPopSound(); return alert("මුලින්ම බිල් එක Generate කරන්න!"); }
         playSuccessSound(); 
+        
         const previewElement = document.getElementById('invoice-preview-capture');
         const filename = currentGeneratedBillData ? `LioraBill_${currentGeneratedBillData.id}.png` : 'LioraBill.png';
 
         html2canvas(previewElement, { scale: 3, logging: false, useCORS: true }).then(canvas => {
             const dataUrl = canvas.toDataURL("image/png");
-            const link = document.createElement('a'); link.href = dataUrl; link.download = filename;
-            document.body.appendChild(link); link.click(); document.body.removeChild(link);
             
-            incrementInvoiceSeq(currentGeneratedBillData.id);
+            // WebIntoApp Android WebView Fix
+            let arr = dataUrl.split(','), mime = arr[0].match(/:(.*?);/)[1],
+                bstr = atob(arr[1]), n = bstr.length, u8arr = new Uint8Array(n);
+            while(n--){ u8arr[n] = bstr.charCodeAt(n); }
+            let blob = new Blob([u8arr], {type:mime});
+
+            if (navigator.canShare && navigator.canShare({ files: [new File([blob], filename, { type: mime })] })) {
+                // If Web Share API is available (Native share to WhatsApp/Gallery)
+                const file = new File([blob], filename, { type: mime });
+                navigator.share({
+                    files: [file],
+                    title: 'Liora Fashion Invoice',
+                    text: 'Invoice from Liora Fashion'
+                }).then(() => {
+                    incrementInvoiceSeq(currentGeneratedBillData.id);
+                }).catch(err => {
+                    fallbackImageDisplay(dataUrl);
+                });
+            } else {
+                // If standard download fails in WebView, show full screen for long-press
+                fallbackImageDisplay(dataUrl);
+            }
         });
+    }
+
+    // Show image on screen if WebView blocks downloads
+    function fallbackImageDisplay(dataUrl) {
+        const modalHtml = `
+            <div id="img-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(5px);">
+                <p style="color:white; margin-bottom:15px; font-weight:700; font-size:14px; text-align:center; line-height: 1.5;">📸 ෆොටෝ එක උඩ ඔබාගෙන ඉඳලා (Long-press)<br>'Save Image' හෝ 'Share Image' දෙන්න.</p>
+                <img src="${dataUrl}" style="max-width:100%; max-height:70vh; border-radius:10px; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+                <button onclick="document.getElementById('img-modal').remove(); playPopSound();" style="margin-top:25px; padding:12px 40px; border-radius:20px; border:none; background:var(--primary); color:white; font-weight:bold; font-size:16px; box-shadow: 0 4px 10px rgba(232,30,109,0.4);">Close</button>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', modalHtml);
+        if(currentGeneratedBillData) incrementInvoiceSeq(currentGeneratedBillData.id);
     }
 
 </script>
