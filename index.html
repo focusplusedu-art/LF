@@ -204,7 +204,7 @@
         
         #invoice-totals { text-align: right; font-size: 13px; font-weight: 600; color: var(--primary); }
         #invoice-totals div { display: flex; justify-content: flex-end; gap: 30px; margin-bottom: 8px; }
-        #invoice-totals .grand-total { font-weight: 800; color: var(--primary); border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary); padding: 12px 0; margin-top: 10px; font-size: 16px; text-transform: uppercase; }
+        #invoice-totals .grand-total { font-weight: 800; color: var(--primary); border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary); padding: 12px 0; margin-top: 10px; font-size: 18px; text-transform: uppercase; }
         
         .invoice-footer-msg { text-align: center; font-size: 14px; margin-top: 40px; color: var(--primary); font-weight: 600; }
 
@@ -409,7 +409,7 @@
 
                 <div id="invoice-action-btns" style="margin-top: 15px; display: none; gap: 10px;">
                     <button class="btn-action" style="background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; font-size: 14px;" onclick="sendWhatsAppInvoice()">📱 WhatsApp</button>
-                    <button class="btn-action" style="background:var(--primary-gradient); font-size: 14px;" onclick="openSaveModal()">⬇️ Save / Share</button>
+                    <button class="btn-action" style="background:var(--primary-gradient); font-size: 14px;" onclick="openSaveModal()">⬇️ Save / Print</button>
                 </div>
             </div>
         </div>
@@ -1126,7 +1126,6 @@
         playSuccessSound(); 
         
         const previewElement = document.getElementById('invoice-preview-capture');
-        const filename = currentGeneratedBillData ? `LioraBill_${currentGeneratedBillData.id}.png` : 'LioraBill.png';
 
         html2canvas(previewElement, { scale: 3, logging: false, useCORS: true }).then(canvas => {
             const dataUrl = canvas.toDataURL("image/png");
@@ -1135,18 +1134,17 @@
             <div id="img-save-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter: blur(5px);">
                 
                 <p style="color:#10b981; font-weight:800; font-size:18px; text-align:center; margin-bottom:10px;">✅ Bill Ready!</p>
-                <p style="color:white; margin-bottom:15px; font-size:12px; text-align:center; line-height: 1.5;">
-                    පහතින් <b>Download</b> හෝ <b>Save as PDF</b> දෙන්න.<br>
-                    <span style="color:#ff99c2; font-size:11px;">(ඇප් එකෙන් Download වුණේ නැත්නම් PDF දෙන්න)</span>
+                
+                <p style="color:white; margin-bottom:15px; font-size:13px; text-align:center; line-height: 1.5; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; width: 100%; max-width: 300px;">
+                    <b style="color:var(--primary-light);">Gallery එකට Save කරගන්න:</b><br>
+                    පහත ෆොටෝ එක උඩ ඇඟිල්ල තද කරගෙන ඉඳලා (Long Press) <b>'Save Image'</b> හෝ <b>'Download'</b> දෙන්න.
                 </p>
                 
-                <div style="max-height:45vh; overflow:auto; border-radius:10px; box-shadow:0 10px 30px rgba(232,30,109,0.3); margin-bottom:20px; border: 2px solid white; background: white;">
-                    <img src="${dataUrl}" style="max-width:100%; height:auto; display:block; -webkit-touch-callout:default; pointer-events:auto; user-select:auto;">
+                <div style="max-height:45vh; overflow:auto; border-radius:10px; box-shadow:0 10px 30px rgba(232,30,109,0.3); margin-bottom:20px; border: 2px solid white; background: white; width: 100%; max-width: 350px;">
+                    <img src="${dataUrl}" style="width:100%; height:auto; display:block; touch-action: auto; pointer-events: auto; -webkit-user-select: none; user-select: none; -webkit-touch-callout: default;">
                 </div>
                 
-                <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px;">
-                    
-                    <button onclick="forceDownloadImage('${dataUrl}', '${filename}')" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #e81e6d, #ff5e98); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(232,30,109,0.4); cursor:pointer;">⬇️ Download Image</button>
+                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px;">
                     
                     <button onclick="saveAsPdf()" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #10b981, #059669); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(16,185,129,0.4); cursor:pointer;">🖨️ Save as PDF</button>
 
@@ -1160,22 +1158,6 @@
             console.error("Error:", err);
             alert("Error preparing bill.");
         });
-    }
-
-    function forceDownloadImage(dataUrl, filename) {
-        playTabSound();
-        incrementInvoiceSeqOnce();
-        
-        try {
-            const link = document.createElement('a');
-            link.href = dataUrl;
-            link.download = filename;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-        } catch(e) {
-            console.error("Download failed", e);
-        }
     }
 
     function incrementInvoiceSeqOnce() {
