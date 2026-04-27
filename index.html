@@ -211,13 +211,18 @@
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Print styles for PDF saving */
         @media print {
             body * { visibility: hidden; }
             #invoice-preview-capture, #invoice-preview-capture * { visibility: visible; }
             #invoice-preview-capture { position: absolute; left: 0; top: 0; width: 100%; }
             #img-save-modal { display: none !important; }
         }
+
+        /* WebView specific modal button styles */
+        .modal-btn { display: block; width: 100%; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 15px; text-align: center; text-decoration: none; border: none; cursor: pointer; margin-bottom: 10px; }
+        .btn-download-direct { background: linear-gradient(135deg, #e81e6d, #ff5e98); color: white; box-shadow: 0 4px 10px rgba(232,30,109,0.4); }
+        .btn-share { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; box-shadow: 0 4px 10px rgba(59,130,246,0.4); }
+        .btn-pdf { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 10px rgba(16,185,129,0.4); }
 
     </style>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -409,7 +414,7 @@
 
                 <div id="invoice-action-btns" style="margin-top: 15px; display: none; gap: 10px;">
                     <button class="btn-action" style="background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; font-size: 14px;" onclick="sendWhatsAppInvoice()">📱 WhatsApp</button>
-                    <button class="btn-action" style="background:var(--primary-gradient); font-size: 14px;" onclick="openSaveModal()">⬇️ Save / Print</button>
+                    <button class="btn-action" style="background:var(--primary-gradient); font-size: 14px;" onclick="openSaveModal()">⬇️ Save / Share</button>
                 </div>
             </div>
         </div>
@@ -488,16 +493,9 @@
 </div>
 
 <script>
-    // --- SOUND EFFECTS (Web Audio API) ---
+    // --- SOUND EFFECTS ---
     let audioCtx;
-    function initAudio() {
-        if (!audioCtx) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            audioCtx = new AudioContext();
-        }
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
+    function initAudio() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } if (audioCtx.state === 'suspended') audioCtx.resume(); }
     function playTabSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'triangle'; osc.frequency.setValueAtTime(400, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); osc.start(); osc.stop(audioCtx.currentTime + 0.05); } catch(e) {} }
     function playBubbleSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} }
     function playSuccessSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); } catch(e) {} }
@@ -508,77 +506,56 @@
 
     function togglePrepareBillSound() { playPopSound(); }
 
-    // --- AUTO-SAVE CUSTOMER PHONE LOGIC ---
+    // --- AUTO-SAVE CUSTOMER PHONE ---
     let customerDirectory = JSON.parse(localStorage.getItem('liora_customers')) || {};
-
     function saveCustomerInfo(name, phone) {
         if(name && phone && phone.length >= 9) {
             customerDirectory[name.trim().toUpperCase()] = phone.trim();
             localStorage.setItem('liora_customers', JSON.stringify(customerDirectory));
         }
     }
-
     function searchPhoneByName(nameInputId, phoneInputId) {
         let name = document.getElementById(nameInputId).value.trim().toUpperCase();
-        if(customerDirectory[name]) {
-            document.getElementById(phoneInputId).value = customerDirectory[name];
-        }
+        if(customerDirectory[name]) document.getElementById(phoneInputId).value = customerDirectory[name];
     }
 
-    // --- INVOICE AUTO NUMBER LOGIC ---
+    // --- INVOICE AUTO NUMBER ---
     function setAutoInvoiceId() {
         let nextId = parseInt(localStorage.getItem('liora_inv_seq')) || 1;
         document.getElementById('invoice-id-input').value = nextId;
     }
-
     function incrementInvoiceSeq(usedId) {
         let currentSeq = parseInt(localStorage.getItem('liora_inv_seq')) || 1;
-        if (parseInt(usedId) === currentSeq) {
-            localStorage.setItem('liora_inv_seq', currentSeq + 1);
-        }
+        if (parseInt(usedId) === currentSeq) localStorage.setItem('liora_inv_seq', currentSeq + 1);
     }
-
 
     // --- APP LOGIC ---
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxiNrs-TuIUmAYkefTKcXyZfeFqaoh_TLoeRDdiS5h5oGNs24E_6-_n0M_9HZTwHJhl/exec';
 
-    let editingId = null; 
-    let globalMaxOrderId = 1000;
-    let localData = [];
-    let billBuffer = []; 
-    let currentGeneratedBillData = null;
-    let isSeqIncremented = false; 
+    let editingId = null; let globalMaxOrderId = 1000; let localData = []; let billBuffer = []; let currentGeneratedBillData = null; let isSeqIncremented = false; 
 
     const swipeWrapper = document.getElementById('swipe-wrapper');
     const tabsArr = ['tab-entry', 'tab-orders', 'tab-invoice', 'tab-bills', 'tab-reports'];
     const tabBtns = ['tab-btn-entry', 'tab-btn-orders', 'tab-btn-invoice', 'tab-btn-bills', 'tab-btn-reports'];
-    let currentTabIndex = 0;
-    let containerWidth = 0;
+    let currentTabIndex = 0; let containerWidth = 0;
     
     let touchStartX = 0; let touchStartY = 0; let touchMoveX = 0; let isSwiping = false; let isVerticalScroll = false; 
 
     function setupSwipeGestures() {
         let mainApp = document.getElementById('main-app');
         containerWidth = mainApp.offsetWidth;
-
-        window.addEventListener('resize', () => { 
-            containerWidth = document.getElementById('main-app').offsetWidth; 
-            updateTabPosition(currentTabIndex, false); 
-        });
-
+        window.addEventListener('resize', () => { containerWidth = document.getElementById('main-app').offsetWidth; updateTabPosition(currentTabIndex, false); });
         swipeWrapper.addEventListener('touchstart', e => {
             if(e.target.closest('.bubble-scroll-container') || e.target.closest('input') || e.target.closest('select') || e.target.closest('#invoice-preview-area')) return;
             isSwiping = true; isVerticalScroll = false;
             touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; touchMoveX = touchStartX;
         }, {passive: true});
-
         swipeWrapper.addEventListener('touchmove', e => {
             if (!isSwiping) return;
             let currentX = e.touches[0].clientX; let currentY = e.touches[0].clientY;
             let diffX = currentX - touchStartX; let diffY = currentY - touchStartY;
             if (!isVerticalScroll && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 5) {
-                isVerticalScroll = true; isSwiping = false; 
-                swipeWrapper.classList.remove('swiping'); updateTabPosition(currentTabIndex, false); return;
+                isVerticalScroll = true; isSwiping = false; swipeWrapper.classList.remove('swiping'); updateTabPosition(currentTabIndex, false); return;
             }
             if (!isVerticalScroll && Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 5) {
                 swipeWrapper.classList.add('swiping'); touchMoveX = currentX;
@@ -586,7 +563,6 @@
                 swipeWrapper.style.transform = `translateX(${currentTranslation}px)`;
             }
         }, {passive: true});
-
         swipeWrapper.addEventListener('touchend', e => {
             if (!isSwiping) return;
             isSwiping = false; swipeWrapper.classList.remove('swiping');
@@ -600,9 +576,7 @@
 
     function showTabByIndex(index) {
         currentTabIndex = index;
-        tabBtns.forEach((btnId, i) => {
-            if(document.getElementById(btnId)) document.getElementById(btnId).classList.toggle('active', i === index);
-        });
+        tabBtns.forEach((btnId, i) => { if(document.getElementById(btnId)) document.getElementById(btnId).classList.toggle('active', i === index); });
         updateTabPosition(index, true);
         if(editingId) cancelEdit(); 
         if(localData.length > 0) renderData(); 
@@ -642,23 +616,15 @@
     }
 
     function initBubbles(selectId, containerId, tabType) {
-        const selectEl = document.getElementById(selectId);
-        const container = document.getElementById(containerId);
-        let html = '';
-        for(let i=1; i<selectEl.options.length; i++) {
-            let opt = selectEl.options[i];
-            html += `<div class="bubble-item" data-val="${opt.value}" onclick="playBubbleSound(); selectBubble('${tabType}', '${opt.value}', this)">${opt.text}</div>`;
-        }
+        const selectEl = document.getElementById(selectId); const container = document.getElementById(containerId); let html = '';
+        for(let i=1; i<selectEl.options.length; i++) { let opt = selectEl.options[i]; html += `<div class="bubble-item" data-val="${opt.value}" onclick="playBubbleSound(); selectBubble('${tabType}', '${opt.value}', this)">${opt.text}</div>`; }
         container.innerHTML = html;
     }
 
     function selectBubble(tab, val, el) {
-        let containerId = tab === 'home' ? 'home-bubbles' : 'ord-bubbles';
-        let selectId = tab === 'home' ? 'note-select' : 'ord-item';
-
+        let containerId = tab === 'home' ? 'home-bubbles' : 'ord-bubbles'; let selectId = tab === 'home' ? 'note-select' : 'ord-item';
         document.querySelectorAll(`#${containerId} .bubble-item`).forEach(b => b.classList.remove('selected'));
         if(el) { el.classList.add('selected'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
-        
         document.getElementById(selectId).value = val;
         if(tab === 'home') handleNoteSelect(); else handleOrdItemSelect();
     }
@@ -672,30 +638,21 @@
     function syncBubbles(selectId, containerId) {
         const val = document.getElementById(selectId).value;
         document.querySelectorAll(`#${containerId} .bubble-item`).forEach(b => {
-            if(b.getAttribute('data-val') === val) {
-                b.classList.add('selected'); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            } else { b.classList.remove('selected'); }
+            if(b.getAttribute('data-val') === val) { b.classList.add('selected'); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } else { b.classList.remove('selected'); }
         });
     }
 
     function searchOrders() {
-        let input = document.getElementById('search-order').value.toUpperCase();
-        let items = document.querySelectorAll('#pending-orders-list .record-item');
-        items.forEach(item => {
-            let text = item.innerText.toUpperCase();
-            item.style.display = text.indexOf(input) > -1 ? 'flex' : 'none';
-        });
+        let input = document.getElementById('search-order').value.toUpperCase(); let items = document.querySelectorAll('#pending-orders-list .record-item');
+        items.forEach(item => { let text = item.innerText.toUpperCase(); item.style.display = text.indexOf(input) > -1 ? 'flex' : 'none'; });
     }
 
     let currentType = 'INCOME'; let currentCat = 'Tailoring'; let currentBillCat = 'Fabric_Bill';
 
     function setType(t) {
         currentType = t;
-        document.getElementById('btn-in').className = t==='INCOME' ? 'active-in' : '';
-        document.getElementById('btn-out').className = t==='EXPENSE' ? 'active-out' : '';
-        document.getElementById('grid-income').style.display = t==='INCOME' ? 'grid' : 'none';
-        document.getElementById('grid-expense').style.display = t==='EXPENSE' ? 'grid' : 'none';
-        
+        document.getElementById('btn-in').className = t==='INCOME' ? 'active-in' : ''; document.getElementById('btn-out').className = t==='EXPENSE' ? 'active-out' : '';
+        document.getElementById('grid-income').style.display = t==='INCOME' ? 'grid' : 'none'; document.getElementById('grid-expense').style.display = t==='EXPENSE' ? 'grid' : 'none';
         const txt = document.getElementById('note-text');
         if(t === 'INCOME') { setCat('Tailoring'); document.getElementById('home-bubbles').style.display = 'flex'; handleNoteSelect(); } 
         else { setCat('Shop'); document.getElementById('home-bubbles').style.display = 'none'; txt.style.display = 'block'; txt.placeholder = "Type Expense Detail..."; txt.value = ""; }
@@ -704,8 +661,7 @@
     function setCat(c) {
         currentCat = c;
         document.querySelectorAll('#grid-income .cat-item, #grid-expense .cat-item').forEach(el => el.classList.remove('selected'));
-        const catElement = document.getElementById('cat-' + c);
-        if(catElement) catElement.classList.add('selected');
+        const catElement = document.getElementById('cat-' + c); if(catElement) catElement.classList.add('selected');
     }
 
     function handleNoteSelect() {
@@ -721,14 +677,12 @@
     function setBillCat(c) {
         currentBillCat = c;
         document.querySelectorAll('#grid-bill .cat-item').forEach(el => el.classList.remove('selected'));
-        const catElement = document.getElementById('cat-' + c);
-        if(catElement) catElement.classList.add('selected');
+        const catElement = document.getElementById('cat-' + c); if(catElement) catElement.classList.add('selected');
     }
 
     async function fetchInitialData() {
         try {
-            const response = await fetch(scriptURL);
-            const data = await response.json();
+            const response = await fetch(scriptURL); const data = await response.json();
             if(Array.isArray(data)) { localData = data; } else { localData = []; }
             renderData();
         } catch (error) { document.getElementById('home-today-list').innerHTML = "<p style='text-align:center; color: var(--danger); font-weight:600;'>Offline or Sync Error. Try reloading.</p>"; }
@@ -1126,6 +1080,7 @@
         playSuccessSound(); 
         
         const previewElement = document.getElementById('invoice-preview-capture');
+        const filename = currentGeneratedBillData ? `LioraBill_${currentGeneratedBillData.id}.png` : 'LioraBill.png';
 
         html2canvas(previewElement, { scale: 3, logging: false, useCORS: true }).then(canvas => {
             const dataUrl = canvas.toDataURL("image/png");
@@ -1133,18 +1088,17 @@
             const modalHtml = `
             <div id="img-save-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter: blur(5px);">
                 
-                <p style="color:#10b981; font-weight:800; font-size:18px; text-align:center; margin-bottom:10px;">✅ Bill Ready!</p>
+                <p style="color:#10b981; font-weight:800; font-size:18px; text-align:center; margin-bottom:15px;">✅ Bill Ready!</p>
                 
-                <p style="color:white; margin-bottom:15px; font-size:13px; text-align:center; line-height: 1.5; background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; width: 100%; max-width: 300px;">
-                    <b style="color:var(--primary-light);">Gallery එකට Save කරගන්න:</b><br>
-                    පහත ෆොටෝ එක උඩ ඇඟිල්ල තද කරගෙන ඉඳලා (Long Press) <b>'Save Image'</b> හෝ <b>'Download'</b> දෙන්න.
-                </p>
-                
-                <div style="max-height:45vh; overflow:auto; border-radius:10px; box-shadow:0 10px 30px rgba(232,30,109,0.3); margin-bottom:20px; border: 2px solid white; background: white; width: 100%; max-width: 350px;">
-                    <img src="${dataUrl}" style="width:100%; height:auto; display:block; touch-action: auto; pointer-events: auto; -webkit-user-select: none; user-select: none; -webkit-touch-callout: default;">
+                <div style="max-height:45vh; overflow:auto; border-radius:10px; box-shadow:0 10px 30px rgba(232,30,109,0.3); margin-bottom:20px; border: 2px solid white; background: white;">
+                    <img src="${dataUrl}" style="max-width:100%; height:auto; display:block; touch-action: auto; pointer-events: auto; -webkit-user-select: auto; user-select: auto; -webkit-touch-callout: default;">
                 </div>
                 
-                <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px;">
+                <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px;">
+                    
+                    <a href="${dataUrl}" download="${filename}" onclick="playTabSound(); incrementInvoiceSeqOnce();" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #e81e6d, #ff5e98); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(232,30,109,0.4); cursor:pointer; text-align:center; text-decoration:none; display:block;">⬇️ Download Image</a>
+                    
+                    <button onclick="nativeShareImage('${dataUrl}', '${filename}')" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #3b82f6, #2563eb); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(59,130,246,0.4); cursor:pointer;">📤 Share to Apps</button>
                     
                     <button onclick="saveAsPdf()" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #10b981, #059669); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(16,185,129,0.4); cursor:pointer;">🖨️ Save as PDF</button>
 
@@ -1167,10 +1121,33 @@
         }
     }
 
+    // Attempt native share using fetch to blob
+    async function nativeShareImage(dataUrl, filename) {
+        playTabSound();
+        try {
+            const response = await fetch(dataUrl);
+            const blob = await response.blob();
+            const file = new File([blob], filename, { type: blob.type });
+
+            if (navigator.share && navigator.canShare({ files: [file] })) {
+                await navigator.share({
+                    files: [file],
+                    title: 'Liora Fashion Bill',
+                    text: 'Here is your invoice from Liora Fashion.'
+                });
+                incrementInvoiceSeqOnce();
+            } else {
+                alert("Share feature disabled by this App. Please use 'Save as PDF' instead.");
+            }
+        } catch (e) {
+            alert("Share feature disabled by this App. Please use 'Save as PDF' instead.");
+        }
+    }
+
     function saveAsPdf() {
         playTabSound();
         incrementInvoiceSeqOnce();
-        window.print(); // Fully supported by WebIntoApp
+        window.print(); // Fully supported by WebIntoApp natively
     }
 
     function closeSaveModal() {
