@@ -38,8 +38,9 @@
             color: var(--text-main); 
             padding: 15px; 
             min-height: 100vh;
+            overflow-x: hidden; 
         }
-        .container { max-width: 600px; margin: 0 auto; position: relative; padding-bottom: 20px; }
+        .container { max-width: 600px; margin: 0 auto; position: relative; padding-bottom: 20px; overflow: hidden; }
         
         .header { text-align: center; margin-bottom: 24px; position: relative; display: flex; flex-direction: column; align-items: center; }
         .logo-img { height: 85px; border-radius: 20px; margin-bottom: 8px; object-fit: contain; box-shadow: var(--shadow-md); background: #111; padding: 4px; border: 2px solid white; }
@@ -55,10 +56,27 @@
             position: relative; z-index: 5;
         }
         .tab-btn {
-            flex: 1; padding: 12px 4px; border: none; border-radius: 12px;
-            font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer; background: transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 1; padding: 12px 2px; border: none; border-radius: 12px;
+            font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer; background: transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(232, 30, 109, 0.25); }
+
+        .swipe-tabs-wrapper {
+            display: flex;
+            width: 500%; 
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+        .swipe-tabs-wrapper.swiping {
+            transition: none;
+        }
+        .swipe-tab { 
+            width: 20%; 
+            flex-shrink: 0;
+            padding: 0 15px; 
+            box-sizing: border-box;
+            display: block; 
+        }
 
         .card { 
             background: var(--card-bg); border-radius: 24px; padding: 24px; margin-bottom: 20px; 
@@ -125,6 +143,7 @@
         .bubble-scroll-container {
             display: flex; overflow-x: auto; gap: 10px; padding: 4px 4px 16px 4px; margin-bottom: 8px;
             scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
         }
         .bubble-scroll-container::-webkit-scrollbar { display: none; } 
         
@@ -148,9 +167,52 @@
         #pin-input { text-align: center; font-size: 36px; letter-spacing: 12px; font-weight: 800; margin-bottom: 30px; border: none; border-bottom: 3px solid var(--primary); background: transparent; width: 100%; outline: none; color: var(--text-main); padding-bottom: 10px; transition: 0.3s; }
         #pin-input:focus { border-bottom-color: #ff5e98; }
 
+        .bill-switch-card {
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary-light); border-radius: 16px;
+            padding: 14px 20px; margin-bottom: 16px; box-shadow: var(--shadow-sm);
+            font-size: 14px; font-weight: 700; color: var(--primary);
+        }
+        .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #f3e1e8; transition: .3s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        input:checked + .slider { background-color: var(--primary); }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* PURE WHITE & PINK TWO-COLOR INVOICE STYLES (UPDATED AS REQUESTED) */
+        #invoice-preview-capture { background: #ffffff; padding: 15px; border-radius: 8px; }
+        #invoice-preview { width: 100%; font-family: 'Inter', sans-serif; background: #ffffff; padding: 30px; border: 2px solid var(--primary); display: none; color: var(--primary); }
+        
+        #invoice-header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 20px; margin-bottom: 20px; }
+        #invoice-shop-logo { height: 65px; margin: 0 auto 12px auto; display: block; border-radius: 8px; }
+        #invoice-shop-title { font-weight: 800; font-size: 28px; color: var(--primary); letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase; }
+        #invoice-shop-address { font-size: 12px; color: var(--primary); line-height: 1.6; font-weight: 600; }
+        
+        #invoice-details-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
+        #invoice-bill-to { text-align: left; }
+        #invoice-bill-to strong { display: block; margin-bottom: 5px; color: var(--primary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+        #invoice-bill-to div { font-weight: 700; color: var(--primary); font-size: 15px; }
+        #invoice-meta { text-align: right; }
+        #invoice-id-date { font-size: 12px; color: var(--primary); font-weight: 600; line-height: 1.5; }
+        
+        #invoice-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 12px; background: #ffffff; }
+        #invoice-table th, #invoice-table td { padding: 12px 5px; text-align: left; color: var(--primary); border-bottom: 1px solid var(--primary-light); }
+        #invoice-table th { text-transform: uppercase; font-size: 12px; color: var(--primary); background: transparent; border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary); font-weight: 800; }
+        #invoice-table td.total-col { text-align: right; font-weight: 700; }
+        #invoice-table th.total-col { text-align: right; }
+        
+        #invoice-totals { text-align: right; font-size: 13px; font-weight: 600; color: var(--primary); }
+        #invoice-totals div { display: flex; justify-content: flex-end; gap: 30px; margin-bottom: 8px; }
+        #invoice-totals .grand-total { font-weight: 800; color: var(--primary); border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary); padding: 12px 0; margin-top: 10px; font-size: 16px; text-transform: uppercase; }
+        
+        .invoice-footer-msg { text-align: center; font-size: 14px; margin-top: 40px; color: var(--primary); font-weight: 600; }
+
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
     </style>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -175,214 +237,250 @@
     <div class="nav-tabs">
         <button class="tab-btn active" id="tab-btn-entry" onclick="playTabSound(); showTabByIndex(0)">🏠 Home</button>
         <button class="tab-btn" id="tab-btn-orders" onclick="playTabSound(); showTabByIndex(1)">✂️ Orders</button>
-        <button class="tab-btn" id="tab-btn-bills" onclick="playTabSound(); showTabByIndex(2)">🧾 Bills</button>
-        <button class="tab-btn" id="tab-btn-reports" onclick="playTabSound(); showTabByIndex(3)">📊 Reps</button>
+        <button class="tab-btn" id="tab-btn-invoice" onclick="playTabSound(); showTabByIndex(2)">🧾 Invoice</button>
+        <button class="tab-btn" id="tab-btn-bills" onclick="playTabSound(); showTabByIndex(3)">🛒 Bills</button>
+        <button class="tab-btn" id="tab-btn-reports" onclick="playTabSound(); showTabByIndex(4)">📊 Reps</button>
     </div>
 
-    <div id="tab-entry" class="fade-in" style="display: block;">
-        <div class="card summary-box" style="margin-bottom: 20px;">
-            <h3>Today's Income 💰</h3>
-            <div class="profit-amount" id="home-today-income">Rs. 0.00</div>
-        </div>
-
-        <div class="card">
-            <h3 id="entry-title">⚡ Quick Entry</h3>
-            
-            <div class="type-switch">
-                <button id="btn-in" class="active-in" onclick="playTabSound(); setType('INCOME')">INCOME</button>
-                <button id="btn-out" onclick="playTabSound(); setType('EXPENSE')">EXPENSE</button>
-            </div>
-            
-            <div class="cat-grid" id="grid-income">
-                <div class="cat-item selected" id="cat-Tailoring" onclick="playTabSound(); setCat('Tailoring')"><span>✂️</span> Tailoring</div>
-                <div class="cat-item" id="cat-Fabrics" onclick="playTabSound(); setCat('Fabrics')"><span>🧵</span> Fabric Sales</div>
-            </div>
-            <div class="cat-grid" id="grid-expense" style="display: none;">
-                <div class="cat-item" id="cat-Shop" onclick="playTabSound(); setCat('Shop')"><span>🏪</span> Shop</div>
-                <div class="cat-item" id="cat-Personal" onclick="playTabSound(); setCat('Personal')"><span>👤</span> Personal</div>
-            </div>
-
-            <div class="amount-wrapper">
-                <span>Rs.</span><input type="number" id="amt" placeholder="0.00">
-            </div>
-            
-            <div class="bubble-scroll-container" id="home-bubbles"></div>
-            
-            <select id="note-select" style="display: none;">
-                <option value="" disabled selected>Select Item</option>
-                <option value="Frocks">Frocks</option>
-                <option value="Skirts">Skirts</option>
-                <option value="Pants">Pants</option>
-                <option value="Shorts">Shorts</option>
-                <option value="Night Dress">Night Dress</option>
-                <option value="Jacket">Jacket</option>
-                <option value="Underskirts">Underskirts</option>
-                <option value="School Uniform (Frocks)">School Uniform (Frocks)</option>
-                <option value="School Uniform (Shirt)">School Uniform (Shirt)</option>
-                <option value="School Uniform (Short)">School Uniform (Short)</option>
-                <option value="Lama Saree">Lama Saree</option>
-                <option value="Saree Madeup">Saree Madeup</option>
-                <option value="Kandyan Madeup">Kandyan Madeup</option>
-                <option value="Curtains">Curtains</option>
-                <option value="Pillow Case">Pillow Case</option>
-                <option value="Blouse">Blouse</option>
-                <option value="Kids Frocks">Kids Frocks</option>
-                <option value="Jumper Suit">Jumper Suit</option>
-                <option value="Wrap Dress">Wrap Dress</option>
-                <option value="Wraparound">Wraparound</option>
-                <option value="OTHER">✏️ Type Custom...</option>
-            </select>
-            
-            <input type="text" id="note-text" placeholder="Type detail here..." style="display: none;">
-            
-            <button class="btn-action" id="save-btn" onclick="saveData()">💾 Save Entry</button>
-            <button class="btn-action btn-cancel" id="cancel-edit-btn" style="display: none;" onclick="playTabSound(); cancelEdit()">❌ Cancel Edit</button>
-        </div>
-
-        <div class="card">
-            <h3>📝 Today's Activity</h3>
-            <div id="home-today-list">
-                <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading data...</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-orders" class="fade-in" style="display: none;">
+    <div class="swipe-tabs-wrapper" id="swipe-wrapper">
         
-        <div class="search-box">
-            <span>🔎</span>
-            <input type="text" id="search-order" placeholder="Search Order Code (e.g. 1005)..." onkeyup="searchOrders()">
-        </div>
-
-        <div class="card" style="border-top: 4px solid var(--info);">
-            <h3 style="color: var(--info);">✂️ New Order</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Add customer orders and advance payments.</p>
-            
-            <input type="text" id="ord-name" placeholder="Customer Name">
-            <input type="number" id="ord-phone" placeholder="Phone Number (Optional)">
-            
-            <div class="bubble-scroll-container" id="ord-bubbles"></div>
-
-            <select id="ord-item" style="display: none;">
-                <option value="" disabled selected>Select Category</option>
-                <option value="Frocks">Frocks</option>
-                <option value="Skirts">Skirts</option>
-                <option value="Pants">Pants</option>
-                <option value="Shorts">Shorts</option>
-                <option value="Night Dress">Night Dress</option>
-                <option value="Jacket">Jacket</option>
-                <option value="Underskirts">Underskirts</option>
-                <option value="School Uniform">School Uniform</option>
-                <option value="Lama Saree">Lama Saree</option>
-                <option value="Saree Madeup">Saree Madeup</option>
-                <option value="Kandyan Madeup">Kandyan Madeup</option>
-                <option value="Curtains">Curtains</option>
-                <option value="Pillow Case">Pillow Case</option>
-                <option value="Blouse">Blouse</option>
-                <option value="Kids Frocks">Kids Frocks</option>
-                <option value="Jumper Suit">Jumper Suit</option>
-                <option value="Wrap Dress">Wrap Dress</option>
-                <option value="OTHER">✏️ Type Custom...</option>
-            </select>
-            
-            <input type="text" id="ord-item-text" placeholder="Type custom category here..." style="display: none; margin-bottom: 20px;">
-
-            <div class="amount-wrapper" style="border-color: #cbd5e1; margin-bottom: 12px; padding-bottom: 5px;">
-                <span style="color: var(--text-muted); font-size: 16px;">Total Rs.</span>
-                <input type="number" id="ord-total" placeholder="0.00" style="color: var(--text-main); font-size: 28px;">
+        <div id="tab-entry" class="swipe-tab">
+            <div class="card summary-box" style="margin-bottom: 20px;">
+                <h3>Today's Income 💰</h3>
+                <div class="profit-amount" id="home-today-income">Rs. 0.00</div>
             </div>
 
-            <div class="amount-wrapper" style="border-color: var(--info); margin-bottom: 24px; padding-bottom: 5px;">
-                <span style="color: var(--info); font-size: 16px;">Advance Rs.</span>
-                <input type="number" id="ord-adv" placeholder="0.00" style="color: var(--info); font-size: 28px;">
-            </div>
-            
-            <button class="btn-action" id="save-ord-btn" style="background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);" onclick="saveAdvance()">💾 Save Order</button>
-        </div>
+            <div class="card">
+                <div class="bill-switch-card">
+                    <span>📝 Prepare Bill? (Auto Add Items)</span>
+                    <label class="switch">
+                        <input type="checkbox" id="prepare-bill-switch" onchange="togglePrepareBillSound()">
+                        <span class="slider"></span>
+                    </label>
+                </div>
 
-        <div class="card">
-            <h3>⏳ Pending Orders</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Pending balances to receive.</p>
-            <div id="pending-orders-list">
-                <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading orders...</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-bills" class="fade-in" style="display: none;">
-        <div class="card" style="border-top: 4px solid var(--warning);">
-            <h3 id="bill-title" style="color: #d97706;">🧾 Add New Bill</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Enter business bills and expenses here.</p>
-            
-            <div class="cat-grid" id="grid-bill">
-                <div class="cat-item selected" id="cat-Fabric_Bill" onclick="playTabSound(); setBillCat('Fabric_Bill')"><span>🛍️</span> Fabric Bills</div>
-                <div class="cat-item" id="cat-Other_Bill" onclick="playTabSound(); setBillCat('Other_Bill')"><span>📦</span> Other Bills</div>
-            </div>
-
-            <div class="amount-wrapper" style="border-color: var(--warning);">
-                <span style="color: var(--warning);">Rs.</span>
-                <input type="number" id="bill-amt" placeholder="0.00" style="color: var(--text-main);">
-            </div>
-            
-            <input type="text" id="bill-note" placeholder="Bill No. or Item Details">
-            
-            <button class="btn-action" id="save-bill-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);" onclick="saveBillData()">💾 Save Bill</button>
-            <button class="btn-action btn-cancel" id="cancel-bill-edit-btn" style="display: none;" onclick="playTabSound(); cancelBillEdit()">❌ Cancel Edit</button>
-        </div>
-
-        <div class="card">
-            <h3>📝 Today's Bills</h3>
-            <div id="bills-today-list">
-                <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading today's bills...</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-reports" class="fade-in" style="display: none;">
-        <div class="card summary-box" style="margin-bottom: 20px;">
-            <h3 id="report-title">Monthly Summary</h3>
-            <div class="profit-amount" id="total-profit">Rs. 0.00</div>
-            <p id="total-bills" style="font-size: 13px; margin-top: 8px; background: rgba(0,0,0,0.15); padding: 6px 12px; border-radius: 8px; display: inline-block; font-weight: 600;">Total Bills: Rs. 0.00</p>
-        </div>
-        
-        <div class="card">
-            <h3>🔍 Filter Past Records</h3>
-            <div style="margin-bottom: 16px;">
-                <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">Record Type</label>
+                <h3 id="entry-title">⚡ Quick Entry</h3>
                 
-                <div class="bubble-scroll-container" id="filter-bubbles">
-                    <div class="bubble-item selected" data-val="ALL" onclick="playBubbleSound(); selectFilterBubble('ALL', this)">All Records</div>
-                    <div class="bubble-item" data-val="INCOME" onclick="playBubbleSound(); selectFilterBubble('INCOME', this)">Income & Orders 💰</div>
-                    <div class="bubble-item" data-val="BILL" onclick="playBubbleSound(); selectFilterBubble('BILL', this)">Bills Only 🧾</div>
-                    <div class="bubble-item" data-val="EXPENSE" onclick="playBubbleSound(); selectFilterBubble('EXPENSE', this)">Expense Only 📉</div>
+                <div class="type-switch">
+                    <button id="btn-in" class="active-in" onclick="playTabSound(); setType('INCOME')">INCOME</button>
+                    <button id="btn-out" onclick="playTabSound(); setType('EXPENSE')">EXPENSE</button>
+                </div>
+                
+                <div class="cat-grid" id="grid-income">
+                    <div class="cat-item selected" id="cat-Tailoring" onclick="playTabSound(); setCat('Tailoring')"><span>✂️</span> Tailoring</div>
+                    <div class="cat-item" id="cat-Fabrics" onclick="playTabSound(); setCat('Fabrics')"><span>🧵</span> Fabric Sales</div>
+                </div>
+                <div class="cat-grid" id="grid-expense" style="display: none;">
+                    <div class="cat-item" id="cat-Shop" onclick="playTabSound(); setCat('Shop')"><span>🏪</span> Shop</div>
+                    <div class="cat-item" id="cat-Personal" onclick="playTabSound(); setCat('Personal')"><span>👤</span> Personal</div>
                 </div>
 
-                <select id="filter-type" style="display: none;" onchange="renderData()">
-                    <option value="ALL" selected>All Records</option>
-                    <option value="INCOME">Income & Orders 💰</option>
-                    <option value="BILL">Bills Only 🧾</option>
-                    <option value="EXPENSE">Expense Only 📉</option>
+                <div class="amount-wrapper">
+                    <span>Rs.</span><input type="number" id="amt" placeholder="0.00">
+                </div>
+                
+                <div class="bubble-scroll-container" id="home-bubbles"></div>
+                
+                <select id="note-select" style="display: none;">
+                    <option value="" disabled selected>Select Item</option>
+                    <option value="Frocks">Frocks</option>
+                    <option value="Skirts">Skirts</option>
+                    <option value="Pants">Pants</option>
+                    <option value="Shorts">Shorts</option>
+                    <option value="Night Dress">Night Dress</option>
+                    <option value="Jacket">Jacket</option>
+                    <option value="Underskirts">Underskirts</option>
+                    <option value="School Uniform (Frocks)">School Uniform (Frocks)</option>
+                    <option value="School Uniform (Shirt)">School Uniform (Shirt)</option>
+                    <option value="School Uniform (Short)">School Uniform (Short)</option>
+                    <option value="Lama Saree">Lama Saree</option>
+                    <option value="Saree Madeup">Saree Madeup</option>
+                    <option value="Kandyan Madeup">Kandyan Madeup</option>
+                    <option value="Curtains">Curtains</option>
+                    <option value="Pillow Case">Pillow Case</option>
+                    <option value="Blouse">Blouse</option>
+                    <option value="Kids Frocks">Kids Frocks</option>
+                    <option value="Jumper Suit">Jumper Suit</option>
+                    <option value="Wrap Dress">Wrap Dress</option>
+                    <option value="Wraparound">Wraparound</option>
+                    <option value="OTHER">✏️ Type Custom...</option>
                 </select>
+                
+                <input type="text" id="note-text" placeholder="Type detail here..." style="display: none;">
+                
+                <button class="btn-action" id="save-btn" onclick="saveData()">💾 Save Entry</button>
+                <button class="btn-action btn-cancel" id="cancel-edit-btn" style="display: none;" onclick="playTabSound(); cancelEdit()">❌ Cancel Edit</button>
             </div>
-            <div class="filter-section">
-                <div>
-                    <label>Month</label>
-                    <input type="month" id="filter-month" onchange="playTabSound(); renderData()">
+
+            <div class="card">
+                <h3>📝 Today's Activity</h3>
+                <div id="home-today-list">
+                    <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading data...</p>
                 </div>
-                <div>
-                    <label>Day</label>
-                    <input type="date" id="filter-date" onchange="playTabSound(); renderData()">
-                </div>
-            </div>
-            <div id="report-list" style="margin-top: 20px;">
-                <p style="text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500;">Please wait...</p>
             </div>
         </div>
-    </div>
+
+        <div id="tab-orders" class="swipe-tab">
+            <div class="search-box">
+                <span>🔎</span>
+                <input type="text" id="search-order" placeholder="Search Order Code / Name..." onkeyup="searchOrders()">
+            </div>
+
+            <div class="card" style="border-top: 4px solid var(--info);">
+                <h3 style="color: var(--info);">✂️ New Order</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Add customer orders and advance payments.</p>
+                
+                <input type="text" id="ord-name" placeholder="Customer Name" onkeyup="searchPhoneByName('ord-name', 'ord-phone')">
+                <input type="number" id="ord-phone" placeholder="Phone Number (Optional)">
+                
+                <div class="bubble-scroll-container" id="ord-bubbles"></div>
+
+                <select id="ord-item" style="display: none;">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Frocks">Frocks</option>
+                    <option value="Skirts">Skirts</option>
+                    <option value="Pants">Pants</option>
+                    <option value="Shorts">Shorts</option>
+                    <option value="Night Dress">Night Dress</option>
+                    <option value="Jacket">Jacket</option>
+                    <option value="Underskirts">Underskirts</option>
+                    <option value="School Uniform">School Uniform</option>
+                    <option value="Lama Saree">Lama Saree</option>
+                    <option value="Saree Madeup">Saree Madeup</option>
+                    <option value="Kandyan Madeup">Kandyan Madeup</option>
+                    <option value="Curtains">Curtains</option>
+                    <option value="Pillow Case">Pillow Case</option>
+                    <option value="Blouse">Blouse</option>
+                    <option value="Kids Frocks">Kids Frocks</option>
+                    <option value="Jumper Suit">Jumper Suit</option>
+                    <option value="Wrap Dress">Wrap Dress</option>
+                    <option value="OTHER">✏️ Type Custom...</option>
+                </select>
+                
+                <input type="text" id="ord-item-text" placeholder="Type custom category here..." style="display: none; margin-bottom: 20px;">
+
+                <div class="amount-wrapper" style="border-color: #cbd5e1; margin-bottom: 12px; padding-bottom: 5px;">
+                    <span style="color: var(--text-muted); font-size: 16px;">Total Rs.</span>
+                    <input type="number" id="ord-total" placeholder="0.00" style="color: var(--text-main); font-size: 28px;">
+                </div>
+
+                <div class="amount-wrapper" style="border-color: var(--info); margin-bottom: 24px; padding-bottom: 5px;">
+                    <span style="color: var(--info); font-size: 16px;">Advance Rs.</span>
+                    <input type="number" id="ord-adv" placeholder="0.00" style="color: var(--info); font-size: 28px;">
+                </div>
+                
+                <button class="btn-action" id="save-ord-btn" style="background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);" onclick="saveAdvance()">💾 Save Order</button>
+            </div>
+
+            <div class="card">
+                <h3>⏳ Pending Orders</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Click Pay Bal or Bill to auto-generate Invoice!</p>
+                <div id="pending-orders-list">
+                    <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading orders...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-invoice" class="swipe-tab">
+            <div class="card" style="border-top: 4px solid var(--primary);">
+                <h3>🧾 Invoice Generator</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Create a beautiful bill to share via WhatsApp.</p>
+                
+                <input type="text" id="invoice-bill-name" placeholder="Customer Name" onkeyup="searchPhoneByName('invoice-bill-name', 'invoice-bill-whatsapp')">
+                <input type="number" id="invoice-bill-whatsapp" placeholder="WhatsApp Number (e.g. 071...)">
+                <input type="text" id="invoice-id-input" placeholder="Invoice Number">
+                
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <button class="btn-action" style="flex: 1; text-transform: uppercase;" onclick="generateBillPreview()">🖼️ Generate</button>
+                    <button class="btn-action btn-cancel" style="flex: 1; border-color: var(--danger); color: var(--danger);" onclick="clearBillBuffer()">❌ Clear</button>
+                </div>
+
+                <div id="invoice-preview-area">
+                    <p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #f9f5f7; padding: 15px; border-radius: 12px;">Add items in Home Tab with "Prepare Bill" ON, or Pay an Order Balance to see the bill here.</p>
+                </div>
+
+                <div id="invoice-action-btns" style="margin-top: 15px; display: none; gap: 10px;">
+                    <button class="btn-action" style="background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; font-size: 14px;" onclick="sendWhatsAppInvoice()">📱 WhatsApp</button>
+                    <button class="btn-action" style="background:var(--primary-gradient); font-size: 14px;" onclick="downloadInvoiceImage()">⬇️ Save Image</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-bills" class="swipe-tab">
+            <div class="card" style="border-top: 4px solid var(--warning);">
+                <h3 id="bill-title" style="color: #d97706;">🛒 Add Shop Bill</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Enter your fabric and shop expenses here.</p>
+                
+                <div class="cat-grid" id="grid-bill">
+                    <div class="cat-item selected" id="cat-Fabric_Bill" onclick="playTabSound(); setBillCat('Fabric_Bill')"><span>🛍️</span> Fabric Bills</div>
+                    <div class="cat-item" id="cat-Other_Bill" onclick="playTabSound(); setBillCat('Other_Bill')"><span>📦</span> Other Bills</div>
+                </div>
+
+                <div class="amount-wrapper" style="border-color: var(--warning);">
+                    <span style="color: var(--warning);">Rs.</span>
+                    <input type="number" id="bill-amt" placeholder="0.00" style="color: var(--text-main);">
+                </div>
+                
+                <input type="text" id="bill-note" placeholder="Bill No. or Item Details">
+                
+                <button class="btn-action" id="save-bill-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);" onclick="saveBillData()">💾 Save Bill</button>
+                <button class="btn-action btn-cancel" id="cancel-bill-edit-btn" style="display: none;" onclick="playTabSound(); cancelBillEdit()">❌ Cancel Edit</button>
+            </div>
+
+            <div class="card">
+                <h3>📝 Today's Shop Bills</h3>
+                <div id="bills-today-list">
+                    <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading today's bills...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-reports" class="swipe-tab">
+            <div class="card summary-box" style="margin-bottom: 20px;">
+                <h3 id="report-title">Monthly Summary</h3>
+                <div class="profit-amount" id="total-profit">Rs. 0.00</div>
+                <p id="total-bills" style="font-size: 13px; margin-top: 8px; background: rgba(0,0,0,0.15); padding: 6px 12px; border-radius: 8px; display: inline-block; font-weight: 600;">Total Bills: Rs. 0.00</p>
+            </div>
+            
+            <div class="card">
+                <h3>🔍 Filter Past Records</h3>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">Record Type</label>
+                    
+                    <div class="bubble-scroll-container" id="filter-bubbles">
+                        <div class="bubble-item selected" data-val="ALL" onclick="playBubbleSound(); selectFilterBubble('ALL', this)">All Records</div>
+                        <div class="bubble-item" data-val="INCOME" onclick="playBubbleSound(); selectFilterBubble('INCOME', this)">Income & Orders 💰</div>
+                        <div class="bubble-item" data-val="BILL" onclick="playBubbleSound(); selectFilterBubble('BILL', this)">Bills Only 🧾</div>
+                        <div class="bubble-item" data-val="EXPENSE" onclick="playBubbleSound(); selectFilterBubble('EXPENSE', this)">Expense Only 📉</div>
+                    </div>
+
+                    <select id="filter-type" style="display: none;" onchange="renderData()">
+                        <option value="ALL" selected>All Records</option>
+                        <option value="INCOME">Income & Orders 💰</option>
+                        <option value="BILL">Bills Only 🧾</option>
+                        <option value="EXPENSE">Expense Only 📉</option>
+                    </select>
+                </div>
+                <div class="filter-section">
+                    <div>
+                        <label>Month</label>
+                        <input type="month" id="filter-month" onchange="playTabSound(); renderData()">
+                    </div>
+                    <div>
+                        <label>Day</label>
+                        <input type="date" id="filter-date" onchange="playTabSound(); renderData()">
+                    </div>
+                </div>
+                <div id="report-list" style="margin-top: 20px;">
+                    <p style="text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500;">Please wait...</p>
+                </div>
+            </div>
+        </div>
+    </div> 
 </div>
 
 <script>
-    // --- 6 NEW SOUND EFFECTS (Web Audio API) ---
+    // --- SOUND EFFECTS (Web Audio API) ---
     let audioCtx;
     function initAudio() {
         if (!audioCtx) {
@@ -392,98 +490,44 @@
         if (audioCtx.state === 'suspended') audioCtx.resume();
     }
 
-    // 1. Soft Tab Sound
-    function playTabSound() {
-        try {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'triangle';
-            osc.frequency.setValueAtTime(400, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
-        } catch(e) {}
+    function playTabSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'triangle'; osc.frequency.setValueAtTime(400, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); osc.start(); osc.stop(audioCtx.currentTime + 0.05); } catch(e) {} }
+    function playBubbleSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} }
+    function playSuccessSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); } catch(e) {} }
+    function playDeleteSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2); osc.start(); osc.stop(audioCtx.currentTime + 0.2); } catch(e) {} }
+    function playPaySound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(1000, audioCtx.currentTime); osc.frequency.setValueAtTime(1500, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); } catch(e) {} }
+    function playErrorSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2); osc.start(); osc.stop(audioCtx.currentTime + 0.2); } catch(e) {} }
+    function playPopSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} }
+
+    function togglePrepareBillSound() { playPopSound(); }
+
+    // --- AUTO-SAVE CUSTOMER PHONE LOGIC ---
+    let customerDirectory = JSON.parse(localStorage.getItem('liora_customers')) || {};
+
+    function saveCustomerInfo(name, phone) {
+        if(name && phone && phone.length >= 9) {
+            customerDirectory[name.trim().toUpperCase()] = phone.trim();
+            localStorage.setItem('liora_customers', JSON.stringify(customerDirectory));
+        }
     }
 
-    // 2. High Pop Sound for Bubbles
-    function playBubbleSound() {
-        try {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(800, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.1);
-        } catch(e) {}
+    function searchPhoneByName(nameInputId, phoneInputId) {
+        let name = document.getElementById(nameInputId).value.trim().toUpperCase();
+        if(customerDirectory[name]) {
+            document.getElementById(phoneInputId).value = customerDirectory[name];
+        }
     }
 
-    // 3. Success Chime for Saving
-    function playSuccessSound() {
-        try {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        } catch(e) {}
+    // --- INVOICE AUTO NUMBER LOGIC ---
+    function setAutoInvoiceId() {
+        let nextId = parseInt(localStorage.getItem('liora_inv_seq')) || 1;
+        document.getElementById('invoice-id-input').value = nextId;
     }
 
-    // 4. Trash/Delete Sound
-    function playDeleteSound() {
-        try {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'sawtooth';
-            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2);
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-        } catch(e) {}
-    }
-
-    // 5. Pay Balance Cash/Chime
-    function playPaySound() {
-        try {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(1000, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(1500, audioCtx.currentTime + 0.1);
-            gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
-        } catch(e) {}
-    }
-
-    // 6. Error/Buzz Sound
-    function playErrorSound() {
-        try {
-            initAudio();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'square';
-            osc.frequency.setValueAtTime(150, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
-            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.2);
-        } catch(e) {}
+    function incrementInvoiceSeq(usedId) {
+        let currentSeq = parseInt(localStorage.getItem('liora_inv_seq')) || 1;
+        if (parseInt(usedId) === currentSeq) {
+            localStorage.setItem('liora_inv_seq', currentSeq + 1);
+        }
     }
 
 
@@ -493,35 +537,85 @@
     let editingId = null; 
     let globalMaxOrderId = 1000;
     let localData = [];
+    let billBuffer = []; 
+    let currentGeneratedBillData = null;
 
-    const tabsArr = ['tab-entry', 'tab-orders', 'tab-bills', 'tab-reports'];
-    const tabBtns = ['tab-btn-entry', 'tab-btn-orders', 'tab-btn-bills', 'tab-btn-reports'];
+    const swipeWrapper = document.getElementById('swipe-wrapper');
+    const tabsArr = ['tab-entry', 'tab-orders', 'tab-invoice', 'tab-bills', 'tab-reports'];
+    const tabBtns = ['tab-btn-entry', 'tab-btn-orders', 'tab-btn-invoice', 'tab-btn-bills', 'tab-btn-reports'];
     let currentTabIndex = 0;
+    let containerWidth = 0;
+    
+    let touchStartX = 0; let touchStartY = 0; let touchMoveX = 0; let isSwiping = false; let isVerticalScroll = false; 
+
+    function setupSwipeGestures() {
+        let mainApp = document.getElementById('main-app');
+        containerWidth = mainApp.offsetWidth;
+
+        window.addEventListener('resize', () => { 
+            containerWidth = document.getElementById('main-app').offsetWidth; 
+            updateTabPosition(currentTabIndex, false); 
+        });
+
+        swipeWrapper.addEventListener('touchstart', e => {
+            if(e.target.closest('.bubble-scroll-container') || e.target.closest('input') || e.target.closest('select') || e.target.closest('#invoice-preview-area')) return;
+            isSwiping = true; isVerticalScroll = false;
+            touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; touchMoveX = touchStartX;
+        }, {passive: true});
+
+        swipeWrapper.addEventListener('touchmove', e => {
+            if (!isSwiping) return;
+            let currentX = e.touches[0].clientX; let currentY = e.touches[0].clientY;
+            let diffX = currentX - touchStartX; let diffY = currentY - touchStartY;
+            if (!isVerticalScroll && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 5) {
+                isVerticalScroll = true; isSwiping = false; 
+                swipeWrapper.classList.remove('swiping'); updateTabPosition(currentTabIndex, false); return;
+            }
+            if (!isVerticalScroll && Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 5) {
+                swipeWrapper.classList.add('swiping'); touchMoveX = currentX;
+                const currentTranslation = (-currentTabIndex * containerWidth) + diffX;
+                swipeWrapper.style.transform = `translateX(${currentTranslation}px)`;
+            }
+        }, {passive: true});
+
+        swipeWrapper.addEventListener('touchend', e => {
+            if (!isSwiping) return;
+            isSwiping = false; swipeWrapper.classList.remove('swiping');
+            const finalDeltaX = touchMoveX - touchStartX; const threshold = containerWidth * 0.2; 
+            if (touchMoveX !== 0 && finalDeltaX < -threshold && currentTabIndex < tabsArr.length - 1) { showTabByIndex(currentTabIndex + 1); } 
+            else if (touchMoveX !== 0 && finalDeltaX > threshold && currentTabIndex > 0) { showTabByIndex(currentTabIndex - 1); } 
+            else { updateTabPosition(currentTabIndex, true); }
+            touchMoveX = 0;
+        });
+    }
 
     function showTabByIndex(index) {
         currentTabIndex = index;
-        
         tabBtns.forEach((btnId, i) => {
-            document.getElementById(btnId).classList.toggle('active', i === index);
-            document.getElementById(tabsArr[i]).style.display = (i === index) ? 'block' : 'none';
+            if(document.getElementById(btnId)) document.getElementById(btnId).classList.toggle('active', i === index);
         });
-        
+        updateTabPosition(index, true);
         if(editingId) cancelEdit(); 
         if(localData.length > 0) renderData(); 
+    }
+
+    function updateTabPosition(index, animate = true) {
+        containerWidth = document.getElementById('main-app').offsetWidth || window.innerWidth;
+        const offset = -index * containerWidth;
+        if(!animate) swipeWrapper.classList.add('swiping');
+        swipeWrapper.style.transform = `translateX(${offset}px)`;
+        if(!animate) requestAnimationFrame(() => swipeWrapper.classList.remove('swiping'));
     }
 
     let pin = localStorage.getItem('liora_pin');
     function checkPin() {
         const i = document.getElementById('pin-input').value;
         if(!pin) { if(i.length>=4) { localStorage.setItem('liora_pin', i); pin=i; unlock(); } }
-        else { 
-            if(i===pin) unlock(); 
-            else { playErrorSound(); alert("Wrong PIN!"); } 
-        }
+        else { if(i===pin) unlock(); else { playErrorSound(); alert("Wrong PIN!"); } }
     }
     
     function unlock() {
-        playSuccessSound(); // Sound effect
+        playSuccessSound(); 
         document.getElementById('pin-screen').style.display='none';
         document.getElementById('main-app').style.display='block';
         
@@ -533,8 +627,9 @@
 
         initBubbles('note-select', 'home-bubbles', 'home');
         initBubbles('ord-item', 'ord-bubbles', 'orders');
-        
-        fetchInitialData(); 
+        setAutoInvoiceId(); 
+
+        setTimeout(() => { setupSwipeGestures(); fetchInitialData(); }, 50);
     }
 
     function initBubbles(selectId, containerId, tabType) {
@@ -553,35 +648,24 @@
         let selectId = tab === 'home' ? 'note-select' : 'ord-item';
 
         document.querySelectorAll(`#${containerId} .bubble-item`).forEach(b => b.classList.remove('selected'));
-        if(el) {
-            el.classList.add('selected');
-            el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
-
+        if(el) { el.classList.add('selected'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+        
         document.getElementById(selectId).value = val;
-        if(tab === 'home') handleNoteSelect();
-        else handleOrdItemSelect();
+        if(tab === 'home') handleNoteSelect(); else handleOrdItemSelect();
     }
 
     function selectFilterBubble(val, el) {
         document.querySelectorAll('#filter-bubbles .bubble-item').forEach(b => b.classList.remove('selected'));
-        if(el) {
-            el.classList.add('selected');
-            el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-        }
-        document.getElementById('filter-type').value = val;
-        renderData(); 
+        if(el) { el.classList.add('selected'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+        document.getElementById('filter-type').value = val; renderData(); 
     }
 
     function syncBubbles(selectId, containerId) {
         const val = document.getElementById(selectId).value;
         document.querySelectorAll(`#${containerId} .bubble-item`).forEach(b => {
             if(b.getAttribute('data-val') === val) {
-                b.classList.add('selected');
-                b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            } else {
-                b.classList.remove('selected');
-            }
+                b.classList.add('selected'); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            } else { b.classList.remove('selected'); }
         });
     }
 
@@ -594,9 +678,7 @@
         });
     }
 
-    let currentType = 'INCOME';
-    let currentCat = 'Tailoring';
-    let currentBillCat = 'Fabric_Bill';
+    let currentType = 'INCOME'; let currentCat = 'Tailoring'; let currentBillCat = 'Fabric_Bill';
 
     function setType(t) {
         currentType = t;
@@ -606,18 +688,8 @@
         document.getElementById('grid-expense').style.display = t==='EXPENSE' ? 'grid' : 'none';
         
         const txt = document.getElementById('note-text');
-
-        if(t === 'INCOME') {
-            setCat('Tailoring');
-            document.getElementById('home-bubbles').style.display = 'flex';
-            handleNoteSelect(); 
-        } else {
-            setCat('Shop');
-            document.getElementById('home-bubbles').style.display = 'none';
-            txt.style.display = 'block';
-            txt.placeholder = "Type Expense Detail...";
-            txt.value = "";
-        }
+        if(t === 'INCOME') { setCat('Tailoring'); document.getElementById('home-bubbles').style.display = 'flex'; handleNoteSelect(); } 
+        else { setCat('Shop'); document.getElementById('home-bubbles').style.display = 'none'; txt.style.display = 'block'; txt.placeholder = "Type Expense Detail..."; txt.value = ""; }
     }
 
     function setCat(c) {
@@ -628,27 +700,13 @@
     }
 
     function handleNoteSelect() {
-        const sel = document.getElementById('note-select');
-        const txt = document.getElementById('note-text');
-        if (sel.value === 'OTHER') {
-            txt.style.display = 'block';
-            txt.focus();
-        } else {
-            txt.style.display = 'none';
-            txt.value = '';
-        }
+        const sel = document.getElementById('note-select'); const txt = document.getElementById('note-text');
+        if (sel.value === 'OTHER') { txt.style.display = 'block'; txt.focus(); } else { txt.style.display = 'none'; txt.value = ''; }
     }
 
     function handleOrdItemSelect() {
-        const sel = document.getElementById('ord-item');
-        const txt = document.getElementById('ord-item-text');
-        if (sel.value === 'OTHER') {
-            txt.style.display = 'block';
-            txt.focus();
-        } else {
-            txt.style.display = 'none';
-            txt.value = '';
-        }
+        const sel = document.getElementById('ord-item'); const txt = document.getElementById('ord-item-text');
+        if (sel.value === 'OTHER') { txt.style.display = 'block'; txt.focus(); } else { txt.style.display = 'none'; txt.value = ''; }
     }
 
     function setBillCat(c) {
@@ -662,71 +720,36 @@
         try {
             const response = await fetch(scriptURL);
             const data = await response.json();
-            if(Array.isArray(data)) {
-                localData = data;
-            } else {
-                localData = [];
-            }
+            if(Array.isArray(data)) { localData = data; } else { localData = []; }
             renderData();
-        } catch (error) {
-            document.getElementById('home-today-list').innerHTML = "<p style='text-align:center; color: var(--danger); font-weight:600;'>Offline or Sync Error. Try reloading.</p>";
-        }
+        } catch (error) { document.getElementById('home-today-list').innerHTML = "<p style='text-align:center; color: var(--danger); font-weight:600;'>Offline or Sync Error. Try reloading.</p>"; }
     }
 
     function renderData() {
-        const searchBox = document.getElementById('search-order');
-        if(searchBox) searchBox.value = '';
-
+        const searchBox = document.getElementById('search-order'); if(searchBox) searchBox.value = '';
         const listHome = document.getElementById('home-today-list');
         const listBills = document.getElementById('bills-today-list');
         const listOrders = document.getElementById('pending-orders-list');
+        const now = new Date(); const todayStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0') + "-" + String(now.getDate()).padStart(2, '0');
         
-        const now = new Date();
-        const todayStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0') + "-" + String(now.getDate()).padStart(2, '0');
-        
-        let todayIncome = 0;
-        let htmlHome = "";
-        let htmlBills = "";
-        let pendingHtml = "";
-        let ordersMap = {};
-        globalMaxOrderId = 1000; 
-
+        let todayIncome = 0; let htmlHome = ""; let htmlBills = ""; let pendingHtml = ""; let ordersMap = {}; globalMaxOrderId = 1000; 
         if (!Array.isArray(localData)) localData = [];
 
         localData.forEach(r => {
             if(!r) return;
-            
-            let noteStr = r.note ? String(r.note) : "-";
-            let amountVal = parseFloat(r.amount) || 0;
-            let categoryStr = r.category ? String(r.category) : "Unknown";
-
+            let noteStr = r.note ? String(r.note) : "-"; let amountVal = parseFloat(r.amount) || 0; let categoryStr = r.category ? String(r.category) : "Unknown";
             if(r.type === 'ADVANCE' && noteStr.includes('|')) {
-                const parts = noteStr.split('|');
-                const oId = parts[0].trim();
-                const num = parseInt(oId); 
+                const parts = noteStr.split('|'); const oId = parts[0].trim(); const num = parseInt(oId); 
                 if(!isNaN(num) && num > globalMaxOrderId) globalMaxOrderId = num;
-
                 let totalAmt = parseFloat(parts[3]) || amountVal;
-
-                ordersMap[oId] = {
-                    id: r.id, date: r.date || "", oId: oId,
-                    name: parts[1] ? parts[1].trim() : 'Unknown', 
-                    phone: parts[2] ? parts[2].trim() : '',
-                    item: categoryStr, advAmt: amountVal, 
-                    totalAmt: totalAmt, isCompleted: false
-                };
+                ordersMap[oId] = { id: r.id, date: r.date || "", oId: oId, name: parts[1] ? parts[1].trim() : 'Unknown', phone: parts[2] ? parts[2].trim() : '', item: categoryStr, advAmt: amountVal, totalAmt: totalAmt, isCompleted: false };
             }
-            if(r.type === 'BALANCE' && noteStr.includes('|')) {
-                const oId = noteStr.split('|')[0].trim();
-                if(ordersMap[oId]) ordersMap[oId].isCompleted = true; 
-            }
+            if(r.type === 'BALANCE' && noteStr.includes('|')) { const oId = noteStr.split('|')[0].trim(); if(ordersMap[oId]) ordersMap[oId].isCompleted = true; }
         });
 
         Object.values(ordersMap).reverse().forEach(o => {
             if(!o.isCompleted) {
-                let balanceDue = o.totalAmt - o.advAmt;
-                let dateDisplay = o.date ? o.date.split(',')[0] : "";
-                
+                let balanceDue = o.totalAmt - o.advAmt; let dateDisplay = o.date ? o.date.split(',')[0] : "";
                 pendingHtml += `
                 <div class="record-item" style="border-left: 4px solid var(--info); align-items: flex-start; padding-right: 10px;" id="pending-${o.id}">
                     <div class="record-details">
@@ -737,9 +760,9 @@
                         <span style="color:var(--danger); font-weight:800; display:block; margin-top:2px; font-size: 13px;">Due Balance: Rs. ${balanceDue.toFixed(2)}</span>
                         <span style="font-size:10px; margin-top:6px; opacity:0.7;">${dateDisplay}</span>
                     </div>
-                    <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-end; justify-content: center;">
-                        <button onclick="deleteEntry('${o.id}')" style="background:none; border:none; font-size:18px; cursor:pointer; opacity:0.5; transition:0.3s;" onmouseover="this.style.opacity='1'">🗑️</button>
-                        <button onclick="playTabSound(); payBalance('${o.oId}', '${o.name}', '${o.item}', ${balanceDue})" style="background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:10px 16px; border-radius:10px; font-weight:700; cursor:pointer; font-size:12px; box-shadow: 0 4px 10px rgba(16,185,129,0.3);">Pay Bal</button>
+                    <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; justify-content: center;">
+                        <button onclick="generateAdvanceBill('${o.oId}', '${o.name}', '${o.item}', ${o.totalAmt}, ${o.advAmt}, ${balanceDue}, '${o.phone}')" style="background:white; color:var(--primary); border:2px solid var(--primary); padding:10px 14px; border-radius:10px; font-weight:800; cursor:pointer; font-size:12px; box-shadow:var(--shadow-sm);">🧾 Bill</button>
+                        <button onclick="payBalance('${o.oId}', '${o.name}', '${o.item}', ${o.totalAmt}, ${o.advAmt}, ${balanceDue}, '${o.phone}')" style="background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; font-size:12px; box-shadow: 0 4px 10px rgba(16,185,129,0.3);">💰 Pay Bal</button>
                     </div>
                 </div>`;
             }
@@ -749,36 +772,26 @@
         let reversedData = [...localData].reverse();
         reversedData.forEach(r => {
             if(!r) return;
-
-            let rDate = new Date(r.date);
-            if(isNaN(rDate.getTime())) return; 
-
+            let rDate = new Date(r.date); if(isNaN(rDate.getTime())) return; 
             const rDateStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0') + "-" + String(rDate.getDate()).padStart(2, '0');
             
             if (rDateStr === todayStr) {
-                const val = parseFloat(r.amount) || 0;
-                let catName = (r.category || "").toString().replace('_', ' ').toUpperCase();
-                let noteStr = (r.note || "").toString();
-                let displayNote = noteStr;
+                const val = parseFloat(r.amount) || 0; let catName = (r.category || "").toString().replace('_', ' ').toUpperCase(); let noteStr = (r.note || "").toString(); let displayNote = noteStr;
 
                 if (r.type === 'ADVANCE' || r.type === 'BALANCE') {
-                    const parts = noteStr.split('|');
-                    displayNote = "Code: <strong style='color:var(--text-main)'>" + parts[0] + "</strong> | " + (parts[1] || '');
+                    const parts = noteStr.split('|'); displayNote = "Code: <strong style='color:var(--text-main)'>" + parts[0] + "</strong> | " + (parts[1] || '');
                     if(r.type === 'ADVANCE') displayNote += " <span style='color:var(--info); font-weight:600;'>(Advance)</span>";
                     if(r.type === 'BALANCE') displayNote += " <span style='color:var(--success); font-weight:600;'>(Balance Paid)</span>";
                 }
 
-                let actionBtns = r.id ? `<div class="action-btns"><button onclick="deleteEntry('${r.id}')">🗑️</button></div>` : "";
-                if(r.type === 'INCOME' || r.type === 'EXPENSE') {
-                    actionBtns = r.id ? `<div class="action-btns"><button onclick="playTabSound(); editEntry('${r.id}', '${r.type}', '${r.category}', '${r.amount}', '${noteStr}')">✏️</button><button onclick="deleteEntry('${r.id}')">🗑️</button></div>` : "";
-                }
+                let actionBtns = r.id ? `<div class="action-btns"><button onclick="playPopSound(); deleteEntry('${r.id}')">🗑️</button></div>` : "";
+                if(r.type === 'INCOME' || r.type === 'EXPENSE') { actionBtns = r.id ? `<div class="action-btns"><button onclick="playPopSound(); editEntry('${r.id}', '${r.type}', '${r.category}', '${r.amount}', '${noteStr}')">✏️</button><button onclick="deleteEntry('${r.id}')">🗑️</button></div>` : ""; }
 
                 let timeStr = rDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
                 if (r.type !== 'BILL') {
                     if(r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') todayIncome += val;
-                    let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : 'amount-out';
-                    let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-';
+                    let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : 'amount-out'; let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-';
                     htmlHome += `<div class="record-item" id="row-${r.id}"><div class="record-details"><strong>${catName}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div><div style="display:flex; align-items:center;"><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
                 } else {
                     htmlBills += `<div class="record-item" id="row-${r.id}"><div class="record-details"><strong>${catName}</strong><span>${noteStr}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div><div style="display:flex; align-items:center;"><div class="amount-bill">- Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
@@ -789,300 +802,318 @@
         document.getElementById('home-today-income').innerText = "Rs. " + todayIncome.toFixed(2);
         listHome.innerHTML = htmlHome || "<p style='text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500; padding: 20px 0;'>No entries today yet.</p>";
         listBills.innerHTML = htmlBills || "<p style='text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500; padding: 20px 0;'>No bills today yet.</p>";
-
         renderReports(); 
     }
 
     function saveData() {
-        const amtInput = document.getElementById('amt');
-        const noteSel = document.getElementById('note-select').value;
-        const noteTxt = document.getElementById('note-text').value;
-        const btn = document.getElementById('save-btn');
-        
+        const amtInput = document.getElementById('amt'); const noteSel = document.getElementById('note-select').value; const noteTxt = document.getElementById('note-text').value; const btn = document.getElementById('save-btn');
+        const prepareBillChecked = document.getElementById('prepare-bill-switch').checked;
+
         if(!amtInput.value) { playErrorSound(); return alert("Please enter amount!"); }
+        playSuccessSound(); 
 
-        playSuccessSound(); // Different sound for save success
-
-        let finalNote = "-";
-        if (currentType === 'INCOME') {
-            if (noteSel === 'OTHER') finalNote = noteTxt || "-";
-            else if (noteSel) finalNote = noteSel;
-        } else {
-            finalNote = noteTxt || "-";
-        }
-
+        let finalNote = "-"; if (currentType === 'INCOME') { finalNote = noteSel === 'OTHER' ? (noteTxt || "-") : noteSel; } else { finalNote = noteTxt || "-"; }
         const targetId = editingId || ("ID_" + Date.now());
-        const newData = {
-            id: targetId,
-            date: new Date().toLocaleString('en-US'),
-            amount: parseFloat(amtInput.value),
-            note: finalNote,
-            type: currentType,
-            category: currentCat
-        };
+        const newData = { id: targetId, date: new Date().toLocaleString('en-US'), amount: parseFloat(amtInput.value), note: finalNote, type: currentType, category: currentCat };
 
         if (editingId) {
-            const index = localData.findIndex(x => x.id === editingId);
-            if (index > -1) {
-                newData.date = localData[index].date; 
-                localData[index] = newData;
-            }
+            const index = localData.findIndex(x => x.id === editingId); if (index > -1) { newData.date = localData[index].date; localData[index] = newData; }
         } else {
             localData.push(newData);
+            if(prepareBillChecked && currentType === 'INCOME') { billBuffer.push(newData); }
         }
 
         renderData(); 
         fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: editingId ? 'edit' : 'add', ...newData }) });
-        
-        amtInput.value = ""; 
-        cancelEdit();
-        btn.innerText = "✅ Done!";
-        btn.style.background = "linear-gradient(135deg, #10b981, #059669)";
-        setTimeout(() => { btn.innerText = "💾 Save Entry"; btn.style.background = "var(--primary-gradient)"; }, 1500);
+        amtInput.value = ""; cancelEdit(); btn.innerText = "✅ Done!"; btn.style.background = "linear-gradient(135deg, #10b981, #059669)"; setTimeout(() => { btn.innerText = "💾 Save Entry"; btn.style.background = "var(--primary-gradient)"; }, 1500);
+    }
+
+    function clearBillBuffer() {
+        if(confirm("ඇත්තටම මේ බිල් එකේ අයිටම් ටික මකන්න ඕනෙද?")) {
+            playDeleteSound();
+            billBuffer = [];
+            currentGeneratedBillData = null;
+            document.getElementById('invoice-bill-name').value = '';
+            document.getElementById('invoice-bill-whatsapp').value = '';
+            setAutoInvoiceId();
+            document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #fff0f5; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">Cleared. Add new items with "Prepare Bill" ON.</p>`;
+            document.getElementById('invoice-action-btns').style.display = 'none';
+        }
     }
 
     function saveBillData() {
-        const amtInput = document.getElementById('bill-amt');
-        const noteInput = document.getElementById('bill-note');
-        const btn = document.getElementById('save-bill-btn');
+        const amtInput = document.getElementById('bill-amt'); const noteInput = document.getElementById('bill-note'); const btn = document.getElementById('save-bill-btn');
         if(!amtInput.value) { playErrorSound(); return alert("Please enter bill amount!"); }
-        
-        playSuccessSound(); // Sound effect
-
+        playSuccessSound(); 
         const targetId = editingId || ("ID_" + Date.now());
-        const newData = {
-            id: targetId,
-            date: new Date().toLocaleString('en-US'),
-            amount: parseFloat(amtInput.value),
-            note: noteInput.value || "-",
-            type: 'BILL',
-            category: currentBillCat
-        };
-
-        if (editingId) {
-            const index = localData.findIndex(x => x.id === editingId);
-            if (index > -1) { newData.date = localData[index].date; localData[index] = newData; }
-        } else {
-            localData.push(newData);
-        }
-
-        renderData();
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: editingId ? 'edit' : 'add', ...newData }) });
-        
-        amtInput.value = ""; noteInput.value = "";
-        btn.innerText = "✅ Bill Saved!";
-        btn.style.background = "linear-gradient(135deg, #10b981, #059669)";
-        if(editingId) cancelBillEdit();
-        setTimeout(() => { btn.innerText = "💾 Save Bill"; btn.style.background = "linear-gradient(135deg, #f59e0b, #d97706)"; }, 1500);
+        const newData = { id: targetId, date: new Date().toLocaleString('en-US'), amount: parseFloat(amtInput.value), note: noteInput.value || "-", type: 'BILL', category: currentBillCat };
+        if (editingId) { const index = localData.findIndex(x => x.id === editingId); if (index > -1) { newData.date = localData[index].date; localData[index] = newData; } } else { localData.push(newData); }
+        renderData(); fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: editingId ? 'edit' : 'add', ...newData }) });
+        amtInput.value = ""; noteInput.value = ""; btn.innerText = "✅ Bill Saved!"; btn.style.background = "linear-gradient(135deg, #10b981, #059669)"; if(editingId) cancelBillEdit(); setTimeout(() => { btn.innerText = "💾 Save Bill"; btn.style.background = "linear-gradient(135deg, #f59e0b, #d97706)"; }, 1500);
     }
 
     function saveAdvance() {
-        const name = document.getElementById('ord-name').value;
-        const phone = document.getElementById('ord-phone').value;
-        const itemSel = document.getElementById('ord-item').value;
-        const itemTxt = document.getElementById('ord-item-text').value;
-        const finalItem = itemSel === 'OTHER' ? (itemTxt || "Custom Item") : itemSel;
-        const totalAmt = parseFloat(document.getElementById('ord-total').value);
-        const advAmt = parseFloat(document.getElementById('ord-adv').value);
-        const btn = document.getElementById('save-ord-btn');
+        const name = document.getElementById('ord-name').value; const phone = document.getElementById('ord-phone').value; const itemSel = document.getElementById('ord-item').value; const itemTxt = document.getElementById('ord-item-text').value; const finalItem = itemSel === 'OTHER' ? (itemTxt || "Custom Item") : itemSel; const totalAmt = parseFloat(document.getElementById('ord-total').value); const advAmt = parseFloat(document.getElementById('ord-adv').value); const btn = document.getElementById('save-ord-btn');
 
-        if(!name || !finalItem || isNaN(totalAmt) || isNaN(advAmt)) {
-            playErrorSound(); return alert("Please enter Name, Item, Total and Advance amounts!");
-        }
+        if(!name || !finalItem || isNaN(totalAmt) || isNaN(advAmt)) { playErrorSound(); return alert("Please enter Name, Item, Total and Advance amounts!"); }
         if(advAmt > totalAmt) { playErrorSound(); return alert("Advance amount cannot be greater than Total amount!"); }
 
-        playSuccessSound(); // Sound effect
+        playSuccessSound(); 
+        saveCustomerInfo(name, phone);
 
-        globalMaxOrderId++;
-        const newOrderId = globalMaxOrderId.toString(); 
-        const combinedNote = `${newOrderId} | ${name} | ${phone || '-'} | ${totalAmt}`;
-        
-        const newData = {
-            id: "ID_" + Date.now(),
-            date: new Date().toLocaleString('en-US'),
-            amount: advAmt,
-            note: combinedNote,
-            type: 'ADVANCE',
-            category: finalItem
-        };
+        globalMaxOrderId++; const newOrderId = globalMaxOrderId.toString(); const combinedNote = `${newOrderId} | ${name} | ${phone || '-'} | ${totalAmt}`;
+        const newData = { id: "ID_" + Date.now(), date: new Date().toLocaleString('en-US'), amount: advAmt, note: combinedNote, type: 'ADVANCE', category: finalItem };
 
-        localData.push(newData);
-        renderData();
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'add', ...newData }) });
+        localData.push(newData); renderData(); fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'add', ...newData }) });
 
-        document.getElementById('ord-name').value = ""; document.getElementById('ord-phone').value = "";
-        document.getElementById('ord-item').value = ""; document.getElementById('ord-item-text').value = "";
-        document.getElementById('ord-item-text').style.display = 'none';
-        document.getElementById('ord-total').value = ""; document.getElementById('ord-adv').value = "";
-        syncBubbles('ord-item', 'ord-bubbles'); 
-        
-        btn.innerText = "✅ Order Saved!";
-        btn.style.background = "linear-gradient(135deg, #10b981, #059669)";
-        setTimeout(() => { btn.innerText = "💾 Save Order"; btn.style.background = "linear-gradient(135deg, #3b82f6, #2563eb)"; }, 1500);
+        document.getElementById('ord-name').value = ""; document.getElementById('ord-phone').value = ""; document.getElementById('ord-item').value = ""; document.getElementById('ord-item-text').value = ""; document.getElementById('ord-item-text').style.display = 'none'; document.getElementById('ord-total').value = ""; document.getElementById('ord-adv').value = ""; syncBubbles('ord-item', 'ord-bubbles'); 
+        btn.innerText = "✅ Order Saved!"; btn.style.background = "linear-gradient(135deg, #10b981, #059669)"; setTimeout(() => { btn.innerText = "💾 Save Order"; btn.style.background = "linear-gradient(135deg, #3b82f6, #2563eb)"; }, 1500);
     }
 
-    function payBalance(oId, name, item, balDue) {
+    function generateAdvanceBill(oId, name, item, totalAmt, advAmt, balDue, phone) {
+        playPopSound();
+        showTabByIndex(2); 
+        document.getElementById('invoice-bill-name').value = name;
+        document.getElementById('invoice-bill-whatsapp').value = phone || '';
+        document.getElementById('invoice-id-input').value = oId;
+        
+        currentGeneratedBillData = { 
+            id: oId, 
+            name: name, 
+            items: [{category: item, amount: totalAmt}], 
+            total: totalAmt, 
+            adv: 0,        
+            paidNow: advAmt, 
+            bal: balDue 
+        };
+        renderInvoicePreviewHTML();
+    }
+
+    function payBalance(oId, name, item, totalAmt, advAmt, balDue, phone) {
+        playPopSound();
         let balStr = prompt(`Order Code: ${oId}\nCustomer: ${name}\n\nEnter Balance Amount (Rs):`, balDue);
         if (balStr !== null) {
-            let balAmt = parseFloat(balStr);
-            if (!isNaN(balAmt) && balAmt > 0) {
-                playPaySound(); // Unique sound for receiving cash
+            let paidAmt = parseFloat(balStr);
+            if (!isNaN(paidAmt) && paidAmt > 0) {
+                playPaySound(); 
 
                 const combinedNote = `${oId} | ${name} | Balance Paid`;
-                const newData = {
-                    id: "ID_" + Date.now(),
-                    date: new Date().toLocaleString('en-US'),
-                    amount: balAmt,
-                    note: combinedNote,
-                    type: 'BALANCE',
-                    category: item
-                };
+                const newData = { id: "ID_" + Date.now(), date: new Date().toLocaleString('en-US'), amount: paidAmt, note: combinedNote, type: 'BALANCE', category: item };
                 
-                localData.push(newData);
-                renderData();
+                localData.push(newData); renderData();
                 fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'add', ...newData }) });
                 
-                document.getElementById('search-order').value = '';
-                searchOrders();
+                document.getElementById('search-order').value = ''; searchOrders();
+
+                let newBal = totalAmt - (advAmt + paidAmt);
                 
-                alert("✅ Balance Paid! Amount added to today's income instantly.");
+                showTabByIndex(2); 
+                document.getElementById('invoice-bill-name').value = name;
+                document.getElementById('invoice-bill-whatsapp').value = phone || '';
+                document.getElementById('invoice-id-input').value = oId;
+                
+                currentGeneratedBillData = { 
+                    id: oId, 
+                    name: name, 
+                    items: [{category: item, amount: totalAmt}], 
+                    total: totalAmt, 
+                    adv: advAmt,       
+                    paidNow: paidAmt,  
+                    bal: newBal        
+                };
+                renderInvoicePreviewHTML();
+                
             } else {
-                playErrorSound();
-                alert("Please enter a valid amount!");
+                playErrorSound(); alert("Please enter a valid amount!");
             }
         }
     }
 
-    function deleteEntry(id) {
-        if(confirm("Are you sure you want to delete this record?")) {
-            playDeleteSound(); // Unique downward sound for delete
-            localData = localData.filter(r => r.id !== id);
-            renderData();
-            fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', id: id }) });
-        }
-    }
+    function deleteEntry(id) { if(confirm("Are you sure you want to delete this record?")) { playDeleteSound(); localData = localData.filter(r => r.id !== id); renderData(); fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: 'delete', id: id }) }); } }
 
     function editEntry(id, type, cat, amt, note) {
-        showTabByIndex(0); 
-        editingId = id;
-        document.getElementById('amt').value = amt;
-        setType(type);
-        
-        const sel = document.getElementById('note-select');
-        const txt = document.getElementById('note-text');
-
+        showTabByIndex(0); editingId = id; document.getElementById('amt').value = amt; setType(type); setCat(cat); 
+        const sel = document.getElementById('note-select'); const txt = document.getElementById('note-text');
         if (type === 'INCOME') {
-            let optionExists = false;
-            for(let i=0; i<sel.options.length; i++) {
-                if(sel.options[i].value === note) { optionExists = true; break; }
-            }
-            if (optionExists && note !== "-") { 
-                sel.value = note; 
-                txt.style.display = 'none'; 
-            }
-            else if (note !== "-") { 
-                sel.value = 'OTHER'; 
-                txt.value = note; 
-                txt.style.display = 'block'; 
-            }
-            else { 
-                sel.value = ""; 
-                txt.value = ""; 
-                txt.style.display = 'none'; 
-            }
+            let optionExists = false; for(let i=0; i<sel.options.length; i++) { if(sel.options[i].value === note) { optionExists = true; break; } }
+            if (optionExists) { sel.value = note; txt.style.display = 'none'; txt.value = ''; } else { sel.value = 'OTHER'; txt.value = note !== "-" ? note : ""; txt.style.display = 'block'; }
             syncBubbles('note-select', 'home-bubbles');
-        } else {
-            txt.value = note !== "-" ? note : "";
-        }
-        
-        document.getElementById('entry-title').innerText = "✏️ Edit Entry";
-        document.getElementById('save-btn').innerText = "🔄 Update Entry";
-        document.getElementById('save-btn').style.background = "linear-gradient(135deg, #f59e0b, #d97706)";
-        document.getElementById('cancel-edit-btn').style.display = "block";
-        window.scrollTo(0, 0);
+        } else { txt.value = note !== "-" ? note : ""; }
+        document.getElementById('entry-title').innerText = "✏️ Edit Entry"; document.getElementById('save-btn').innerText = "🔄 Update Entry"; document.getElementById('cancel-edit-btn').style.display = "block"; window.scrollTo(0, 0);
     }
 
-    function cancelEdit() {
-        editingId = null;
-        document.getElementById('amt').value = "";
-        document.getElementById('note-select').value = "";
-        document.getElementById('note-text').value = "";
-        setType('INCOME');
-        syncBubbles('note-select', 'home-bubbles');
-        document.getElementById('entry-title').innerText = "⚡ Quick Entry";
-        document.getElementById('save-btn').innerText = "💾 Save Entry";
-        document.getElementById('save-btn').style.background = "var(--primary-gradient)";
-        document.getElementById('cancel-edit-btn').style.display = "none";
-    }
-
-    function cancelBillEdit() {
-        editingId = null;
-        document.getElementById('bill-amt').value = "";
-        document.getElementById('bill-note').value = "";
-        setBillCat('Fabric_Bill');
-        document.getElementById('bill-title').innerText = "🧾 Add New Bill";
-        document.getElementById('save-bill-btn').innerText = "💾 Save Bill";
-        document.getElementById('save-bill-btn').style.background = "linear-gradient(135deg, #f59e0b, #d97706)";
-        document.getElementById('cancel-bill-edit-btn').style.display = "none";
-    }
+    function cancelEdit() { editingId = null; document.getElementById('amt').value = ""; document.getElementById('note-select').value = ""; document.getElementById('note-text').value = ""; setType('INCOME'); syncBubbles('note-select', 'home-bubbles'); document.getElementById('entry-title').innerText = "⚡ Quick Entry"; document.getElementById('save-btn').innerText = "💾 Save Entry"; document.getElementById('save-btn').style.background = "var(--primary-gradient)"; document.getElementById('cancel-edit-btn').style.display = "none"; }
+    function cancelBillEdit() { editingId = null; document.getElementById('bill-amt').value = ""; document.getElementById('bill-note').value = ""; setBillCat('Fabric_Bill'); document.getElementById('bill-title').innerText = "🧾 Add New Bill"; document.getElementById('save-bill-btn').innerText = "💾 Save Bill"; document.getElementById('save-bill-btn').style.background = "linear-gradient(135deg, #f59e0b, #d97706)"; document.getElementById('cancel-bill-edit-btn').style.display = "none"; }
 
     function renderReports() {
-        const list = document.getElementById('report-list');
-        const title = document.getElementById('report-title');
-        const recordType = document.getElementById('filter-type').value; 
-        const monthInput = document.getElementById('filter-month').value; 
-        const dateInput = document.getElementById('filter-date').value;   
-        
-        if (monthInput) title.innerText = "Summary for " + monthInput;
-        else if (dateInput) title.innerText = "Summary for " + dateInput;
-
-        let totalProfit = 0, totalBillsAmount = 0, html = "";
-        let reversedData = [...localData].reverse();
-        
+        const list = document.getElementById('report-list'); const title = document.getElementById('report-title'); const recordType = document.getElementById('filter-type').value; const monthInput = document.getElementById('filter-month').value; const dateInput = document.getElementById('filter-date').value;   
+        if (monthInput) title.innerText = "Summary for " + monthInput; else if (dateInput) title.innerText = "Summary for " + dateInput;
+        let totalProfit = 0, totalBillsAmount = 0, html = ""; let reversedData = [...localData].reverse();
         reversedData.forEach(r => {
-            if(!r) return;
-            let rDate = new Date(r.date);
-            if(isNaN(rDate.getTime())) return;
-
-            const rMonthStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0');
-            const rDateStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0') + "-" + String(rDate.getDate()).padStart(2, '0');
-            
-            let matchDate = false;
-            if(monthInput && rMonthStr === monthInput) matchDate = true;
-            if(!monthInput && dateInput && rDateStr === dateInput) matchDate = true;
-
+            if(!r) return; let rDate = new Date(r.date); if(isNaN(rDate.getTime())) return;
+            const rMonthStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0'); const rDateStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0') + "-" + String(rDate.getDate()).padStart(2, '0');
+            let matchDate = false; if(monthInput && rMonthStr === monthInput) matchDate = true; if(!monthInput && dateInput && rDateStr === dateInput) matchDate = true;
             if(matchDate) {
-                const val = parseFloat(r.amount) || 0;
-                let noteStr = r.note ? String(r.note) : "-";
-                let categoryStr = (r.category || "").toString().replace('_', ' ').toUpperCase();
-                
-                if(r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') totalProfit += val; 
-                else if(r.type === 'EXPENSE') totalProfit -= val;
+                const val = parseFloat(r.amount) || 0; let noteStr = r.note ? String(r.note) : "-"; let categoryStr = (r.category || "").toString().replace('_', ' ').toUpperCase();
+                if(r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') totalProfit += val; else if(r.type === 'EXPENSE' || r.type === 'BILL') totalProfit -= val;
                 if(r.type === 'BILL') totalBillsAmount += val;
-
-                let showByType = false;
-                if(recordType === 'ALL') showByType = true;
-                else if(recordType === 'INCOME' && (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE')) showByType = true;
-                else if(recordType === r.type) showByType = true;
-
+                let showByType = false; if(recordType === 'ALL') showByType = true; else if(recordType === 'INCOME' && (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE')) showByType = true; else if(recordType === r.type) showByType = true;
                 if(showByType) {
-                    let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : (r.type === 'EXPENSE' ? 'amount-out' : 'amount-bill');
-                    let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-';
-                    
-                    let displayNote = noteStr;
-                    if (r.type === 'ADVANCE' || r.type === 'BALANCE') {
-                        const parts = noteStr.split('|');
-                        displayNote = "Code: <strong style='color:var(--text-main)'>" + parts[0] + "</strong> | " + (parts[1] || '');
-                    }
-
+                    let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : (r.type === 'EXPENSE' ? 'amount-out' : 'amount-bill'); let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-'; let displayNote = noteStr;
+                    if (r.type === 'ADVANCE' || r.type === 'BALANCE') { const parts = noteStr.split('|'); displayNote = "Code: <strong style='color:var(--text-main)'>" + parts[0] + "</strong> | " + (parts[1] || ''); }
                     html += `<div class="record-item"><div class="record-details"><strong>${categoryStr}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${r.date}</span></div><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div></div>`;
                 }
             }
         });
-        document.getElementById('total-profit').innerText = "Net: Rs. " + totalProfit.toFixed(2);
-        document.getElementById('total-bills').innerText = "Total Bills: Rs. " + totalBillsAmount.toFixed(2);
-        list.innerHTML = html || "<p style='text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500; padding: 20px 0;'>No records found.</p>";
+        document.getElementById('total-profit').innerText = "Net: Rs. " + totalProfit.toFixed(2); document.getElementById('total-bills').innerText = "Total Bills: Rs. " + totalBillsAmount.toFixed(2); list.innerHTML = html || "<p style='text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500; padding: 20px 0;'>No records found.</p>";
     }
+
+    // --- INVOICE GENERATION LOGIC ---
+    function generateBillPreview() {
+        const customerName = document.getElementById('invoice-bill-name').value || "Customer Name";
+        const invoiceId = document.getElementById('invoice-id-input').value || (parseInt(localStorage.getItem('liora_inv_seq')) || 1);
+        const phone = document.getElementById('invoice-bill-whatsapp').value;
+        saveCustomerInfo(customerName, phone);
+
+        if(billBuffer.length === 0) {
+            playPopSound(); 
+            document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500; background: #fff0f5; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">No items in buffer! Turn ON "Prepare Bill" in Home tab and add items first.</p>`;
+            document.getElementById('invoice-action-btns').style.display = 'none';
+            return;
+        }
+
+        playSuccessSound(); 
+        
+        let subtotal = 0;
+        billBuffer.forEach(i => subtotal += (parseFloat(i.amount) || 0));
+
+        currentGeneratedBillData = { 
+            id: invoiceId, 
+            name: customerName, 
+            items: billBuffer, 
+            total: subtotal, 
+            adv: 0, 
+            paidNow: subtotal, 
+            bal: 0 
+        };
+        renderInvoicePreviewHTML();
+        
+        document.getElementById('prepare-bill-switch').checked = false;
+    }
+
+    function renderInvoicePreviewHTML() {
+        const previewArea = document.getElementById('invoice-preview-area');
+        const actionBtns = document.getElementById('invoice-action-btns');
+        const dateStr = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
+
+        let tableRows = '';
+        currentGeneratedBillData.items.forEach((item, index) => {
+            let desc = item.category;
+            if(item.note && item.note !== "-") desc += ` <span style="font-size:10px; color:var(--primary); opacity: 0.8;">(${item.note})</span>`;
+            tableRows += `<tr><td>${index + 1}</td><td>${desc}</td><td class="total-col">Rs. ${parseFloat(item.amount).toFixed(2)}</td></tr>`;
+        });
+
+        let totalsHtml = `<div><span>Total Amount:</span><span>Rs. ${currentGeneratedBillData.total.toFixed(2)}</span></div>`;
+        
+        if (currentGeneratedBillData.adv > 0) {
+            totalsHtml += `<div><span>Advance Paid:</span><span>Rs. ${currentGeneratedBillData.adv.toFixed(2)}</span></div>`;
+        }
+        if (currentGeneratedBillData.paidNow > 0 && currentGeneratedBillData.paidNow !== currentGeneratedBillData.total) {
+            totalsHtml += `<div><span>Paid Now:</span><span>Rs. ${currentGeneratedBillData.paidNow.toFixed(2)}</span></div>`;
+        }
+        totalsHtml += `<div class="grand-total"><span>Balance Due:</span><span>Rs. ${currentGeneratedBillData.bal.toFixed(2)}</span></div>`;
+
+        // FULLY CENTERED LIORA FASHION NO INVOICE TEXT DESIGN
+        const billHtml = `
+        <div id="invoice-preview-capture">
+            <div id="invoice-preview">
+                
+                <div id="invoice-header">
+                    <img src="logo.jpg" id="invoice-shop-logo" onerror="this.style.display='none'">
+                    <div id="invoice-shop-title">LIORA FASHION</div>
+                    <div id="invoice-shop-address">Kendagolla, Ettampitiya.<br>Tel: +94 78 663 2336</div>
+                </div>
+                
+                <div id="invoice-details-row">
+                    <div id="invoice-bill-to">
+                        <strong>BILLED TO:</strong>
+                        <div>${currentGeneratedBillData.name}</div>
+                    </div>
+                    <div id="invoice-meta">
+                        <div id="invoice-id-date">Bill No: #${currentGeneratedBillData.id}<br>Date: ${dateStr}</div>
+                    </div>
+                </div>
+
+                <table id="invoice-table">
+                    <thead><tr><th style="width:10%;">#</th><th>Item Description</th><th class="total-col" style="width:35%;">Amount</th></tr></thead>
+                    <tbody>${tableRows}</tbody>
+                </table>
+                
+                <div id="invoice-totals">
+                    ${totalsHtml}
+                </div>
+                
+                <div class="invoice-footer-msg">Thank you for your business! ✨</div>
+            </div>
+        </div>`;
+
+        previewArea.innerHTML = billHtml;
+        document.getElementById('invoice-preview').style.display = 'block';
+        actionBtns.style.display = 'flex';
+    }
+
+    function sendWhatsAppInvoice() {
+        if(!currentGeneratedBillData) { playPopSound(); return alert("මුලින්ම බිල් එක Generate කරන්න!"); }
+        
+        let phone = document.getElementById('invoice-bill-whatsapp').value.trim();
+        if(!phone || phone.length < 9) { playErrorSound(); return alert("කරුණාකර WhatsApp Number එකක් (071...) ඇතුළත් කරන්න!"); }
+
+        playTabSound(); 
+
+        if (phone.startsWith("0")) { phone = "94" + phone.substring(1); } else if (phone.length === 9) { phone = "94" + phone; } phone = phone.replace("+", "");
+
+        let text = `🎀 *L I O R A  F A S H I O N* 🎀\n~ Smart Tailoring & Fashion ~\n\n`;
+        text += `Hello ${currentGeneratedBillData.name}, 👋\nHere is your order summary:\n\n`;
+        text += `✂️ *Order No:* #${currentGeneratedBillData.id}\n`;
+        text += `🛍️ *Items Ordered:*\n`;
+        currentGeneratedBillData.items.forEach(i => { text += `✔️ ${i.category}\n`; });
+        text += `\n💳 *Total Bill:* Rs. ${currentGeneratedBillData.total.toFixed(2)}\n`;
+        
+        if (currentGeneratedBillData.adv > 0) text += `✅ *Advance Paid:* Rs. ${currentGeneratedBillData.adv.toFixed(2)}\n`;
+        if (currentGeneratedBillData.paidNow > 0 && currentGeneratedBillData.paidNow !== currentGeneratedBillData.total) text += `✅ *Paid Now:* Rs. ${currentGeneratedBillData.paidNow.toFixed(2)}\n`;
+        
+        text += `⚠️ *Balance Due:* Rs. ${currentGeneratedBillData.bal.toFixed(2)}\n\n`;
+        text += `📞 +94 78 663 2336\n`;
+        text += `Thank you for choosing us! 💖`;
+        
+        let url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+        
+        incrementInvoiceSeq(currentGeneratedBillData.id);
+        billBuffer = [];
+        currentGeneratedBillData = null;
+        document.getElementById('invoice-bill-name').value = '';
+        document.getElementById('invoice-bill-whatsapp').value = '';
+        setAutoInvoiceId();
+        document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #fff0f5; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">Invoice Sent! Ready for new bill.</p>`;
+        document.getElementById('invoice-action-btns').style.display = 'none';
+    }
+
+    function downloadInvoiceImage() {
+        if(!document.getElementById('invoice-preview-capture')) { playPopSound(); return alert("මුලින්ම බිල් එක Generate කරන්න!"); }
+        playSuccessSound(); 
+        const previewElement = document.getElementById('invoice-preview-capture');
+        const filename = currentGeneratedBillData ? `LioraBill_${currentGeneratedBillData.id}.png` : 'LioraBill.png';
+
+        html2canvas(previewElement, { scale: 3, logging: false, useCORS: true }).then(canvas => {
+            const dataUrl = canvas.toDataURL("image/png");
+            const link = document.createElement('a'); link.href = dataUrl; link.download = filename;
+            document.body.appendChild(link); link.click(); document.body.removeChild(link);
+            
+            incrementInvoiceSeq(currentGeneratedBillData.id);
+        });
+    }
+
 </script>
 
 </body>
