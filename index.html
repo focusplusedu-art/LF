@@ -14,19 +14,18 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
         :root {
-            /* --- COLOR UPDATE: More Pink Elements --- */
             --primary: #FF1493;         
             --primary-gradient: linear-gradient(135deg, #FF1493 0%, #ff66b2 100%);
-            --primary-light: #ffcce0;   /* Darker light pink for selected items */
-            --bg: #ffe6f0;              /* More noticeable pink background */
-            --card-bg: rgba(255, 250, 252, 0.98); /* Faint pink tint to cards */        
+            --primary-light: #ffcce0;   
+            --bg: #ffe6f0;              
+            --card-bg: rgba(255, 250, 252, 0.98);         
             --text-main: #3d0c20;       
             --text-muted: #9e4770;      
             --success: #10b981;         
             --danger: #ef4444;          
             --warning: #f59e0b;         
             --info: #3b82f6;
-            --border: #ff99c2;          /* Stronger pink borders */
+            --border: #ff99c2;          
             --shadow-sm: 0 4px 12px rgba(255, 20, 147, 0.08);
             --shadow-md: 0 8px 24px rgba(255, 20, 147, 0.15);
             --shadow-lg: 0 12px 32px rgba(255, 20, 147, 0.2);
@@ -34,7 +33,7 @@
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { 
-            background: linear-gradient(180deg, #ffe6f0 0%, #ffdae9 100%); /* Stronger pink bg */
+            background: linear-gradient(180deg, #ffe6f0 0%, #ffdae9 100%); 
             background-attachment: fixed;
             color: var(--text-main); 
             padding: 15px; 
@@ -67,11 +66,9 @@
             width: 400%; 
             transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             will-change: transform;
-            cursor: grab; 
         }
         .swipe-tabs-wrapper.swiping {
             transition: none;
-            cursor: grabbing;
         }
 
         .card { 
@@ -415,9 +412,12 @@
     const tabBtns = ['tab-btn-entry', 'tab-btn-orders', 'tab-btn-bills', 'tab-btn-reports'];
     let currentTabIndex = 0;
     
+    // Smooth Touch Logic Variables
     let touchStartX = 0;
+    let touchStartY = 0;
     let touchMoveX = 0;
     let isSwiping = false;
+    let isVerticalScroll = false; // Prevents horizontal wobble during scrolling
     let containerWidth = 0;
 
     function setupSwipeGestures() {
@@ -430,18 +430,40 @@
         });
 
         swipeWrapper.addEventListener('touchstart', e => {
-            if(e.target.closest('.bubble-scroll-container')) return;
+            // Ignore touches on elements that need to scroll horizontally themselves
+            if(e.target.closest('.bubble-scroll-container') || e.target.closest('input') || e.target.closest('select')) return;
+            
             isSwiping = true;
+            isVerticalScroll = false;
             touchStartX = e.touches[0].clientX;
-            swipeWrapper.classList.add('swiping');
+            touchStartY = e.touches[0].clientY;
+            touchMoveX = touchStartX;
         }, {passive: true});
 
         swipeWrapper.addEventListener('touchmove', e => {
             if (!isSwiping) return;
-            touchMoveX = e.touches[0].clientX;
-            const currentDeltaX = touchMoveX - touchStartX;
-            const currentTranslation = (-currentTabIndex * containerWidth) + currentDeltaX;
-            swipeWrapper.style.transform = `translateX(${currentTranslation}px)`;
+
+            let currentX = e.touches[0].clientX;
+            let currentY = e.touches[0].clientY;
+            let diffX = currentX - touchStartX;
+            let diffY = currentY - touchStartY;
+
+            // Detect if the user is scrolling up/down instead of swiping left/right
+            if (!isVerticalScroll && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 5) {
+                isVerticalScroll = true;
+                isSwiping = false; // Stop tracking horizontal swipe
+                swipeWrapper.classList.remove('swiping');
+                updateTabPosition(currentTabIndex, false); // Snap back immediately
+                return;
+            }
+
+            // Only translate if it's a genuine horizontal swipe
+            if (!isVerticalScroll && Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 5) {
+                swipeWrapper.classList.add('swiping');
+                touchMoveX = currentX;
+                const currentTranslation = (-currentTabIndex * containerWidth) + diffX;
+                swipeWrapper.style.transform = `translateX(${currentTranslation}px)`;
+            }
         }, {passive: true});
 
         swipeWrapper.addEventListener('touchend', e => {
@@ -450,14 +472,14 @@
             swipeWrapper.classList.remove('swiping');
             
             const finalDeltaX = touchMoveX - touchStartX;
-            const threshold = containerWidth * 0.25; 
+            const threshold = containerWidth * 0.2; // 20% swipe to trigger tab change
 
-            if (finalDeltaX < -threshold && currentTabIndex < tabs.length - 1) {
+            if (touchMoveX !== 0 && finalDeltaX < -threshold && currentTabIndex < tabs.length - 1) {
                 showTabByIndex(currentTabIndex + 1);
-            } else if (finalDeltaX > threshold && currentTabIndex > 0) {
+            } else if (touchMoveX !== 0 && finalDeltaX > threshold && currentTabIndex > 0) {
                 showTabByIndex(currentTabIndex - 1);
             } else {
-                updateTabPosition(currentTabIndex, true);
+                updateTabPosition(currentTabIndex, true); // Snap back to current
             }
             touchMoveX = 0;
         });
