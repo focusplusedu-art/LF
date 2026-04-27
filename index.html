@@ -6,7 +6,7 @@
     <title>Liora Fashion - Smart Manager</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#e81e6d">
+    <meta name="theme-color" content="#FF1493"> 
     <link rel="icon" type="image/jpeg" href="logo.jpg">
     <link rel="apple-touch-icon" href="logo.jpg">
 
@@ -14,65 +14,87 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
         :root {
-            /* Premium Pro Color Palette */
-            --primary: #e81e6d;         
-            --primary-gradient: linear-gradient(135deg, #e81e6d 0%, #ff5e98 100%);
-            --primary-light: #fce4ec;   
-            --bg: #fcf8fa;              
-            --card-bg: rgba(255, 255, 255, 0.95);         
-            --text-main: #2b111a;       
-            --text-muted: #8e6578;      
+            /* --- COLOR UPDATE: More Pink Elements --- */
+            --primary: #FF1493;         
+            --primary-gradient: linear-gradient(135deg, #FF1493 0%, #ff66b2 100%);
+            --primary-light: #ffcce0;   /* Darker light pink for selected items */
+            --bg: #ffe6f0;              /* More noticeable pink background */
+            --card-bg: rgba(255, 250, 252, 0.98); /* Faint pink tint to cards */        
+            --text-main: #3d0c20;       
+            --text-muted: #9e4770;      
             --success: #10b981;         
             --danger: #ef4444;          
             --warning: #f59e0b;         
             --info: #3b82f6;
-            --border: #f3e1e8;          
-            --shadow-sm: 0 4px 12px rgba(232, 30, 109, 0.05);
-            --shadow-md: 0 8px 24px rgba(232, 30, 109, 0.1);
-            --shadow-lg: 0 12px 32px rgba(232, 30, 109, 0.15);
+            --border: #ff99c2;          /* Stronger pink borders */
+            --shadow-sm: 0 4px 12px rgba(255, 20, 147, 0.08);
+            --shadow-md: 0 8px 24px rgba(255, 20, 147, 0.15);
+            --shadow-lg: 0 12px 32px rgba(255, 20, 147, 0.2);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { 
-            background: linear-gradient(180deg, #fff0f5 0%, #f7f9ff 100%); 
+            background: linear-gradient(180deg, #ffe6f0 0%, #ffdae9 100%); /* Stronger pink bg */
             background-attachment: fixed;
             color: var(--text-main); 
             padding: 15px; 
             min-height: 100vh;
+            overflow-x: hidden; 
         }
-        .container { max-width: 600px; margin: 0 auto; position: relative; padding-bottom: 20px; }
+        .container { max-width: 600px; margin: 0 auto; position: relative; padding-bottom: 20px; overflow: hidden; }
         
         .header { text-align: center; margin-bottom: 24px; position: relative; display: flex; flex-direction: column; align-items: center; }
         .logo-img { height: 85px; border-radius: 20px; margin-bottom: 8px; object-fit: contain; box-shadow: var(--shadow-md); background: #111; padding: 4px; border: 2px solid white; }
-        .header h2 { color: var(--text-main); font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
-        .header p { font-size: 11px; color: var(--primary); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; }
+        .header h2 { color: var(--primary); font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        .header p { font-size: 11px; color: var(--text-muted); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; }
         
-        .lock-btn { position: absolute; right: 0; top: 15px; background: white; color: var(--primary); border: 1px solid var(--border); border-radius: 50%; width: 42px; height: 42px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); transition: 0.3s; }
+        .lock-btn { position: absolute; right: 0; top: 15px; background: white; color: var(--primary); border: 1px solid var(--border); border-radius: 50%; width: 42px; height: 42px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); transition: 0.3s; z-index: 10; }
         .lock-btn:active { transform: scale(0.9); }
 
         .nav-tabs {
             display: flex; background: white; border-radius: 16px;
-            padding: 6px; margin-bottom: 24px; box-shadow: var(--shadow-sm); border: 1px solid rgba(255,255,255,0.8);
+            padding: 6px; margin-bottom: 24px; box-shadow: var(--shadow-sm); border: 1px solid rgba(255, 105, 180, 0.3);
+            position: relative; z-index: 5;
         }
         .tab-btn {
             flex: 1; padding: 12px 4px; border: none; border-radius: 12px;
             font-size: 13px; font-weight: 700; color: var(--text-muted); cursor: pointer; background: transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(232, 30, 109, 0.25); }
+        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(255, 20, 147, 0.25); }
+
+        .swipe-tabs-wrapper {
+            display: flex;
+            width: 400%; 
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+            cursor: grab; 
+        }
+        .swipe-tabs-wrapper.swiping {
+            transition: none;
+            cursor: grabbing;
+        }
 
         .card { 
             background: var(--card-bg); border-radius: 24px; padding: 24px; margin-bottom: 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: var(--shadow-md); backdrop-filter: blur(10px); 
+            border: 1px solid rgba(255, 105, 180, 0.2); box-shadow: var(--shadow-md); backdrop-filter: blur(10px); 
         }
-        .card h3 { font-size: 18px; margin-bottom: 16px; color: var(--text-main); display: flex; align-items: center; gap: 8px; font-weight: 700; }
+
+        .swipe-tab { 
+            width: 25%; 
+            flex-shrink: 0;
+            padding: 0 15px; 
+            box-sizing: border-box;
+        }
+
+        .card h3 { font-size: 18px; margin-bottom: 16px; color: var(--primary); display: flex; align-items: center; gap: 8px; font-weight: 700; }
         
-        .type-switch { display: flex; background: #f9f5f7; border-radius: 14px; padding: 6px; margin-bottom: 20px; gap: 4px; border: 1px solid var(--border); }
+        .type-switch { display: flex; background: #fff5f8; border-radius: 14px; padding: 6px; margin-bottom: 20px; gap: 4px; border: 1px solid var(--border); }
         .type-switch button { flex: 1; padding: 14px 5px; border: none; background: transparent; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.3s; color: var(--text-muted); }
         .type-switch button.active-in { background: var(--success); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
         .type-switch button.active-out { background: var(--danger); color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); }
 
         .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .cat-item { padding: 16px; border: 2px solid transparent; background: #f9f5f7; border-radius: 16px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; color: var(--text-muted); transition: all 0.2s ease; }
+        .cat-item { padding: 16px; border: 2px solid transparent; background: #fff5f8; border: 1px solid var(--border); border-radius: 16px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; color: var(--text-muted); transition: all 0.2s ease; }
         .cat-item span { font-size: 24px; margin-bottom: 6px; }
         .cat-item.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
 
@@ -80,13 +102,13 @@
         .amount-wrapper:focus-within { border-color: var(--primary); }
         .amount-wrapper span { font-size: 24px; font-weight: 700; color: var(--text-muted); margin-right: 12px; transition: 0.3s; }
         .amount-wrapper:focus-within span { color: var(--primary); }
-        .amount-wrapper input { border: none; background: transparent; font-size: 40px; font-weight: 800; width: 100%; outline: none; margin: 0; padding: 0; color: var(--text-main); letter-spacing: -1px; }
+        .amount-wrapper input { border: none; background: transparent; font-size: 40px; font-weight: 800; width: 100%; outline: none; margin: 0; padding: 0; color: var(--primary); letter-spacing: -1px; }
 
         input[type="text"], input[type="number"], input[type="date"], input[type="month"], select {
-            width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 500; background: #f9f5f7; outline: none; margin-bottom: 16px; color: var(--text-main); transition: all 0.3s ease;
+            width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 500; background: #fff5f8; outline: none; margin-bottom: 16px; color: var(--text-main); transition: all 0.3s ease;
         }
         input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, input[type="month"]:focus, select:focus {
-            background: white; border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light);
+            border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(255, 20, 147, 0.15);
         }
 
         .btn-action {
@@ -94,15 +116,15 @@
         }
         .btn-action:active { transform: scale(0.96); box-shadow: var(--shadow-sm); }
         .btn-cancel { background: transparent; color: var(--text-muted); border: 2px solid var(--border); box-shadow: none; padding: 14px; font-size: 14px; }
-        .btn-cancel:active { background: #f9f5f7; }
+        .btn-cancel:active { background: #fff5f8; }
 
         .summary-box { background: var(--primary-gradient); color: white; text-align: center; border: none; padding: 28px 20px; position: relative; overflow: hidden; }
         .summary-box::after { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%); pointer-events: none; }
         .summary-box h3 { border: none; color: rgba(255,255,255,0.9); justify-content: center; font-size: 14px; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
         .profit-amount { font-size: 42px; font-weight: 800; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.1); letter-spacing: -1px; }
 
-        .record-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid var(--border); background: white; border-radius: 16px; margin-bottom: 10px; transition: 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-        .record-item:hover { box-shadow: var(--shadow-sm); border-color: var(--primary-light); }
+        .record-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid var(--border); background: white; border-radius: 16px; margin-bottom: 10px; transition: 0.3s; box-shadow: 0 2px 6px rgba(255, 20, 147, 0.05); }
+        .record-item:hover { box-shadow: var(--shadow-sm); border-color: var(--primary); }
         .record-details strong { display: block; font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
         .record-details span { font-size: 12px; color: var(--text-muted); display: block; line-height: 1.4; }
         
@@ -110,19 +132,18 @@
         .amount-out { color: var(--danger); font-weight: 800; font-size: 15px; }
         .amount-bill { color: var(--warning); font-weight: 800; font-size: 15px; }
         
-        .action-btns button { background: #f9f5f7; border: none; font-size: 14px; cursor: pointer; margin-left: 8px; width: 32px; height: 32px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+        .action-btns button { background: #fff5f8; border: 1px solid var(--border); font-size: 14px; cursor: pointer; margin-left: 8px; width: 32px; height: 32px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; }
         .action-btns button:active { transform: scale(0.9); background: var(--border); }
 
         .filter-section { display: flex; gap: 12px; margin-bottom: 16px; }
         .filter-section > div { flex: 1; }
         .filter-section label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .search-box { display: flex; align-items: center; border: 1px solid white; border-radius: 14px; background: white; padding: 4px 16px; margin-bottom: 20px; box-shadow: var(--shadow-sm); transition: 0.3s; }
-        .search-box:focus-within { box-shadow: 0 0 0 4px var(--primary-light); border-color: var(--primary); }
+        .search-box { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 14px; background: white; padding: 4px 16px; margin-bottom: 20px; box-shadow: var(--shadow-sm); transition: 0.3s; }
+        .search-box:focus-within { box-shadow: 0 0 0 4px rgba(255, 20, 147, 0.15); border-color: var(--primary); }
         .search-box span { font-size: 18px; opacity: 0.5; }
         .search-box input { border: none; background: transparent; margin-bottom: 0; padding: 12px 10px; outline: none; width: 100%; font-size: 15px; font-weight: 500; }
 
-        /* --- BUBBLE SCROLL UI --- */
         .bubble-scroll-container {
             display: flex; overflow-x: auto; gap: 10px; padding: 4px 4px 16px 4px; margin-bottom: 8px;
             scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth;
@@ -130,28 +151,25 @@
         .bubble-scroll-container::-webkit-scrollbar { display: none; } 
         
         .bubble-item {
-            padding: 10px 20px; background: white; color: var(--text-muted);
+            padding: 10px 20px; background: #fff5f8; color: var(--text-muted);
             border: 1px solid var(--border); border-radius: 20px; font-size: 13px; font-weight: 600;
             cursor: pointer; white-space: nowrap; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: 0 2px 4px rgba(255, 20, 147, 0.05);
         }
         .bubble-item.selected {
             background: var(--primary-gradient); color: white; border-color: transparent;
-            box-shadow: 0 6px 16px rgba(232, 30, 109, 0.3); transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255, 20, 147, 0.3); transform: translateY(-2px);
         }
 
         #pin-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%); z-index: 9999; display: flex; flex-direction: column;
+            background: linear-gradient(135deg, #ffcce0 0%, #ffe4e1 100%); z-index: 9999; display: flex; flex-direction: column;
             align-items: center; justify-content: center; padding: 20px;
         }
-        .pin-box { background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); padding: 40px 30px; border-radius: 30px; box-shadow: var(--shadow-lg); width: 100%; max-width: 360px; text-align: center; border: 1px solid rgba(255,255,255,0.5); }
+        .pin-box { background: rgba(255,255,255,0.95); backdrop-filter: blur(20px); padding: 40px 30px; border-radius: 30px; box-shadow: var(--shadow-lg); width: 100%; max-width: 360px; text-align: center; border: 1px solid rgba(255, 105, 180, 0.3); }
         #pin-input { text-align: center; font-size: 36px; letter-spacing: 12px; font-weight: 800; margin-bottom: 30px; border: none; border-bottom: 3px solid var(--primary); background: transparent; width: 100%; outline: none; color: var(--text-main); padding-bottom: 10px; transition: 0.3s; }
-        #pin-input:focus { border-bottom-color: #ff5e98; }
+        #pin-input:focus { border-bottom-color: #ff66b2; }
 
-        /* Smooth tab transitions */
-        .swipe-tab { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -175,224 +193,293 @@
     </div>
 
     <div class="nav-tabs">
-        <button class="tab-btn active" id="tab-btn-entry" onclick="showTab('entry')">🏠 Home</button>
-        <button class="tab-btn" id="tab-btn-orders" onclick="showTab('orders')">✂️ Orders</button>
-        <button class="tab-btn" id="tab-btn-bills" onclick="showTab('bills')">🧾 Bills</button>
-        <button class="tab-btn" id="tab-btn-reports" onclick="showTab('reports')">📊 Reps</button>
+        <button class="tab-btn active" id="tab-btn-entry" onclick="showTabByIndex(0)">🏠 Home</button>
+        <button class="tab-btn" id="tab-btn-orders" onclick="showTabByIndex(1)">✂️ Orders</button>
+        <button class="tab-btn" id="tab-btn-bills" onclick="showTabByIndex(2)">🧾 Bills</button>
+        <button class="tab-btn" id="tab-btn-reports" onclick="showTabByIndex(3)">📊 Reps</button>
     </div>
 
-    <div id="tab-entry" class="swipe-tab">
-        <div class="card summary-box" style="margin-bottom: 20px;">
-            <h3>Today's Income 💰</h3>
-            <div class="profit-amount" id="home-today-income">Rs. 0.00</div>
-        </div>
-
-        <div class="card">
-            <h3 id="entry-title">⚡ Quick Entry</h3>
-            
-            <div class="type-switch">
-                <button id="btn-in" class="active-in" onclick="setType('INCOME')">INCOME</button>
-                <button id="btn-out" onclick="setType('EXPENSE')">EXPENSE</button>
-            </div>
-            
-            <div class="cat-grid" id="grid-income">
-                <div class="cat-item selected" id="cat-Tailoring" onclick="setCat('Tailoring')"><span>✂️</span> Tailoring</div>
-                <div class="cat-item" id="cat-Fabrics" onclick="setCat('Fabrics')"><span>🧵</span> Fabric Sales</div>
-            </div>
-            <div class="cat-grid" id="grid-expense" style="display: none;">
-                <div class="cat-item" id="cat-Shop" onclick="setCat('Shop')"><span>🏪</span> Shop</div>
-                <div class="cat-item" id="cat-Personal" onclick="setCat('Personal')"><span>👤</span> Personal</div>
-            </div>
-
-            <div class="amount-wrapper">
-                <span>Rs.</span><input type="number" id="amt" placeholder="0.00">
-            </div>
-            
-            <div class="bubble-scroll-container" id="home-bubbles"></div>
-            
-            <select id="note-select" style="display: none;">
-                <option value="" disabled selected>Select Item</option>
-                <option value="Frocks">Frocks</option>
-                <option value="Skirts">Skirts</option>
-                <option value="Pants">Pants</option>
-                <option value="Shorts">Shorts</option>
-                <option value="Night Dress">Night Dress</option>
-                <option value="Jacket">Jacket</option>
-                <option value="Underskirts">Underskirts</option>
-                <option value="School Uniform (Frocks)">School Uniform (Frocks)</option>
-                <option value="School Uniform (Shirt)">School Uniform (Shirt)</option>
-                <option value="School Uniform (Short)">School Uniform (Short)</option>
-                <option value="Lama Saree">Lama Saree</option>
-                <option value="Saree Madeup">Saree Madeup</option>
-                <option value="Kandyan Madeup">Kandyan Madeup</option>
-                <option value="Curtains">Curtains</option>
-                <option value="Pillow Case">Pillow Case</option>
-                <option value="Blouse">Blouse</option>
-                <option value="Kids Frocks">Kids Frocks</option>
-                <option value="Jumper Suit">Jumper Suit</option>
-                <option value="Wrap Dress">Wrap Dress</option>
-                <option value="Wraparound">Wraparound</option>
-                <option value="OTHER">✏️ Type Custom...</option>
-            </select>
-            
-            <input type="text" id="note-text" placeholder="Type detail here..." style="display: none;">
-            
-            <button class="btn-action" id="save-btn" onclick="saveData()">💾 Save Entry</button>
-            <button class="btn-action btn-cancel" id="cancel-edit-btn" style="display: none;" onclick="cancelEdit()">❌ Cancel Edit</button>
-        </div>
-
-        <div class="card">
-            <h3>📝 Today's Activity</h3>
-            <div id="home-today-list">
-                <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading data...</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-orders" class="swipe-tab" style="display: none;">
+    <div class="swipe-tabs-wrapper" id="swipe-wrapper">
         
-        <div class="search-box">
-            <span>🔎</span>
-            <input type="text" id="search-order" placeholder="Search Order Code (e.g. 1005)..." onkeyup="searchOrders()">
-        </div>
-
-        <div class="card" style="border-top: 4px solid var(--info);">
-            <h3 style="color: var(--info);">✂️ New Order</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Add customer orders and advance payments.</p>
-            
-            <input type="text" id="ord-name" placeholder="Customer Name">
-            <input type="number" id="ord-phone" placeholder="Phone Number (Optional)">
-            
-            <div class="bubble-scroll-container" id="ord-bubbles"></div>
-
-            <select id="ord-item" style="display: none;">
-                <option value="" disabled selected>Select Category</option>
-                <option value="Frocks">Frocks</option>
-                <option value="Skirts">Skirts</option>
-                <option value="Pants">Pants</option>
-                <option value="Shorts">Shorts</option>
-                <option value="Night Dress">Night Dress</option>
-                <option value="Jacket">Jacket</option>
-                <option value="Underskirts">Underskirts</option>
-                <option value="School Uniform">School Uniform</option>
-                <option value="Lama Saree">Lama Saree</option>
-                <option value="Saree Madeup">Saree Madeup</option>
-                <option value="Kandyan Madeup">Kandyan Madeup</option>
-                <option value="Curtains">Curtains</option>
-                <option value="Pillow Case">Pillow Case</option>
-                <option value="Blouse">Blouse</option>
-                <option value="Kids Frocks">Kids Frocks</option>
-                <option value="Jumper Suit">Jumper Suit</option>
-                <option value="Wrap Dress">Wrap Dress</option>
-                <option value="OTHER">✏️ Type Custom...</option>
-            </select>
-            
-            <input type="text" id="ord-item-text" placeholder="Type custom category here..." style="display: none; margin-bottom: 20px;">
-
-            <div class="amount-wrapper" style="border-color: #cbd5e1; margin-bottom: 12px; padding-bottom: 5px;">
-                <span style="color: var(--text-muted); font-size: 16px;">Total Rs.</span>
-                <input type="number" id="ord-total" placeholder="0.00" style="color: var(--text-main); font-size: 28px;">
+        <div id="tab-entry" class="swipe-tab">
+            <div class="card summary-box" style="margin-bottom: 20px;">
+                <h3>Today's Income 💰</h3>
+                <div class="profit-amount" id="home-today-income">Rs. 0.00</div>
             </div>
 
-            <div class="amount-wrapper" style="border-color: var(--info); margin-bottom: 24px; padding-bottom: 5px;">
-                <span style="color: var(--info); font-size: 16px;">Advance Rs.</span>
-                <input type="number" id="ord-adv" placeholder="0.00" style="color: var(--info); font-size: 28px;">
-            </div>
-            
-            <button class="btn-action" id="save-ord-btn" style="background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);" onclick="saveAdvance()">💾 Save Order</button>
-        </div>
+            <div class="card">
+                <h3 id="entry-title">⚡ Quick Entry</h3>
+                
+                <div class="type-switch">
+                    <button id="btn-in" class="active-in" onclick="setType('INCOME')">INCOME</button>
+                    <button id="btn-out" onclick="setType('EXPENSE')">EXPENSE</button>
+                </div>
+                
+                <div class="cat-grid" id="grid-income">
+                    <div class="cat-item selected" id="cat-Tailoring" onclick="setCat('Tailoring')"><span>✂️</span> Tailoring</div>
+                    <div class="cat-item" id="cat-Fabrics" onclick="setCat('Fabrics')"><span>🧵</span> Fabric Sales</div>
+                </div>
+                <div class="cat-grid" id="grid-expense" style="display: none;">
+                    <div class="cat-item" id="cat-Shop" onclick="setCat('Shop')"><span>🏪</span> Shop</div>
+                    <div class="cat-item" id="cat-Personal" onclick="setCat('Personal')"><span>👤</span> Personal</div>
+                </div>
 
-        <div class="card">
-            <h3>⏳ Pending Orders</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Pending balances to receive.</p>
-            <div id="pending-orders-list">
-                <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading orders...</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-bills" class="swipe-tab" style="display: none;">
-        <div class="card" style="border-top: 4px solid var(--warning);">
-            <h3 id="bill-title" style="color: #d97706;">🧾 Add New Bill</h3>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Enter business bills and expenses here.</p>
-            
-            <div class="cat-grid" id="grid-bill">
-                <div class="cat-item selected" id="cat-Fabric_Bill" onclick="setBillCat('Fabric_Bill')"><span>🛍️</span> Fabric Bills</div>
-                <div class="cat-item" id="cat-Other_Bill" onclick="setBillCat('Other_Bill')"><span>📦</span> Other Bills</div>
-            </div>
-
-            <div class="amount-wrapper" style="border-color: var(--warning);">
-                <span style="color: var(--warning);">Rs.</span>
-                <input type="number" id="bill-amt" placeholder="0.00" style="color: var(--text-main);">
-            </div>
-            
-            <input type="text" id="bill-note" placeholder="Bill No. or Item Details">
-            
-            <button class="btn-action" id="save-bill-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);" onclick="saveBillData()">💾 Save Bill</button>
-            <button class="btn-action btn-cancel" id="cancel-bill-edit-btn" style="display: none;" onclick="cancelBillEdit()">❌ Cancel Edit</button>
-        </div>
-
-        <div class="card">
-            <h3>📝 Today's Bills</h3>
-            <div id="bills-today-list">
-                <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading today's bills...</p>
-            </div>
-        </div>
-    </div>
-
-    <div id="tab-reports" class="swipe-tab" style="display: none;">
-        <div class="card summary-box" style="margin-bottom: 20px;">
-            <h3 id="report-title">Monthly Summary</h3>
-            <div class="profit-amount" id="total-profit">Rs. 0.00</div>
-            <p id="total-bills" style="font-size: 13px; margin-top: 8px; background: rgba(0,0,0,0.15); padding: 6px 12px; border-radius: 8px; display: inline-block; font-weight: 600;">Total Bills: Rs. 0.00</p>
-        </div>
-        
-        <div class="card">
-            <h3>🔍 Filter Past Records</h3>
-            <div style="margin-bottom: 16px;">
-                <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase;">Record Type</label>
-                <select id="filter-type" onchange="renderData()" style="font-weight: 600;">
-                    <option value="ALL">All Records</option>
-                    <option value="INCOME">Income & Orders 💰</option>
-                    <option value="BILL">Bills Only 🧾</option>
-                    <option value="EXPENSE">Expense Only 📉</option>
+                <div class="amount-wrapper">
+                    <span>Rs.</span><input type="number" id="amt" placeholder="0.00">
+                </div>
+                
+                <div class="bubble-scroll-container" id="home-bubbles"></div>
+                
+                <select id="note-select" style="display: none;">
+                    <option value="" disabled selected>Select Item</option>
+                    <option value="Frocks">Frocks</option>
+                    <option value="Skirts">Skirts</option>
+                    <option value="Pants">Pants</option>
+                    <option value="Shorts">Shorts</option>
+                    <option value="Night Dress">Night Dress</option>
+                    <option value="Jacket">Jacket</option>
+                    <option value="Underskirts">Underskirts</option>
+                    <option value="School Uniform (Frocks)">School Uniform (Frocks)</option>
+                    <option value="School Uniform (Shirt)">School Uniform (Shirt)</option>
+                    <option value="School Uniform (Short)">School Uniform (Short)</option>
+                    <option value="Lama Saree">Lama Saree</option>
+                    <option value="Saree Madeup">Saree Madeup</option>
+                    <option value="Kandyan Madeup">Kandyan Madeup</option>
+                    <option value="Curtains">Curtains</option>
+                    <option value="Pillow Case">Pillow Case</option>
+                    <option value="Blouse">Blouse</option>
+                    <option value="Kids Frocks">Kids Frocks</option>
+                    <option value="Jumper Suit">Jumper Suit</option>
+                    <option value="Wrap Dress">Wrap Dress</option>
+                    <option value="Wraparound">Wraparound</option>
+                    <option value="OTHER">✏️ Type Custom...</option>
                 </select>
+                
+                <input type="text" id="note-text" placeholder="Type detail here..." style="display: none;">
+                
+                <button class="btn-action" id="save-btn" onclick="saveData()">💾 Save Entry</button>
+                <button class="btn-action btn-cancel" id="cancel-edit-btn" style="display: none;" onclick="cancelEdit()">❌ Cancel Edit</button>
             </div>
-            <div class="filter-section">
-                <div>
-                    <label>Month</label>
-                    <input type="month" id="filter-month" onchange="renderData()">
+
+            <div class="card">
+                <h3>📝 Today's Activity</h3>
+                <div id="home-today-list">
+                    <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading data...</p>
                 </div>
-                <div>
-                    <label>Day</label>
-                    <input type="date" id="filter-date" onchange="renderData()">
-                </div>
-            </div>
-            <div id="report-list" style="margin-top: 20px;">
-                <p style="text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500;">Please wait...</p>
             </div>
         </div>
-    </div>
+
+        <div id="tab-orders" class="swipe-tab">
+            <div class="search-box">
+                <span>🔎</span>
+                <input type="text" id="search-order" placeholder="Search Order Code (e.g. 1005)..." onkeyup="searchOrders()">
+            </div>
+
+            <div class="card" style="border-top: 4px solid var(--info);">
+                <h3 style="color: var(--info);">✂️ New Order</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Add customer orders and advance payments.</p>
+                
+                <input type="text" id="ord-name" placeholder="Customer Name">
+                <input type="number" id="ord-phone" placeholder="Phone Number (Optional)">
+                
+                <div class="bubble-scroll-container" id="ord-bubbles"></div>
+
+                <select id="ord-item" style="display: none;">
+                    <option value="" disabled selected>Select Category</option>
+                    <option value="Frocks">Frocks</option>
+                    <option value="Skirts">Skirts</option>
+                    <option value="Pants">Pants</option>
+                    <option value="Shorts">Shorts</option>
+                    <option value="Night Dress">Night Dress</option>
+                    <option value="Jacket">Jacket</option>
+                    <option value="Underskirts">Underskirts</option>
+                    <option value="School Uniform">School Uniform</option>
+                    <option value="Lama Saree">Lama Saree</option>
+                    <option value="Saree Madeup">Saree Madeup</option>
+                    <option value="Kandyan Madeup">Kandyan Madeup</option>
+                    <option value="Curtains">Curtains</option>
+                    <option value="Pillow Case">Pillow Case</option>
+                    <option value="Blouse">Blouse</option>
+                    <option value="Kids Frocks">Kids Frocks</option>
+                    <option value="Jumper Suit">Jumper Suit</option>
+                    <option value="Wrap Dress">Wrap Dress</option>
+                    <option value="OTHER">✏️ Type Custom...</option>
+                </select>
+                
+                <input type="text" id="ord-item-text" placeholder="Type custom category here..." style="display: none; margin-bottom: 20px;">
+
+                <div class="amount-wrapper" style="border-color: #cbd5e1; margin-bottom: 12px; padding-bottom: 5px;">
+                    <span style="color: var(--text-muted); font-size: 16px;">Total Rs.</span>
+                    <input type="number" id="ord-total" placeholder="0.00" style="color: var(--text-main); font-size: 28px;">
+                </div>
+
+                <div class="amount-wrapper" style="border-color: var(--info); margin-bottom: 24px; padding-bottom: 5px;">
+                    <span style="color: var(--info); font-size: 16px;">Advance Rs.</span>
+                    <input type="number" id="ord-adv" placeholder="0.00" style="color: var(--info); font-size: 28px;">
+                </div>
+                
+                <button class="btn-action" id="save-ord-btn" style="background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);" onclick="saveAdvance()">💾 Save Order</button>
+            </div>
+
+            <div class="card">
+                <h3>⏳ Pending Orders</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Pending balances to receive.</p>
+                <div id="pending-orders-list">
+                    <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading orders...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-bills" class="swipe-tab">
+            <div class="card" style="border-top: 4px solid var(--warning);">
+                <h3 id="bill-title" style="color: #d97706;">🧾 Add New Bill</h3>
+                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Enter business bills and expenses here.</p>
+                
+                <div class="cat-grid" id="grid-bill">
+                    <div class="cat-item selected" id="cat-Fabric_Bill" onclick="setBillCat('Fabric_Bill')"><span>🛍️</span> Fabric Bills</div>
+                    <div class="cat-item" id="cat-Other_Bill" onclick="setBillCat('Other_Bill')"><span>📦</span> Other Bills</div>
+                </div>
+
+                <div class="amount-wrapper" style="border-color: var(--warning);">
+                    <span style="color: var(--warning);">Rs.</span>
+                    <input type="number" id="bill-amt" placeholder="0.00" style="color: var(--text-main);">
+                </div>
+                
+                <input type="text" id="bill-note" placeholder="Bill No. or Item Details">
+                
+                <button class="btn-action" id="save-bill-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);" onclick="saveBillData()">💾 Save Bill</button>
+                <button class="btn-action btn-cancel" id="cancel-bill-edit-btn" style="display: none;" onclick="cancelBillEdit()">❌ Cancel Edit</button>
+            </div>
+
+            <div class="card">
+                <h3>📝 Today's Bills</h3>
+                <div id="bills-today-list">
+                    <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading today's bills...</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-reports" class="swipe-tab">
+            <div class="card summary-box" style="margin-bottom: 20px;">
+                <h3 id="report-title">Monthly Summary</h3>
+                <div class="profit-amount" id="total-profit">Rs. 0.00</div>
+                <p id="total-bills" style="font-size: 13px; margin-top: 8px; background: rgba(0,0,0,0.15); padding: 6px 12px; border-radius: 8px; display: inline-block; font-weight: 600;">Total Bills: Rs. 0.00</p>
+            </div>
+            
+            <div class="card">
+                <h3>🔍 Filter Past Records</h3>
+                <div style="margin-bottom: 16px;">
+                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">Record Type</label>
+                    
+                    <div class="bubble-scroll-container" id="filter-bubbles">
+                        <div class="bubble-item selected" data-val="ALL" onclick="selectFilterBubble('ALL', this)">All Records</div>
+                        <div class="bubble-item" data-val="INCOME" onclick="selectFilterBubble('INCOME', this)">Income & Orders 💰</div>
+                        <div class="bubble-item" data-val="BILL" onclick="selectFilterBubble('BILL', this)">Bills Only 🧾</div>
+                        <div class="bubble-item" data-val="EXPENSE" onclick="selectFilterBubble('EXPENSE', this)">Expense Only 📉</div>
+                    </div>
+
+                    <select id="filter-type" style="display: none;" onchange="renderData()">
+                        <option value="ALL" selected>All Records</option>
+                        <option value="INCOME">Income & Orders 💰</option>
+                        <option value="BILL">Bills Only 🧾</option>
+                        <option value="EXPENSE">Expense Only 📉</option>
+                    </select>
+                </div>
+                <div class="filter-section">
+                    <div>
+                        <label>Month</label>
+                        <input type="month" id="filter-month" onchange="renderData()">
+                    </div>
+                    <div>
+                        <label>Day</label>
+                        <input type="date" id="filter-date" onchange="renderData()">
+                    </div>
+                </div>
+                <div id="report-list" style="margin-top: 20px;">
+                    <p style="text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500;">Please wait...</p>
+                </div>
+            </div>
+        </div>
+    </div> 
 </div>
 
 <script>
-    // ---------------------------------------------------------------------
-    // YOUR GOOGLE APPS SCRIPT WEB APP URL
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxiNrs-TuIUmAYkefTKcXyZfeFqaoh_TLoeRDdiS5h5oGNs24E_6-_n0M_9HZTwHJhl/exec';
-    // ---------------------------------------------------------------------
 
-    let currentFilterMode = 'month'; 
     let editingId = null; 
     let globalMaxOrderId = 1000;
-    
-    // FAST DATA CACHE
     let localData = [];
 
-    // TABS ARRAY FOR SWIPE
-    const tabsArr = ['entry', 'orders', 'bills', 'reports'];
+    const swipeWrapper = document.getElementById('swipe-wrapper');
+    const tabs = ['tab-entry', 'tab-orders', 'tab-bills', 'tab-reports'];
+    const tabBtns = ['tab-btn-entry', 'tab-btn-orders', 'tab-btn-bills', 'tab-btn-reports'];
     let currentTabIndex = 0;
+    
+    let touchStartX = 0;
+    let touchMoveX = 0;
+    let isSwiping = false;
+    let containerWidth = 0;
 
-    // PIN Logic
+    function setupSwipeGestures() {
+        let mainApp = document.getElementById('main-app');
+        containerWidth = mainApp.offsetWidth;
+
+        window.addEventListener('resize', () => {
+            containerWidth = mainApp.offsetWidth;
+            updateTabPosition(currentTabIndex, false); 
+        });
+
+        swipeWrapper.addEventListener('touchstart', e => {
+            if(e.target.closest('.bubble-scroll-container')) return;
+            isSwiping = true;
+            touchStartX = e.touches[0].clientX;
+            swipeWrapper.classList.add('swiping');
+        }, {passive: true});
+
+        swipeWrapper.addEventListener('touchmove', e => {
+            if (!isSwiping) return;
+            touchMoveX = e.touches[0].clientX;
+            const currentDeltaX = touchMoveX - touchStartX;
+            const currentTranslation = (-currentTabIndex * containerWidth) + currentDeltaX;
+            swipeWrapper.style.transform = `translateX(${currentTranslation}px)`;
+        }, {passive: true});
+
+        swipeWrapper.addEventListener('touchend', e => {
+            if (!isSwiping) return;
+            isSwiping = false;
+            swipeWrapper.classList.remove('swiping');
+            
+            const finalDeltaX = touchMoveX - touchStartX;
+            const threshold = containerWidth * 0.25; 
+
+            if (finalDeltaX < -threshold && currentTabIndex < tabs.length - 1) {
+                showTabByIndex(currentTabIndex + 1);
+            } else if (finalDeltaX > threshold && currentTabIndex > 0) {
+                showTabByIndex(currentTabIndex - 1);
+            } else {
+                updateTabPosition(currentTabIndex, true);
+            }
+            touchMoveX = 0;
+        });
+    }
+
+    function showTabByIndex(index) {
+        currentTabIndex = index;
+        tabBtns.forEach((btnId, i) => {
+            document.getElementById(btnId).classList.toggle('active', i === index);
+        });
+        updateTabPosition(index, true);
+        if(editingId) cancelEdit(); 
+        if(localData.length > 0) renderData(); 
+    }
+
+    function updateTabPosition(index, animate = true) {
+        const offset = -index * containerWidth;
+        if(!animate) swipeWrapper.classList.add('swiping');
+        swipeWrapper.style.transform = `translateX(${offset}px)`;
+        if(!animate) requestAnimationFrame(() => swipeWrapper.classList.remove('swiping'));
+    }
+
     let pin = localStorage.getItem('liora_pin');
     function checkPin() {
         const i = document.getElementById('pin-input').value;
@@ -412,40 +499,13 @@
 
         initBubbles('note-select', 'home-bubbles', 'home');
         initBubbles('ord-item', 'ord-bubbles', 'orders');
-        setupSwipeGestures();
-
-        fetchInitialData(); 
+        
+        setTimeout(() => {
+            setupSwipeGestures(); 
+            fetchInitialData(); 
+        }, 50);
     }
 
-    // --- SWIPE GESTURE LOGIC ---
-    function setupSwipeGestures() {
-        let touchStartX = 0;
-        let touchStartY = 0;
-
-        const mainApp = document.getElementById('main-app');
-        mainApp.addEventListener('touchstart', e => {
-            touchStartX = e.changedTouches[0].screenX;
-            touchStartY = e.changedTouches[0].screenY;
-        }, {passive: true});
-
-        mainApp.addEventListener('touchend', e => {
-            if(e.target.closest('.bubble-scroll-container')) return;
-
-            let touchEndX = e.changedTouches[0].screenX;
-            let touchEndY = e.changedTouches[0].screenY;
-
-            if (Math.abs(touchEndX - touchStartX) > 60 && Math.abs(touchEndY - touchStartY) < 40) {
-                if (touchEndX < touchStartX && currentTabIndex < tabsArr.length - 1) {
-                    showTab(tabsArr[currentTabIndex + 1]); 
-                }
-                if (touchEndX > touchStartX && currentTabIndex > 0) {
-                    showTab(tabsArr[currentTabIndex - 1]); 
-                }
-            }
-        }, {passive: true});
-    }
-
-    // --- BUBBLES UI LOGIC ---
     function initBubbles(selectId, containerId, tabType) {
         const selectEl = document.getElementById(selectId);
         const container = document.getElementById(containerId);
@@ -468,9 +528,18 @@
         }
 
         document.getElementById(selectId).value = val;
-
         if(tab === 'home') handleNoteSelect();
         else handleOrdItemSelect();
+    }
+
+    function selectFilterBubble(val, el) {
+        document.querySelectorAll('#filter-bubbles .bubble-item').forEach(b => b.classList.remove('selected'));
+        if(el) {
+            el.classList.add('selected');
+            el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+        document.getElementById('filter-type').value = val;
+        renderData(); 
     }
 
     function syncBubbles(selectId, containerId) {
@@ -485,7 +554,6 @@
         });
     }
 
-    // Search Order Logic
     function searchOrders() {
         let input = document.getElementById('search-order').value.toUpperCase();
         let items = document.querySelectorAll('#pending-orders-list .record-item');
@@ -495,7 +563,6 @@
         });
     }
 
-    // UI Logic
     let currentType = 'INCOME';
     let currentCat = 'Tailoring';
     let currentBillCat = 'Fabric_Bill';
@@ -560,30 +627,18 @@
         if(catElement) catElement.classList.add('selected');
     }
 
-    function showTab(t) {
-        currentTabIndex = tabsArr.indexOf(t); 
-
-        document.getElementById('tab-entry').style.display = t==='entry' ? 'block' : 'none';
-        document.getElementById('tab-bills').style.display = t==='bills' ? 'block' : 'none';
-        document.getElementById('tab-orders').style.display = t==='orders' ? 'block' : 'none';
-        document.getElementById('tab-reports').style.display = t==='reports' ? 'block' : 'none';
-        
-        document.getElementById('tab-btn-entry').className = t==='entry' ? 'tab-btn active' : 'tab-btn';
-        document.getElementById('tab-btn-bills').className = t==='bills' ? 'tab-btn active' : 'tab-btn';
-        document.getElementById('tab-btn-orders').className = t==='orders' ? 'tab-btn active' : 'tab-btn';
-        document.getElementById('tab-btn-reports').className = t==='reports' ? 'tab-btn active' : 'tab-btn';
-        
-        renderData(); 
-    }
-
-    // --- INSTANT DATA RENDERING ---
     async function fetchInitialData() {
         try {
             const response = await fetch(scriptURL);
-            localData = await response.json();
+            const data = await response.json();
+            if(Array.isArray(data)) {
+                localData = data;
+            } else {
+                localData = [];
+            }
             renderData();
         } catch (error) {
-            document.getElementById('home-today-list').innerHTML = "<p style='text-align:center; color: var(--danger); font-weight:600;'>Offline or Sync Error. Check Connection.</p>";
+            document.getElementById('home-today-list').innerHTML = "<p style='text-align:center; color: var(--danger); font-weight:600;'>Offline or Sync Error. Try reloading.</p>";
         }
     }
 
@@ -605,25 +660,33 @@
         let ordersMap = {};
         globalMaxOrderId = 1000; 
 
+        if (!Array.isArray(localData)) localData = [];
+
         localData.forEach(r => {
-            if(r.type === 'ADVANCE' && r.note.includes('|')) {
-                const parts = r.note.split('|');
+            if(!r) return;
+            
+            let noteStr = r.note ? String(r.note) : "-";
+            let amountVal = parseFloat(r.amount) || 0;
+            let categoryStr = r.category ? String(r.category) : "Unknown";
+
+            if(r.type === 'ADVANCE' && noteStr.includes('|')) {
+                const parts = noteStr.split('|');
                 const oId = parts[0].trim();
                 const num = parseInt(oId); 
                 if(!isNaN(num) && num > globalMaxOrderId) globalMaxOrderId = num;
 
-                let totalAmt = parseFloat(parts[3]) || parseFloat(r.amount);
+                let totalAmt = parseFloat(parts[3]) || amountVal;
 
                 ordersMap[oId] = {
-                    id: r.id, date: r.date, oId: oId,
+                    id: r.id, date: r.date || "", oId: oId,
                     name: parts[1] ? parts[1].trim() : 'Unknown', 
                     phone: parts[2] ? parts[2].trim() : '',
-                    item: r.category, advAmt: parseFloat(r.amount), 
+                    item: categoryStr, advAmt: amountVal, 
                     totalAmt: totalAmt, isCompleted: false
                 };
             }
-            if(r.type === 'BALANCE' && r.note.includes('|')) {
-                const oId = r.note.split('|')[0].trim();
+            if(r.type === 'BALANCE' && noteStr.includes('|')) {
+                const oId = noteStr.split('|')[0].trim();
                 if(ordersMap[oId]) ordersMap[oId].isCompleted = true; 
             }
         });
@@ -631,6 +694,8 @@
         Object.values(ordersMap).reverse().forEach(o => {
             if(!o.isCompleted) {
                 let balanceDue = o.totalAmt - o.advAmt;
+                let dateDisplay = o.date ? o.date.split(',')[0] : "";
+                
                 pendingHtml += `
                 <div class="record-item" style="border-left: 4px solid var(--info); align-items: flex-start; padding-right: 10px;" id="pending-${o.id}">
                     <div class="record-details">
@@ -639,7 +704,7 @@
                         <span>Item: ${o.item}</span>
                         <span style="display:block; margin-top:6px; font-size:12px; color:var(--text-muted); font-weight:600;">Total: Rs. ${o.totalAmt.toFixed(2)} | Adv: Rs. ${o.advAmt.toFixed(2)}</span>
                         <span style="color:var(--danger); font-weight:800; display:block; margin-top:2px; font-size: 13px;">Due Balance: Rs. ${balanceDue.toFixed(2)}</span>
-                        <span style="font-size:10px; margin-top:6px; opacity:0.7;">${o.date.split(',')[0]}</span>
+                        <span style="font-size:10px; margin-top:6px; opacity:0.7;">${dateDisplay}</span>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 12px; align-items: flex-end; justify-content: center;">
                         <button onclick="deleteEntry('${o.id}')" style="background:none; border:none; font-size:18px; cursor:pointer; opacity:0.5; transition:0.3s;" onmouseover="this.style.opacity='1'">🗑️</button>
@@ -652,16 +717,21 @@
 
         let reversedData = [...localData].reverse();
         reversedData.forEach(r => {
-            const rDate = new Date(r.date);
+            if(!r) return;
+
+            let rDate = new Date(r.date);
+            if(isNaN(rDate.getTime())) return; 
+
             const rDateStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0') + "-" + String(rDate.getDate()).padStart(2, '0');
             
             if (rDateStr === todayStr) {
-                const val = parseFloat(r.amount);
-                let catName = r.category.replace('_', ' ').toUpperCase();
-                let displayNote = r.note;
+                const val = parseFloat(r.amount) || 0;
+                let catName = (r.category || "").toString().replace('_', ' ').toUpperCase();
+                let noteStr = (r.note || "").toString();
+                let displayNote = noteStr;
 
                 if (r.type === 'ADVANCE' || r.type === 'BALANCE') {
-                    const parts = r.note.split('|');
+                    const parts = noteStr.split('|');
                     displayNote = "Code: <strong style='color:var(--text-main)'>" + parts[0] + "</strong> | " + (parts[1] || '');
                     if(r.type === 'ADVANCE') displayNote += " <span style='color:var(--info); font-weight:600;'>(Advance)</span>";
                     if(r.type === 'BALANCE') displayNote += " <span style='color:var(--success); font-weight:600;'>(Balance Paid)</span>";
@@ -669,16 +739,18 @@
 
                 let actionBtns = r.id ? `<div class="action-btns"><button onclick="deleteEntry('${r.id}')">🗑️</button></div>` : "";
                 if(r.type === 'INCOME' || r.type === 'EXPENSE') {
-                    actionBtns = r.id ? `<div class="action-btns"><button onclick="editEntry('${r.id}', '${r.type}', '${r.category}', '${r.amount}', '${r.note}')">✏️</button><button onclick="deleteEntry('${r.id}')">🗑️</button></div>` : "";
+                    actionBtns = r.id ? `<div class="action-btns"><button onclick="editEntry('${r.id}', '${r.type}', '${r.category}', '${r.amount}', '${noteStr}')">✏️</button><button onclick="deleteEntry('${r.id}')">🗑️</button></div>` : "";
                 }
+
+                let timeStr = rDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
                 if (r.type !== 'BILL') {
                     if(r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') todayIncome += val;
                     let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : 'amount-out';
                     let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-';
-                    htmlHome += `<div class="record-item" id="row-${r.id}"><div class="record-details"><strong>${catName}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${rDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div><div style="display:flex; align-items:center;"><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
+                    htmlHome += `<div class="record-item" id="row-${r.id}"><div class="record-details"><strong>${catName}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div><div style="display:flex; align-items:center;"><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
                 } else {
-                    htmlBills += `<div class="record-item" id="row-${r.id}"><div class="record-details"><strong>${catName}</strong><span>${r.note}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${rDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</span></div><div style="display:flex; align-items:center;"><div class="amount-bill">- Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
+                    htmlBills += `<div class="record-item" id="row-${r.id}"><div class="record-details"><strong>${catName}</strong><span>${noteStr}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div><div style="display:flex; align-items:center;"><div class="amount-bill">- Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
                 }
             }
         });
@@ -689,8 +761,6 @@
 
         renderReports(); 
     }
-
-    // --- INSTANT ACTION FUNCTIONS ---
 
     function saveData() {
         const amtInput = document.getElementById('amt');
@@ -708,7 +778,6 @@
             finalNote = noteTxt || "-";
         }
 
-        const isEdit = !!editingId;
         const targetId = editingId || ("ID_" + Date.now());
         const newData = {
             id: targetId,
@@ -719,7 +788,7 @@
             category: currentCat
         };
 
-        if (isEdit) {
+        if (editingId) {
             const index = localData.findIndex(x => x.id === editingId);
             if (index > -1) {
                 newData.date = localData[index].date; 
@@ -730,7 +799,7 @@
         }
 
         renderData(); 
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: isEdit ? 'edit' : 'add', ...newData }) });
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: editingId ? 'edit' : 'add', ...newData }) });
         
         amtInput.value = ""; 
         cancelEdit();
@@ -745,7 +814,6 @@
         const btn = document.getElementById('save-bill-btn');
         if(!amtInput.value) return alert("Please enter bill amount!");
         
-        const isEdit = !!editingId;
         const targetId = editingId || ("ID_" + Date.now());
         const newData = {
             id: targetId,
@@ -756,7 +824,7 @@
             category: currentBillCat
         };
 
-        if (isEdit) {
+        if (editingId) {
             const index = localData.findIndex(x => x.id === editingId);
             if (index > -1) { newData.date = localData[index].date; localData[index] = newData; }
         } else {
@@ -764,12 +832,12 @@
         }
 
         renderData();
-        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: isEdit ? 'edit' : 'add', ...newData }) });
+        fetch(scriptURL, { method: 'POST', mode: 'no-cors', body: JSON.stringify({ action: editingId ? 'edit' : 'add', ...newData }) });
         
         amtInput.value = ""; noteInput.value = "";
         btn.innerText = "✅ Bill Saved!";
         btn.style.background = "linear-gradient(135deg, #10b981, #059669)";
-        if(isEdit) cancelBillEdit();
+        if(editingId) cancelBillEdit();
         setTimeout(() => { btn.innerText = "💾 Save Bill"; btn.style.background = "linear-gradient(135deg, #f59e0b, #d97706)"; }, 1500);
     }
 
@@ -853,9 +921,8 @@
         }
     }
 
-    // --- UTILS ---
     function editEntry(id, type, cat, amt, note) {
-        showTab('entry');
+        showTabByIndex(0); 
         editingId = id;
         document.getElementById('amt').value = amt;
         setType(type);
@@ -932,7 +999,10 @@
         let reversedData = [...localData].reverse();
         
         reversedData.forEach(r => {
-            const rDate = new Date(r.date);
+            if(!r) return;
+            let rDate = new Date(r.date);
+            if(isNaN(rDate.getTime())) return;
+
             const rMonthStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0');
             const rDateStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0') + "-" + String(rDate.getDate()).padStart(2, '0');
             
@@ -941,7 +1011,9 @@
             if(!monthInput && dateInput && rDateStr === dateInput) matchDate = true;
 
             if(matchDate) {
-                const val = parseFloat(r.amount);
+                const val = parseFloat(r.amount) || 0;
+                let noteStr = r.note ? String(r.note) : "-";
+                let categoryStr = (r.category || "").toString().replace('_', ' ').toUpperCase();
                 
                 if(r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') totalProfit += val; 
                 else if(r.type === 'EXPENSE') totalProfit -= val;
@@ -956,13 +1028,13 @@
                     let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : (r.type === 'EXPENSE' ? 'amount-out' : 'amount-bill');
                     let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-';
                     
-                    let displayNote = r.note;
+                    let displayNote = noteStr;
                     if (r.type === 'ADVANCE' || r.type === 'BALANCE') {
-                        const parts = r.note.split('|');
+                        const parts = noteStr.split('|');
                         displayNote = "Code: <strong style='color:var(--text-main)'>" + parts[0] + "</strong> | " + (parts[1] || '');
                     }
 
-                    html += `<div class="record-item"><div class="record-details"><strong>${r.category.replace('_', ' ').toUpperCase()}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${r.date}</span></div><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div></div>`;
+                    html += `<div class="record-item"><div class="record-details"><strong>${categoryStr}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${r.date}</span></div><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div></div>`;
                 }
             }
         });
