@@ -547,7 +547,7 @@
     let localData = [];
     let billBuffer = []; 
     let currentGeneratedBillData = null;
-    let isSeqIncremented = false; // Bug fix helper
+    let isSeqIncremented = false; 
 
     const swipeWrapper = document.getElementById('swipe-wrapper');
     const tabsArr = ['tab-entry', 'tab-orders', 'tab-invoice', 'tab-bills', 'tab-reports'];
@@ -1129,36 +1129,53 @@
         const filename = currentGeneratedBillData ? `LioraBill_${currentGeneratedBillData.id}.png` : 'LioraBill.png';
 
         html2canvas(previewElement, { scale: 3, logging: false, useCORS: true }).then(canvas => {
-            canvas.toBlob(blob => {
-                const blobUrl = URL.createObjectURL(blob);
+            const dataUrl = canvas.toDataURL("image/png");
+            
+            const modalHtml = `
+            <div id="img-save-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter: blur(5px);">
                 
-                const modalHtml = `
-                <div id="img-save-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter: blur(5px);">
-                    <p style="color:#10b981; font-weight:800; font-size:18px; text-align:center; margin-bottom:15px;">✅ Bill Ready!</p>
-                    
-                    <div style="max-height:45vh; overflow:auto; border-radius:10px; box-shadow:0 10px 30px rgba(232,30,109,0.3); margin-bottom:20px; border: 2px solid white; background: white;">
-                        <img src="${blobUrl}" style="max-width:100%; height:auto; display:block; touch-action:default; -webkit-touch-callout:default; pointer-events:auto;">
-                    </div>
-                    
-                    <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px;">
-                        
-                        <a href="${blobUrl}" download="${filename}" onclick="playTabSound(); incrementInvoiceSeqOnce();" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #e81e6d, #ff5e98); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(232,30,109,0.4); cursor:pointer; text-align:center; text-decoration:none; display:block;">⬇️ Download Image</a>
-                        
-                        <button onclick="nativeShareImage('${blobUrl}', '${filename}')" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #3b82f6, #2563eb); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(59,130,246,0.4); cursor:pointer;">📤 Share to Apps</button>
-                        
-                        <button onclick="saveAsPdf()" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #10b981, #059669); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(16,185,129,0.4); cursor:pointer;">🖨️ Save as PDF</button>
-
-                        <button onclick="closeSaveModal()" style="padding:14px; border-radius:12px; border:none; background:#333; color:white; font-weight:bold; font-size:15px; cursor:pointer; margin-top:5px;">❌ Close</button>
-                    </div>
-                </div>`;
+                <p style="color:#10b981; font-weight:800; font-size:18px; text-align:center; margin-bottom:10px;">✅ Bill Ready!</p>
+                <p style="color:white; margin-bottom:15px; font-size:12px; text-align:center; line-height: 1.5;">
+                    පහතින් <b>Download</b> හෝ <b>Save as PDF</b> දෙන්න.<br>
+                    <span style="color:#ff99c2; font-size:11px;">(ඇප් එකෙන් Download වුණේ නැත්නම් PDF දෙන්න)</span>
+                </p>
                 
-                document.body.insertAdjacentHTML('beforeend', modalHtml);
+                <div style="max-height:45vh; overflow:auto; border-radius:10px; box-shadow:0 10px 30px rgba(232,30,109,0.3); margin-bottom:20px; border: 2px solid white; background: white;">
+                    <img src="${dataUrl}" style="max-width:100%; height:auto; display:block; -webkit-touch-callout:default; pointer-events:auto; user-select:auto;">
+                </div>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px;">
+                    
+                    <button onclick="forceDownloadImage('${dataUrl}', '${filename}')" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #e81e6d, #ff5e98); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(232,30,109,0.4); cursor:pointer;">⬇️ Download Image</button>
+                    
+                    <button onclick="saveAsPdf()" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #10b981, #059669); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(16,185,129,0.4); cursor:pointer;">🖨️ Save as PDF</button>
 
-            }, 'image/png');
+                    <button onclick="closeSaveModal()" style="padding:14px; border-radius:12px; border:none; background:#333; color:white; font-weight:bold; font-size:15px; cursor:pointer; margin-top:5px;">❌ Close</button>
+                </div>
+            </div>`;
+            
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
         }).catch(err => {
             console.error("Error:", err);
             alert("Error preparing bill.");
         });
+    }
+
+    function forceDownloadImage(dataUrl, filename) {
+        playTabSound();
+        incrementInvoiceSeqOnce();
+        
+        try {
+            const link = document.createElement('a');
+            link.href = dataUrl;
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        } catch(e) {
+            console.error("Download failed", e);
+        }
     }
 
     function incrementInvoiceSeqOnce() {
@@ -1168,32 +1185,10 @@
         }
     }
 
-    async function nativeShareImage(blobUrl, filename) {
-        playTabSound();
-        try {
-            const response = await fetch(blobUrl);
-            const blob = await response.blob();
-            const file = new File([blob], filename, { type: blob.type });
-
-            if (navigator.share && navigator.canShare({ files: [file] })) {
-                await navigator.share({
-                    files: [file],
-                    title: 'Liora Fashion Bill',
-                    text: 'Here is your invoice from Liora Fashion.'
-                });
-                incrementInvoiceSeqOnce();
-            } else {
-                alert("ෆෝන් එකේ Share පහසුකම මේ ඇප් එකට සපෝට් කරන්නේ නෑ. කරුණාකර 'Download' හෝ 'Save as PDF' පාවිච්චි කරන්න.");
-            }
-        } catch (e) {
-            alert("ෂෙයාර් කිරීමේ දෝෂයක්. කරුණාකර 'Download' හෝ 'Save as PDF' පාවිච්චි කරන්න.");
-        }
-    }
-
     function saveAsPdf() {
         playTabSound();
         incrementInvoiceSeqOnce();
-        window.print();
+        window.print(); // Fully supported by WebIntoApp
     }
 
     function closeSaveModal() {
