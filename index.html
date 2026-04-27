@@ -422,13 +422,13 @@
                 
                 <div id="invoice-instruction" style="display:none; text-align:center; color:var(--primary); font-size:12px; font-weight:bold; margin-top:5px; animation: fadeIn 1s infinite alternate;">👆 Tap the bill to view Full Screen for Screenshot!</div>
 
-                <div id="invoice-action-btns" style="margin-top: 15px; display: none; gap: 10px;">
-                    <button class="btn-action" style="background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; font-size: 14px;" onclick="sendWhatsAppInvoice()">📱 WhatsApp</button>
+                <div id="invoice-action-btns" style="margin-top: 15px; display: none; flex-direction: column; gap: 10px;">
+                    <button class="btn-action" style="background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; font-size: 15px;" onclick="sendWhatsAppInvoice()">📱 Send WhatsApp Message</button>
                 </div>
             </div>
         </div>
 
-        <div id="fullscreen-modal" class="fullscreen-modal" style="display:none;" onclick="closeFullscreen()">
+        <div id="fullscreen-modal" class="fullscreen-modal" style="display:none;" onclick="history.back()">
              </div>
 
         <div id="tab-bills" class="swipe-tab">
@@ -555,6 +555,16 @@
         }
     }
 
+    // --- Native Back Button Handling for Fullscreen Modal ---
+    window.addEventListener('popstate', function(event) {
+        const fsModal = document.getElementById('fullscreen-modal');
+        if (fsModal && fsModal.style.display === 'flex') {
+            fsModal.style.display = 'none';
+            if (document.fullscreenElement) {
+                document.exitFullscreen().catch(e => {});
+            }
+        }
+    });
 
     // --- APP LOGIC ---
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxiNrs-TuIUmAYkefTKcXyZfeFqaoh_TLoeRDdiS5h5oGNs24E_6-_n0M_9HZTwHJhl/exec';
@@ -859,7 +869,7 @@
             playDeleteSound();
             billBuffer = [];
             currentGeneratedBillData = null;
-            isSeqIncremented = false; 
+            isSeqIncremented = false; // Reset incrementer
             document.getElementById('invoice-bill-name').value = '';
             document.getElementById('invoice-bill-whatsapp').value = '';
             setAutoInvoiceId();
@@ -1165,35 +1175,16 @@
             <div class="fullscreen-bill-container" onclick="event.stopPropagation()">
                 ${billContent}
             </div>
-            <div style="margin-top: 30px; color: var(--text-muted); font-size: 13px; font-weight: 800; text-align: center; background: #f9f5f7; padding: 12px 30px; border-radius: 20px; border: 1px solid var(--border);" onclick="closeFullscreen()">
-                ❌ CLOSE / ආපසු
-            </div>
-            <div style="margin-top: 15px; color: #ccc; font-size: 11px; text-align: center; max-width: 250px; line-height: 1.4;">
-                Take your Screenshot now.<br>(Tap the close button when done)
-            </div>
         `;
         
         fsModal.style.display = 'flex';
+        history.pushState({ modalOpen: true }, "");
         
         if (fsModal.requestFullscreen) { fsModal.requestFullscreen().catch(e => console.log(e)); } 
         else if (fsModal.webkitRequestFullscreen) { fsModal.webkitRequestFullscreen(); } 
         else if (fsModal.msRequestFullscreen) { fsModal.msRequestFullscreen(); }
         
         incrementInvoiceSeqOnce();
-    }
-
-    function closeFullscreen() {
-        playPopSound();
-        const fsModal = document.getElementById('fullscreen-modal');
-        fsModal.style.display = 'none';
-        
-        if (document.fullscreenElement) {
-            document.exitFullscreen().catch(e => console.log(e));
-        } else if (document.webkitExitFullscreen) {
-            document.webkitExitFullscreen();
-        } else if (document.msExitFullscreen) {
-            document.msExitFullscreen();
-        }
     }
 
     function incrementInvoiceSeqOnce() {
