@@ -180,6 +180,7 @@
         input:checked + .slider { background-color: var(--primary); }
         input:checked + .slider:before { transform: translateX(20px); }
 
+        /* PURE WHITE & PINK TWO-COLOR INVOICE STYLES */
         #invoice-preview-capture { background: #ffffff; padding: 15px; border-radius: 8px; }
         #invoice-preview { width: 100%; font-family: 'Inter', sans-serif; background: #ffffff; padding: 30px; border: 2px solid var(--primary); display: none; color: var(--primary); }
         
@@ -209,6 +210,14 @@
 
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Print styles for PDF saving */
+        @media print {
+            body * { visibility: hidden; }
+            #invoice-preview-capture, #invoice-preview-capture * { visibility: visible; }
+            #invoice-preview-capture { position: absolute; left: 0; top: 0; width: 100%; }
+            #img-save-modal { display: none !important; }
+        }
 
     </style>
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -400,7 +409,7 @@
 
                 <div id="invoice-action-btns" style="margin-top: 15px; display: none; gap: 10px;">
                     <button class="btn-action" style="background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; font-size: 14px;" onclick="sendWhatsAppInvoice()">📱 WhatsApp</button>
-                    <button class="btn-action" style="background:var(--primary-gradient); font-size: 14px;" onclick="downloadInvoiceImage()">⬇️ Save / Share</button>
+                    <button class="btn-action" style="background:var(--primary-gradient); font-size: 14px;" onclick="openSaveModal()">⬇️ Save / Share</button>
                 </div>
             </div>
         </div>
@@ -1106,35 +1115,72 @@
         document.getElementById('invoice-action-btns').style.display = 'none';
     }
 
-    function downloadInvoiceImage() {
+    // --- 100% BULLETPROOF IMAGE SAVE LOGIC FOR ANDROID WEBVIEW ---
+    let currentImageFile = null;
+
+    function openSaveModal() {
         if(!document.getElementById('invoice-preview-capture')) { playPopSound(); return alert("මුලින්ම බිල් එක Generate කරන්න!"); }
         playSuccessSound(); 
         
         const previewElement = document.getElementById('invoice-preview-capture');
         const filename = currentGeneratedBillData ? `LioraBill_${currentGeneratedBillData.id}.png` : 'LioraBill.png';
 
-        html2canvas(previewElement, { scale: 3, logging: false, useCORS: true }).then(canvas => {
-            canvas.toBlob(function(blob) {
-                const url = window.URL.createObjectURL(blob);
-                const link = document.createElement('a');
-                link.style.display = 'none';
-                link.href = url;
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
+        html2canvas(previewElement, { scale: 2, logging: false, useCORS: true }).then(canvas => {
+            canvas.toBlob(blob => {
+                const dataUrl = URL.createObjectURL(blob);
+                currentImageFile = new File([blob], filename, { type: "image/png" });
                 
-                setTimeout(() => {
-                    document.body.removeChild(link);
-                    window.URL.revokeObjectURL(url);
-                    if(currentGeneratedBillData) {
-                        incrementInvoiceSeq(currentGeneratedBillData.id);
-                    }
-                }, 200);
+                const modalHtml = `
+                <div id="img-save-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter: blur(5px);">
+                    <p style="color:#10b981; font-weight:800; font-size:18px; text-align:center; margin-bottom:15px;">✅ Bill Ready!</p>
+                    
+                    <div style="max-height:50vh; overflow:auto; border-radius:10px; box-shadow:0 10px 30px rgba(232,30,109,0.3); margin-bottom:25px; border: 2px solid white;">
+                        <img src="${dataUrl}" style="max-width:100%; height:auto; display:block;">
+                    </div>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 300px;">
+                        <button onclick="nativeShareImage()" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #3b82f6, #2563eb); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(59,130,246,0.4); cursor:pointer;">📤 Share / Save to Phone</button>
+                        
+                        <button onclick="saveAsPdf()" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #10b981, #059669); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(16,185,129,0.4); cursor:pointer;">🖨️ Save as PDF</button>
+
+                        <button onclick="closeSaveModal()" style="padding:14px; border-radius:12px; border:none; background:#333; color:white; font-weight:bold; font-size:15px; cursor:pointer;">❌ Close</button>
+                    </div>
+                </div>`;
+                
+                document.body.insertAdjacentHTML('beforeend', modalHtml);
+
             }, 'image/png');
         }).catch(err => {
-            console.error("Image generation error:", err);
-            alert("Error saving bill. Please try again.");
+            console.error("Error:", err);
+            alert("Error preparing bill.");
         });
+    }
+
+    function nativeShareImage() {
+        playTabSound();
+        if (navigator.share && currentImageFile) {
+            navigator.share({
+                files: [currentImageFile],
+                title: 'Liora Fashion Bill',
+                text: 'Here is your invoice from Liora Fashion.'
+            }).then(() => {
+                if(currentGeneratedBillData) incrementInvoiceSeq(currentGeneratedBillData.id);
+            }).catch(e => console.log("Share cancelled/failed"));
+        } else {
+            alert("Share feature not supported on this device/app.");
+        }
+    }
+
+    function saveAsPdf() {
+        playTabSound();
+        window.print();
+        if(currentGeneratedBillData) incrementInvoiceSeq(currentGeneratedBillData.id);
+    }
+
+    function closeSaveModal() {
+        playPopSound();
+        const m = document.getElementById('img-save-modal');
+        if(m) m.remove();
     }
 
 </script>
