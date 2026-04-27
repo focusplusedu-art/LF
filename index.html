@@ -181,8 +181,10 @@
         input:checked + .slider:before { transform: translateX(20px); }
 
         /* PURE WHITE & PINK TWO-COLOR INVOICE STYLES */
-        #invoice-preview-capture { background: #ffffff; padding: 15px; border-radius: 8px; }
-        #invoice-preview { width: 100%; font-family: 'Inter', sans-serif; background: #ffffff; padding: 30px; border: 2px solid var(--primary); display: none; color: var(--primary); }
+        #invoice-preview-capture { background: #ffffff; padding: 15px; border-radius: 8px; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(232, 30, 109, 0.1); border: 2px dashed var(--primary-light); }
+        #invoice-preview-capture:active { transform: scale(0.98); }
+        
+        #invoice-preview { width: 100%; font-family: 'Inter', sans-serif; background: #ffffff; padding: 25px; border: 2px solid var(--primary); display: none; color: var(--primary); border-radius: 8px; }
         
         #invoice-header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 20px; margin-bottom: 20px; }
         #invoice-shop-logo { height: 65px; margin: 0 auto 12px auto; display: block; border-radius: 8px; }
@@ -211,21 +213,27 @@
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        @media print {
-            body * { visibility: hidden; }
-            #invoice-preview-capture, #invoice-preview-capture * { visibility: visible; }
-            #invoice-preview-capture { position: absolute; left: 0; top: 0; width: 100%; }
-            #img-save-modal { display: none !important; }
+        /* FULLSCREEN SCREENSHOT MODAL */
+        .fullscreen-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #ffffff;
+            z-index: 999999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            overflow-y: auto;
+        }
+        .fullscreen-bill-container {
+            width: 100%;
+            max-width: 450px;
+            background: #ffffff;
+            padding: 20px;
         }
 
-        /* WebView specific modal button styles */
-        .modal-btn { display: block; width: 100%; padding: 14px; border-radius: 12px; font-weight: bold; font-size: 15px; text-align: center; text-decoration: none; border: none; cursor: pointer; margin-bottom: 10px; }
-        .btn-download-direct { background: linear-gradient(135deg, #e81e6d, #ff5e98); color: white; box-shadow: 0 4px 10px rgba(232,30,109,0.4); }
-        .btn-share { background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; box-shadow: 0 4px 10px rgba(59,130,246,0.4); }
-        .btn-pdf { background: linear-gradient(135deg, #10b981, #059669); color: white; box-shadow: 0 4px 10px rgba(16,185,129,0.4); }
-
     </style>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 <body>
 
@@ -411,13 +419,17 @@
                 <div id="invoice-preview-area">
                     <p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #f9f5f7; padding: 15px; border-radius: 12px;">Add items in Home Tab with "Prepare Bill" ON, or Pay an Order Balance to see the bill here.</p>
                 </div>
+                
+                <div id="invoice-instruction" style="display:none; text-align:center; color:var(--primary); font-size:12px; font-weight:bold; margin-top:5px; animation: fadeIn 1s infinite alternate;">👆 Tap the bill to view Full Screen for Screenshot!</div>
 
                 <div id="invoice-action-btns" style="margin-top: 15px; display: none; gap: 10px;">
                     <button class="btn-action" style="background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; font-size: 14px;" onclick="sendWhatsAppInvoice()">📱 WhatsApp</button>
-                    <button class="btn-action" style="background:var(--primary-gradient); font-size: 14px;" onclick="openSaveModal()">⬇️ Save / Share</button>
                 </div>
             </div>
         </div>
+
+        <div id="fullscreen-modal" class="fullscreen-modal" style="display:none;" onclick="closeFullscreen()">
+             </div>
 
         <div id="tab-bills" class="swipe-tab">
             <div class="card" style="border-top: 4px solid var(--warning);">
@@ -493,9 +505,16 @@
 </div>
 
 <script>
-    // --- SOUND EFFECTS ---
+    // --- SOUND EFFECTS (Web Audio API) ---
     let audioCtx;
-    function initAudio() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } if (audioCtx.state === 'suspended') audioCtx.resume(); }
+    function initAudio() {
+        if (!audioCtx) {
+            const AudioContext = window.AudioContext || window.webkitAudioContext;
+            audioCtx = new AudioContext();
+        }
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+    }
+
     function playTabSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'triangle'; osc.frequency.setValueAtTime(400, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); osc.start(); osc.stop(audioCtx.currentTime + 0.05); } catch(e) {} }
     function playBubbleSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} }
     function playSuccessSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); } catch(e) {} }
@@ -506,56 +525,77 @@
 
     function togglePrepareBillSound() { playPopSound(); }
 
-    // --- AUTO-SAVE CUSTOMER PHONE ---
+    // --- AUTO-SAVE CUSTOMER PHONE LOGIC ---
     let customerDirectory = JSON.parse(localStorage.getItem('liora_customers')) || {};
+
     function saveCustomerInfo(name, phone) {
         if(name && phone && phone.length >= 9) {
             customerDirectory[name.trim().toUpperCase()] = phone.trim();
             localStorage.setItem('liora_customers', JSON.stringify(customerDirectory));
         }
     }
+
     function searchPhoneByName(nameInputId, phoneInputId) {
         let name = document.getElementById(nameInputId).value.trim().toUpperCase();
-        if(customerDirectory[name]) document.getElementById(phoneInputId).value = customerDirectory[name];
+        if(customerDirectory[name]) {
+            document.getElementById(phoneInputId).value = customerDirectory[name];
+        }
     }
 
-    // --- INVOICE AUTO NUMBER ---
+    // --- INVOICE AUTO NUMBER LOGIC ---
     function setAutoInvoiceId() {
         let nextId = parseInt(localStorage.getItem('liora_inv_seq')) || 1;
         document.getElementById('invoice-id-input').value = nextId;
     }
+
     function incrementInvoiceSeq(usedId) {
         let currentSeq = parseInt(localStorage.getItem('liora_inv_seq')) || 1;
-        if (parseInt(usedId) === currentSeq) localStorage.setItem('liora_inv_seq', currentSeq + 1);
+        if (parseInt(usedId) === currentSeq) {
+            localStorage.setItem('liora_inv_seq', currentSeq + 1);
+        }
     }
+
 
     // --- APP LOGIC ---
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxiNrs-TuIUmAYkefTKcXyZfeFqaoh_TLoeRDdiS5h5oGNs24E_6-_n0M_9HZTwHJhl/exec';
 
-    let editingId = null; let globalMaxOrderId = 1000; let localData = []; let billBuffer = []; let currentGeneratedBillData = null; let isSeqIncremented = false; 
+    let editingId = null; 
+    let globalMaxOrderId = 1000;
+    let localData = [];
+    let billBuffer = []; 
+    let currentGeneratedBillData = null;
+    let isSeqIncremented = false; 
 
     const swipeWrapper = document.getElementById('swipe-wrapper');
     const tabsArr = ['tab-entry', 'tab-orders', 'tab-invoice', 'tab-bills', 'tab-reports'];
     const tabBtns = ['tab-btn-entry', 'tab-btn-orders', 'tab-btn-invoice', 'tab-btn-bills', 'tab-btn-reports'];
-    let currentTabIndex = 0; let containerWidth = 0;
+    let currentTabIndex = 0;
+    let containerWidth = 0;
     
     let touchStartX = 0; let touchStartY = 0; let touchMoveX = 0; let isSwiping = false; let isVerticalScroll = false; 
 
     function setupSwipeGestures() {
         let mainApp = document.getElementById('main-app');
         containerWidth = mainApp.offsetWidth;
-        window.addEventListener('resize', () => { containerWidth = document.getElementById('main-app').offsetWidth; updateTabPosition(currentTabIndex, false); });
+
+        window.addEventListener('resize', () => { 
+            containerWidth = document.getElementById('main-app').offsetWidth; 
+            updateTabPosition(currentTabIndex, false); 
+        });
+
         swipeWrapper.addEventListener('touchstart', e => {
-            if(e.target.closest('.bubble-scroll-container') || e.target.closest('input') || e.target.closest('select') || e.target.closest('#invoice-preview-area')) return;
+            if(e.target.closest('.bubble-scroll-container') || e.target.closest('input') || e.target.closest('select') || e.target.closest('#invoice-preview-capture')) return;
             isSwiping = true; isVerticalScroll = false;
             touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; touchMoveX = touchStartX;
         }, {passive: true});
+
         swipeWrapper.addEventListener('touchmove', e => {
             if (!isSwiping) return;
             let currentX = e.touches[0].clientX; let currentY = e.touches[0].clientY;
             let diffX = currentX - touchStartX; let diffY = currentY - touchStartY;
             if (!isVerticalScroll && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 5) {
-                isVerticalScroll = true; isSwiping = false; swipeWrapper.classList.remove('swiping'); updateTabPosition(currentTabIndex, false); return;
+                isVerticalScroll = true; isSwiping = false; 
+                swipeWrapper.classList.remove('swiping'); updateTabPosition(currentTabIndex, false); return;
             }
             if (!isVerticalScroll && Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 5) {
                 swipeWrapper.classList.add('swiping'); touchMoveX = currentX;
@@ -563,6 +603,7 @@
                 swipeWrapper.style.transform = `translateX(${currentTranslation}px)`;
             }
         }, {passive: true});
+
         swipeWrapper.addEventListener('touchend', e => {
             if (!isSwiping) return;
             isSwiping = false; swipeWrapper.classList.remove('swiping');
@@ -576,7 +617,9 @@
 
     function showTabByIndex(index) {
         currentTabIndex = index;
-        tabBtns.forEach((btnId, i) => { if(document.getElementById(btnId)) document.getElementById(btnId).classList.toggle('active', i === index); });
+        tabBtns.forEach((btnId, i) => {
+            if(document.getElementById(btnId)) document.getElementById(btnId).classList.toggle('active', i === index);
+        });
         updateTabPosition(index, true);
         if(editingId) cancelEdit(); 
         if(localData.length > 0) renderData(); 
@@ -616,15 +659,23 @@
     }
 
     function initBubbles(selectId, containerId, tabType) {
-        const selectEl = document.getElementById(selectId); const container = document.getElementById(containerId); let html = '';
-        for(let i=1; i<selectEl.options.length; i++) { let opt = selectEl.options[i]; html += `<div class="bubble-item" data-val="${opt.value}" onclick="playBubbleSound(); selectBubble('${tabType}', '${opt.value}', this)">${opt.text}</div>`; }
+        const selectEl = document.getElementById(selectId);
+        const container = document.getElementById(containerId);
+        let html = '';
+        for(let i=1; i<selectEl.options.length; i++) {
+            let opt = selectEl.options[i];
+            html += `<div class="bubble-item" data-val="${opt.value}" onclick="playBubbleSound(); selectBubble('${tabType}', '${opt.value}', this)">${opt.text}</div>`;
+        }
         container.innerHTML = html;
     }
 
     function selectBubble(tab, val, el) {
-        let containerId = tab === 'home' ? 'home-bubbles' : 'ord-bubbles'; let selectId = tab === 'home' ? 'note-select' : 'ord-item';
+        let containerId = tab === 'home' ? 'home-bubbles' : 'ord-bubbles';
+        let selectId = tab === 'home' ? 'note-select' : 'ord-item';
+
         document.querySelectorAll(`#${containerId} .bubble-item`).forEach(b => b.classList.remove('selected'));
         if(el) { el.classList.add('selected'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
+        
         document.getElementById(selectId).value = val;
         if(tab === 'home') handleNoteSelect(); else handleOrdItemSelect();
     }
@@ -638,21 +689,30 @@
     function syncBubbles(selectId, containerId) {
         const val = document.getElementById(selectId).value;
         document.querySelectorAll(`#${containerId} .bubble-item`).forEach(b => {
-            if(b.getAttribute('data-val') === val) { b.classList.add('selected'); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } else { b.classList.remove('selected'); }
+            if(b.getAttribute('data-val') === val) {
+                b.classList.add('selected'); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+            } else { b.classList.remove('selected'); }
         });
     }
 
     function searchOrders() {
-        let input = document.getElementById('search-order').value.toUpperCase(); let items = document.querySelectorAll('#pending-orders-list .record-item');
-        items.forEach(item => { let text = item.innerText.toUpperCase(); item.style.display = text.indexOf(input) > -1 ? 'flex' : 'none'; });
+        let input = document.getElementById('search-order').value.toUpperCase();
+        let items = document.querySelectorAll('#pending-orders-list .record-item');
+        items.forEach(item => {
+            let text = item.innerText.toUpperCase();
+            item.style.display = text.indexOf(input) > -1 ? 'flex' : 'none';
+        });
     }
 
     let currentType = 'INCOME'; let currentCat = 'Tailoring'; let currentBillCat = 'Fabric_Bill';
 
     function setType(t) {
         currentType = t;
-        document.getElementById('btn-in').className = t==='INCOME' ? 'active-in' : ''; document.getElementById('btn-out').className = t==='EXPENSE' ? 'active-out' : '';
-        document.getElementById('grid-income').style.display = t==='INCOME' ? 'grid' : 'none'; document.getElementById('grid-expense').style.display = t==='EXPENSE' ? 'grid' : 'none';
+        document.getElementById('btn-in').className = t==='INCOME' ? 'active-in' : '';
+        document.getElementById('btn-out').className = t==='EXPENSE' ? 'active-out' : '';
+        document.getElementById('grid-income').style.display = t==='INCOME' ? 'grid' : 'none';
+        document.getElementById('grid-expense').style.display = t==='EXPENSE' ? 'grid' : 'none';
+        
         const txt = document.getElementById('note-text');
         if(t === 'INCOME') { setCat('Tailoring'); document.getElementById('home-bubbles').style.display = 'flex'; handleNoteSelect(); } 
         else { setCat('Shop'); document.getElementById('home-bubbles').style.display = 'none'; txt.style.display = 'block'; txt.placeholder = "Type Expense Detail..."; txt.value = ""; }
@@ -661,7 +721,8 @@
     function setCat(c) {
         currentCat = c;
         document.querySelectorAll('#grid-income .cat-item, #grid-expense .cat-item').forEach(el => el.classList.remove('selected'));
-        const catElement = document.getElementById('cat-' + c); if(catElement) catElement.classList.add('selected');
+        const catElement = document.getElementById('cat-' + c);
+        if(catElement) catElement.classList.add('selected');
     }
 
     function handleNoteSelect() {
@@ -677,12 +738,14 @@
     function setBillCat(c) {
         currentBillCat = c;
         document.querySelectorAll('#grid-bill .cat-item').forEach(el => el.classList.remove('selected'));
-        const catElement = document.getElementById('cat-' + c); if(catElement) catElement.classList.add('selected');
+        const catElement = document.getElementById('cat-' + c);
+        if(catElement) catElement.classList.add('selected');
     }
 
     async function fetchInitialData() {
         try {
-            const response = await fetch(scriptURL); const data = await response.json();
+            const response = await fetch(scriptURL);
+            const data = await response.json();
             if(Array.isArray(data)) { localData = data; } else { localData = []; }
             renderData();
         } catch (error) { document.getElementById('home-today-list').innerHTML = "<p style='text-align:center; color: var(--danger); font-weight:600;'>Offline or Sync Error. Try reloading.</p>"; }
@@ -796,11 +859,12 @@
             playDeleteSound();
             billBuffer = [];
             currentGeneratedBillData = null;
-            isSeqIncremented = false; // Reset incrementer
+            isSeqIncremented = false; 
             document.getElementById('invoice-bill-name').value = '';
             document.getElementById('invoice-bill-whatsapp').value = '';
             setAutoInvoiceId();
             document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #fff0f5; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">Cleared. Add new items with "Prepare Bill" ON.</p>`;
+            document.getElementById('invoice-instruction').style.display = 'none';
             document.getElementById('invoice-action-btns').style.display = 'none';
         }
     }
@@ -945,6 +1009,7 @@
             playPopSound(); 
             document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500; background: #fff0f5; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">No items in buffer! Turn ON "Prepare Bill" in Home tab and add items first.</p>`;
             document.getElementById('invoice-action-btns').style.display = 'none';
+            document.getElementById('invoice-instruction').style.display = 'none';
             return;
         }
 
@@ -971,6 +1036,7 @@
     function renderInvoicePreviewHTML() {
         const previewArea = document.getElementById('invoice-preview-area');
         const actionBtns = document.getElementById('invoice-action-btns');
+        const instruction = document.getElementById('invoice-instruction');
         const dateStr = new Date().toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' });
 
         let tableRows = '';
@@ -995,7 +1061,7 @@
         }
 
         const billHtml = `
-        <div id="invoice-preview-capture">
+        <div id="invoice-preview-capture" onclick="openFullscreen()">
             <div id="invoice-preview">
                 
                 <div id="invoice-header">
@@ -1029,9 +1095,11 @@
 
         previewArea.innerHTML = billHtml;
         document.getElementById('invoice-preview').style.display = 'block';
+        instruction.style.display = 'block';
         actionBtns.style.display = 'flex';
     }
 
+    // --- WHATSAPP PRO TEXT MESSAGE ---
     function sendWhatsAppInvoice() {
         if(!currentGeneratedBillData) { playPopSound(); return alert("මුලින්ම බිල් එක Generate කරන්න!"); }
         
@@ -1042,24 +1110,34 @@
 
         if (phone.startsWith("0")) { phone = "94" + phone.substring(1); } else if (phone.length === 9) { phone = "94" + phone; } phone = phone.replace("+", "");
 
-        let text = `🎀 *L I O R A  F A S H I O N* 🎀\n~ Smart Tailoring & Fashion ~\n\n`;
-        text += `Hello ${currentGeneratedBillData.name}, 👋\nHere is your order summary:\n\n`;
-        text += `✂️ *Order No:* #${currentGeneratedBillData.id}\n`;
-        text += `🛍️ *Items Ordered:*\n`;
-        currentGeneratedBillData.items.forEach(i => { text += `✔️ ${i.category}\n`; });
-        text += `\n💳 *Total Bill:* Rs. ${currentGeneratedBillData.total.toFixed(2)}\n`;
+        const dateStr = new Date().toLocaleDateString('en-GB');
         
-        if (currentGeneratedBillData.adv > 0) text += `✅ *Advance Paid:* Rs. ${currentGeneratedBillData.adv.toFixed(2)}\n`;
-        if (currentGeneratedBillData.paidNow > 0 && currentGeneratedBillData.paidNow !== currentGeneratedBillData.total && currentGeneratedBillData.adv !== currentGeneratedBillData.paidNow) text += `✅ *Paid Now:* Rs. ${currentGeneratedBillData.paidNow.toFixed(2)}\n`;
+        let text = `*🎀 L I O R A  F A S H I O N 🎀*\n~ Smart Tailoring & Fashion ~\n\n`;
+        text += `Hello *${currentGeneratedBillData.name}*, 👋\nHere is your official bill summary:\n\n`;
+        text += `🔖 *Bill No:* #${currentGeneratedBillData.id}\n`;
+        text += `📅 *Date:* ${dateStr}\n\n`;
+        text += `🛍️ *YOUR ITEMS:*\n`;
         
+        currentGeneratedBillData.items.forEach(i => { 
+            let noteText = (i.note && i.note !== "-") ? ` (${i.note})` : "";
+            text += `🔸 ${i.category}${noteText}\n`; 
+        });
+        
+        text += `\n💰 *Sub Total:* Rs. ${currentGeneratedBillData.total.toFixed(2)}\n`;
+        
+        if (currentGeneratedBillData.adv > 0) text += `💵 *Advance Paid:* Rs. ${currentGeneratedBillData.adv.toFixed(2)}\n`;
+        if (currentGeneratedBillData.paidNow > 0 && currentGeneratedBillData.paidNow !== currentGeneratedBillData.total && currentGeneratedBillData.adv !== currentGeneratedBillData.paidNow) text += `💵 *Paid Now:* Rs. ${currentGeneratedBillData.paidNow.toFixed(2)}\n`;
+        
+        text += `----------------------------------\n`;
         if (currentGeneratedBillData.bal > 0) {
-            text += `⚠️ *Balance Due:* Rs. ${currentGeneratedBillData.bal.toFixed(2)}\n\n`;
+            text += `🔴 *AMOUNT DUE: Rs. ${currentGeneratedBillData.bal.toFixed(2)}*\n`;
         } else {
-            text += `🎉 *Payment Status:* Fully Paid\n\n`;
+            text += `🟢 *AMOUNT DUE: Rs. 0.00 (Fully Paid)*\n`;
         }
+        text += `----------------------------------\n\n`;
         
-        text += `📞 +94 78 663 2336\n`;
-        text += `Thank you for choosing us! 💖`;
+        text += `Thank you for your business! 👗✂️\n`;
+        text += `📞 *+94 78 663 2336*`;
         
         let url = `https://wa.me/${phone}?text=${encodeURIComponent(text)}`;
         window.open(url, '_blank');
@@ -1070,48 +1148,52 @@
         document.getElementById('invoice-bill-name').value = '';
         document.getElementById('invoice-bill-whatsapp').value = '';
         setAutoInvoiceId();
-        document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #fff0f5; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">Invoice Sent! Ready for new bill.</p>`;
+        document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #fff0f5; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">WhatsApp Message Sent! Ready for new bill.</p>`;
+        document.getElementById('invoice-instruction').style.display = 'none';
         document.getElementById('invoice-action-btns').style.display = 'none';
     }
 
-    // --- 100% BUG FIX: BULLETPROOF SAVE MODAL FOR ANDROID WEBVIEW ---
-    function openSaveModal() {
-        if(!document.getElementById('invoice-preview-capture')) { playPopSound(); return alert("මුලින්ම බිල් එක Generate කරන්න!"); }
-        playSuccessSound(); 
+    // --- FULLSCREEN SCREENSHOT FEATURE ---
+    function openFullscreen() {
+        if(!currentGeneratedBillData) return;
+        playPopSound();
         
-        const previewElement = document.getElementById('invoice-preview-capture');
-        const filename = currentGeneratedBillData ? `LioraBill_${currentGeneratedBillData.id}.png` : 'LioraBill.png';
+        const fsModal = document.getElementById('fullscreen-modal');
+        const billContent = document.getElementById('invoice-preview').innerHTML;
+        
+        fsModal.innerHTML = `
+            <div class="fullscreen-bill-container" onclick="event.stopPropagation()">
+                ${billContent}
+            </div>
+            <div style="margin-top: 30px; color: var(--text-muted); font-size: 13px; font-weight: 800; text-align: center; background: #f9f5f7; padding: 12px 30px; border-radius: 20px; border: 1px solid var(--border);" onclick="closeFullscreen()">
+                ❌ CLOSE / ආපසු
+            </div>
+            <div style="margin-top: 15px; color: #ccc; font-size: 11px; text-align: center; max-width: 250px; line-height: 1.4;">
+                Take your Screenshot now.<br>(Tap the close button when done)
+            </div>
+        `;
+        
+        fsModal.style.display = 'flex';
+        
+        if (fsModal.requestFullscreen) { fsModal.requestFullscreen().catch(e => console.log(e)); } 
+        else if (fsModal.webkitRequestFullscreen) { fsModal.webkitRequestFullscreen(); } 
+        else if (fsModal.msRequestFullscreen) { fsModal.msRequestFullscreen(); }
+        
+        incrementInvoiceSeqOnce();
+    }
 
-        html2canvas(previewElement, { scale: 3, logging: false, useCORS: true }).then(canvas => {
-            const dataUrl = canvas.toDataURL("image/png");
-            
-            const modalHtml = `
-            <div id="img-save-modal" style="position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95); z-index:99999; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter: blur(5px);">
-                
-                <p style="color:#10b981; font-weight:800; font-size:18px; text-align:center; margin-bottom:15px;">✅ Bill Ready!</p>
-                
-                <div style="max-height:45vh; overflow:auto; border-radius:10px; box-shadow:0 10px 30px rgba(232,30,109,0.3); margin-bottom:20px; border: 2px solid white; background: white;">
-                    <img src="${dataUrl}" style="max-width:100%; height:auto; display:block; touch-action: auto; pointer-events: auto; -webkit-user-select: auto; user-select: auto; -webkit-touch-callout: default;">
-                </div>
-                
-                <div style="display: flex; flex-direction: column; gap: 10px; width: 100%; max-width: 300px;">
-                    
-                    <a href="${dataUrl}" download="${filename}" onclick="playTabSound(); incrementInvoiceSeqOnce();" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #e81e6d, #ff5e98); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(232,30,109,0.4); cursor:pointer; text-align:center; text-decoration:none; display:block;">⬇️ Download Image</a>
-                    
-                    <button onclick="nativeShareImage('${dataUrl}', '${filename}')" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #3b82f6, #2563eb); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(59,130,246,0.4); cursor:pointer;">📤 Share to Apps</button>
-                    
-                    <button onclick="saveAsPdf()" style="padding:14px; border-radius:12px; background:linear-gradient(135deg, #10b981, #059669); color:white; font-weight:bold; font-size:15px; border:none; box-shadow: 0 4px 10px rgba(16,185,129,0.4); cursor:pointer;">🖨️ Save as PDF</button>
-
-                    <button onclick="closeSaveModal()" style="padding:14px; border-radius:12px; border:none; background:#333; color:white; font-weight:bold; font-size:15px; cursor:pointer; margin-top:5px;">❌ Close</button>
-                </div>
-            </div>`;
-            
-            document.body.insertAdjacentHTML('beforeend', modalHtml);
-
-        }).catch(err => {
-            console.error("Error:", err);
-            alert("Error preparing bill.");
-        });
+    function closeFullscreen() {
+        playPopSound();
+        const fsModal = document.getElementById('fullscreen-modal');
+        fsModal.style.display = 'none';
+        
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(e => console.log(e));
+        } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+        } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
     }
 
     function incrementInvoiceSeqOnce() {
@@ -1119,41 +1201,6 @@
             incrementInvoiceSeq(currentGeneratedBillData.id);
             isSeqIncremented = true;
         }
-    }
-
-    // Attempt native share using fetch to blob
-    async function nativeShareImage(dataUrl, filename) {
-        playTabSound();
-        try {
-            const response = await fetch(dataUrl);
-            const blob = await response.blob();
-            const file = new File([blob], filename, { type: blob.type });
-
-            if (navigator.share && navigator.canShare({ files: [file] })) {
-                await navigator.share({
-                    files: [file],
-                    title: 'Liora Fashion Bill',
-                    text: 'Here is your invoice from Liora Fashion.'
-                });
-                incrementInvoiceSeqOnce();
-            } else {
-                alert("Share feature disabled by this App. Please use 'Save as PDF' instead.");
-            }
-        } catch (e) {
-            alert("Share feature disabled by this App. Please use 'Save as PDF' instead.");
-        }
-    }
-
-    function saveAsPdf() {
-        playTabSound();
-        incrementInvoiceSeqOnce();
-        window.print(); // Fully supported by WebIntoApp natively
-    }
-
-    function closeSaveModal() {
-        playPopSound();
-        const m = document.getElementById('img-save-modal');
-        if(m) m.remove();
     }
 
 </script>
