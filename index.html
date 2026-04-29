@@ -6,91 +6,117 @@
     <title>Liora Fashion - Smart Manager</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#e81e6d">
+    <meta name="theme-color" content="#121212">
     <link rel="icon" type="image/jpeg" href="logo.jpg">
     <link rel="apple-touch-icon" href="logo.jpg">
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
+        /* --- BLACK & PINK THEME VARIABLES --- */
         :root {
-            --primary: #e81e6d;         
-            --primary-gradient: linear-gradient(135deg, #e81e6d 0%, #ff5e98 100%);
-            --primary-light: #fce4ec;   
-            --bg: #fcf8fa;              
-            --card-bg: rgba(255, 255, 255, 0.95);         
-            --text-main: #2b111a;       
-            --text-muted: #8e6578;      
+            --primary: #ff4081;         
+            --primary-gradient: linear-gradient(135deg, #ff4081 0%, #e81e6d 100%);
+            --primary-light: rgba(255, 64, 129, 0.15);   
+            --bg: #0a0a0a;              
+            --card-bg: rgba(25, 25, 25, 0.95);         
+            --text-main: #f1f5f9;       
+            --text-muted: #9ca3af;      
             --success: #10b981;         
             --danger: #ef4444;          
             --warning: #f59e0b;         
             --info: #3b82f6;
-            --border: #f3e1e8;          
-            --shadow-sm: 0 4px 12px rgba(232, 30, 109, 0.05);
-            --shadow-md: 0 8px 24px rgba(232, 30, 109, 0.1);
-            --shadow-lg: 0 12px 32px rgba(232, 30, 109, 0.15);
+            --border: #333333;          
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { 
-            background: linear-gradient(180deg, #fff0f5 0%, #f7f9ff 100%); 
+            background: linear-gradient(180deg, #161013 0%, #0a0a0a 100%); 
             background-attachment: fixed;
             color: var(--text-main); 
             padding: 15px; 
+            padding-bottom: 90px; /* Space for Bottom Nav Bar */
             min-height: 100vh;
             overflow-x: hidden; 
         }
-        .container { max-width: 600px; margin: 0 auto; position: relative; padding-bottom: 20px; overflow: hidden; }
+        .container { max-width: 600px; margin: 0 auto; position: relative; }
         
         .header { text-align: center; margin-bottom: 24px; position: relative; display: flex; flex-direction: column; align-items: center; }
-        .logo-img { height: 85px; border-radius: 20px; margin-bottom: 8px; object-fit: contain; box-shadow: var(--shadow-md); background: #111; padding: 4px; border: 2px solid white; }
+        .logo-img { height: 85px; border-radius: 20px; margin-bottom: 8px; object-fit: contain; box-shadow: 0 0 20px rgba(255,64,129,0.2); background: #000; padding: 2px; border: 2px solid var(--primary); }
         .header h2 { color: var(--primary); font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
         .header p { font-size: 11px; color: var(--text-muted); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; }
         
-        .lock-btn { position: absolute; right: 0; top: 15px; background: white; color: var(--primary); border: 1px solid var(--border); border-radius: 50%; width: 42px; height: 42px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); transition: 0.3s; z-index: 10; }
+        .lock-btn { position: absolute; right: 0; top: 15px; background: #1a1a1a; color: var(--primary); border: 1px solid var(--border); border-radius: 50%; width: 42px; height: 42px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); transition: 0.3s; z-index: 10; }
         .lock-btn:active { transform: scale(0.9); }
 
+        /* PRO BOTTOM NAVIGATION BAR WITH SVG ICONS */
         .nav-tabs {
-            display: flex; background: white; border-radius: 16px;
-            padding: 6px; margin-bottom: 24px; box-shadow: var(--shadow-sm); border: 1px solid rgba(255,255,255,0.8);
-            position: relative; z-index: 5;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 15, 15, 0.95);
+            backdrop-filter: blur(15px);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 5px calc(12px + env(safe-area-inset-bottom));
+            box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.5);
+            border-radius: 24px 24px 0 0;
+            z-index: 1000;
+            border-top: 1px solid rgba(255, 64, 129, 0.2);
         }
         .tab-btn {
-            flex: 1; padding: 12px 2px; border: none; border-radius: 12px;
-            font-size: 12px; font-weight: 700; color: var(--text-muted); cursor: pointer; background: transparent; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex: 1; padding: 5px 0; border: none; border-radius: 12px;
+            font-size: 11px; font-weight: 700; color: #6b7280; cursor: pointer; background: transparent; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column; align-items: center; gap: 5px;
         }
-        .tab-btn.active { background: var(--primary); color: white; box-shadow: 0 4px 12px rgba(232, 30, 109, 0.25); }
+        .tab-btn svg { 
+            width: 24px; height: 24px; 
+            transition: transform 0.3s, stroke 0.3s; 
+            stroke: #6b7280; 
+        }
+        .tab-btn.active { color: var(--primary); }
+        .tab-btn.active svg { 
+            transform: translateY(-4px) scale(1.1); 
+            stroke: var(--primary); 
+            filter: drop-shadow(0px 2px 4px rgba(255,64,129,0.4));
+        }
 
-        .swipe-tabs-wrapper {
-            display: flex;
-            width: 500%; 
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            will-change: transform;
+        /* TAB CONTENT ANIMATION */
+        .tab-content { 
+            display: none; 
+            animation: fadeInTab 0.3s ease-out forwards;
         }
-        .swipe-tabs-wrapper.swiping {
-            transition: none;
+        @keyframes fadeInTab {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .swipe-tab { 
-            width: 20%; 
-            flex-shrink: 0;
-            padding: 0 15px; 
-            box-sizing: border-box;
-            display: block; 
+
+        /* SMOOTH LIST ENTRY ANIMATION (STAGGERED) */
+        .stagger-item {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
         }
+        @keyframes slideInUp { to { opacity: 1; transform: translateY(0); } }
 
         .card { 
             background: var(--card-bg); border-radius: 24px; padding: 24px; margin-bottom: 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: var(--shadow-md); backdrop-filter: blur(10px); 
+            border: 1px solid #2a2a2a; box-shadow: var(--shadow-md); backdrop-filter: blur(10px); 
         }
         .card h3 { font-size: 18px; margin-bottom: 16px; color: var(--primary); display: flex; align-items: center; gap: 8px; font-weight: 700; }
         
-        .type-switch { display: flex; background: #f9f5f7; border-radius: 14px; padding: 6px; margin-bottom: 20px; gap: 4px; border: 1px solid var(--border); }
+        .type-switch { display: flex; background: #1a1a1a; border-radius: 14px; padding: 6px; margin-bottom: 20px; gap: 4px; border: 1px solid var(--border); }
         .type-switch button { flex: 1; padding: 14px 5px; border: none; background: transparent; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.3s; color: var(--text-muted); }
         .type-switch button.active-in { background: var(--success); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
         .type-switch button.active-out { background: var(--danger); color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); }
 
         .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .cat-item { padding: 16px; border: 2px solid transparent; background: #f9f5f7; border-radius: 16px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; color: var(--text-muted); transition: all 0.2s ease; }
+        .cat-item { padding: 16px; border: 2px solid transparent; background: #1a1a1a; border-radius: 16px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; color: var(--text-muted); transition: all 0.2s ease; }
         .cat-item span { font-size: 24px; margin-bottom: 6px; }
         .cat-item.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
 
@@ -101,26 +127,27 @@
         .amount-wrapper input { border: none; background: transparent; font-size: 40px; font-weight: 800; width: 100%; outline: none; margin: 0; padding: 0; color: var(--primary); letter-spacing: -1px; }
 
         input[type="text"], input[type="number"], input[type="date"], input[type="month"], select {
-            width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 500; background: #f9f5f7; outline: none; margin-bottom: 16px; color: var(--text-main); transition: all 0.3s ease;
+            width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 500; background: #1a1a1a; outline: none; margin-bottom: 16px; color: var(--text-main); transition: all 0.3s ease;
         }
         input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, input[type="month"]:focus, select:focus {
-            border-color: var(--primary); background: white; box-shadow: 0 0 0 4px var(--primary-light);
+            border-color: var(--primary); background: #222; box-shadow: 0 0 0 4px var(--primary-light);
         }
+        select option { background: #1a1a1a; color: #fff; }
 
         .btn-action {
             width: 100%; padding: 18px; background: var(--primary-gradient); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-md); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;
         }
         .btn-action:active { transform: scale(0.96); box-shadow: var(--shadow-sm); }
         .btn-cancel { background: transparent; color: var(--text-muted); border: 2px solid var(--border); box-shadow: none; padding: 14px; font-size: 14px; }
-        .btn-cancel:active { background: #f9f5f7; }
+        .btn-cancel:active { background: #1a1a1a; }
 
         .summary-box { background: var(--primary-gradient); color: white; text-align: center; border: none; padding: 28px 20px; position: relative; overflow: hidden; }
         .summary-box::after { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%); pointer-events: none; }
         .summary-box h3 { border: none; color: rgba(255,255,255,0.9); justify-content: center; font-size: 14px; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .profit-amount { font-size: 42px; font-weight: 800; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.1); letter-spacing: -1px; }
+        .profit-amount { font-size: 42px; font-weight: 800; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.3); letter-spacing: -1px; }
 
-        .record-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid var(--border); background: white; border-radius: 16px; margin-bottom: 10px; transition: 0.3s; box-shadow: 0 2px 6px rgba(0,0,0,0.02); }
-        .record-item:hover { box-shadow: var(--shadow-sm); border-color: var(--primary-light); }
+        .record-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid var(--border); background: #1e1e1e; border-radius: 16px; margin-bottom: 10px; transition: 0.3s; }
+        .record-item:hover { border-color: var(--primary-light); }
         .record-details strong { display: block; font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
         .record-details span { font-size: 12px; color: var(--text-muted); display: block; line-height: 1.4; }
         
@@ -128,121 +155,74 @@
         .amount-out { color: var(--danger); font-weight: 800; font-size: 15px; }
         .amount-bill { color: var(--warning); font-weight: 800; font-size: 15px; }
         
-        .action-btns button { background: #f9f5f7; border: 1px solid var(--border); font-size: 14px; cursor: pointer; margin-left: 8px; width: 32px; height: 32px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; }
-        .action-btns button:active { transform: scale(0.9); background: var(--border); }
+        .action-btns button { background: #252525; border: 1px solid var(--border); font-size: 14px; cursor: pointer; margin-left: 8px; width: 32px; height: 32px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+        .action-btns button:active { transform: scale(0.9); background: #333; }
 
         .filter-section { display: flex; gap: 12px; margin-bottom: 16px; }
         .filter-section > div { flex: 1; }
         .filter-section label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .search-box { display: flex; align-items: center; border: 1px solid white; border-radius: 14px; background: white; padding: 4px 16px; margin-bottom: 20px; box-shadow: var(--shadow-sm); transition: 0.3s; }
+        .search-box { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 14px; background: #1a1a1a; padding: 4px 16px; margin-bottom: 20px; box-shadow: var(--shadow-sm); transition: 0.3s; }
         .search-box:focus-within { box-shadow: 0 0 0 4px var(--primary-light); border-color: var(--primary); }
         .search-box span { font-size: 18px; opacity: 0.5; }
-        .search-box input { border: none; background: transparent; margin-bottom: 0; padding: 12px 10px; outline: none; width: 100%; font-size: 15px; font-weight: 500; }
+        .search-box input { border: none; background: transparent; margin-bottom: 0; padding: 12px 10px; outline: none; width: 100%; font-size: 15px; font-weight: 500; color: #fff; }
 
-        .bubble-scroll-container {
-            display: flex; overflow-x: auto; gap: 10px; padding: 4px 4px 16px 4px; margin-bottom: 8px;
-            scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth;
-            -webkit-overflow-scrolling: touch;
-        }
+        .bubble-scroll-container { display: flex; overflow-x: auto; gap: 10px; padding: 8px 4px 16px 4px; margin-bottom: 8px; scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
         .bubble-scroll-container::-webkit-scrollbar { display: none; } 
-        
-        .bubble-item {
-            padding: 10px 20px; background: white; color: var(--text-muted);
-            border: 1px solid var(--border); border-radius: 20px; font-size: 13px; font-weight: 600;
-            cursor: pointer; white-space: nowrap; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .bubble-item.selected {
-            background: var(--primary-gradient); color: white; border-color: transparent;
-            box-shadow: 0 6px 16px rgba(232, 30, 109, 0.3); transform: translateY(-2px);
-        }
+        .bubble-item { padding: 10px 20px; background: #1e1e1e; color: #ccc; border: 1px solid var(--border); border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.2); flex-shrink: 0; }
+        .bubble-item.selected { background: var(--primary-gradient); color: white; border-color: transparent; box-shadow: 0 6px 16px rgba(232, 30, 109, 0.4); transform: translateY(-2px); }
 
-        #pin-screen {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, #fff0f5 0%, #ffe4e1 100%); z-index: 9999; display: flex; flex-direction: column;
-            align-items: center; justify-content: center; padding: 20px;
-        }
-        .pin-box { background: rgba(255,255,255,0.9); backdrop-filter: blur(20px); padding: 40px 30px; border-radius: 30px; box-shadow: var(--shadow-lg); width: 100%; max-width: 360px; text-align: center; border: 1px solid rgba(255,255,255,0.5); }
+        #pin-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #111 0%, #1e1015 100%); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .pin-box { background: rgba(30,30,30,0.9); backdrop-filter: blur(20px); padding: 40px 30px; border-radius: 30px; box-shadow: var(--shadow-lg); width: 100%; max-width: 360px; text-align: center; border: 1px solid #333; }
         #pin-input { text-align: center; font-size: 36px; letter-spacing: 12px; font-weight: 800; margin-bottom: 30px; border: none; border-bottom: 3px solid var(--primary); background: transparent; width: 100%; outline: none; color: var(--text-main); padding-bottom: 10px; transition: 0.3s; }
         #pin-input:focus { border-bottom-color: #ff5e98; }
 
-        .bill-switch-card {
-            display: flex; justify-content: space-between; align-items: center;
-            background: rgba(255, 255, 255, 0.9); border: 2px solid var(--primary-light); border-radius: 16px;
-            padding: 14px 20px; margin-bottom: 16px; box-shadow: var(--shadow-sm);
-            font-size: 14px; font-weight: 700; color: var(--primary);
-        }
+        .bill-switch-card { display: flex; justify-content: space-between; align-items: center; background: rgba(30, 30, 30, 0.9); border: 2px solid var(--primary-light); border-radius: 16px; padding: 14px 20px; margin-bottom: 16px; box-shadow: var(--shadow-sm); font-size: 14px; font-weight: 700; color: var(--primary); }
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #f3e1e8; transition: .3s; border-radius: 24px; }
-        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .3s; border-radius: 24px; }
+        .slider:before { position: absolute; content: ""; height: 18px; width: 18px; left: 3px; bottom: 3px; background-color: #888; transition: .3s; border-radius: 50%; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
         input:checked + .slider { background-color: var(--primary); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider:before { transform: translateX(20px); background-color: #fff; }
 
         /* PURE WHITE & PINK TWO-COLOR INVOICE STYLES */
-        #invoice-preview-capture { background: #ffffff; padding: 15px; border-radius: 8px; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(232, 30, 109, 0.1); border: 2px dashed var(--primary-light); }
+        #invoice-preview-capture { background: #ffffff; padding: 15px; border-radius: 8px; cursor: pointer; transition: transform 0.2s; box-shadow: 0 4px 15px rgba(232, 30, 109, 0.1); border: 2px dashed #444; }
         #invoice-preview-capture:active { transform: scale(0.98); }
-        
-        #invoice-preview { width: 100%; font-family: 'Inter', sans-serif; background: #ffffff; padding: 25px; border: 2px solid var(--primary); display: none; color: var(--primary); border-radius: 8px; }
-        
+        #invoice-preview { width: 100%; font-family: 'Inter', sans-serif; background: #0d0d0d; padding: 25px; border: 2px solid var(--primary); display: none; color: #e0e0e0; border-radius: 8px; }
         #invoice-header { text-align: center; border-bottom: 2px solid var(--primary); padding-bottom: 20px; margin-bottom: 20px; }
         #invoice-shop-logo { height: 65px; margin: 0 auto 12px auto; display: block; border-radius: 8px; }
         #invoice-shop-title { font-weight: 800; font-size: 28px; color: var(--primary); letter-spacing: 2px; margin-bottom: 5px; text-transform: uppercase; }
-        #invoice-shop-address { font-size: 12px; color: var(--primary); line-height: 1.6; font-weight: 600; }
-        
+        #invoice-shop-address { font-size: 12px; color: #aaa; line-height: 1.6; font-weight: 600; }
         #invoice-details-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px; }
         #invoice-bill-to { text-align: left; }
         #invoice-bill-to strong { display: block; margin-bottom: 5px; color: var(--primary); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
-        #invoice-bill-to div { font-weight: 700; color: var(--primary); font-size: 15px; }
+        #invoice-bill-to div { font-weight: 700; color: #fff; font-size: 15px; }
         #invoice-meta { text-align: right; }
-        #invoice-id-date { font-size: 12px; color: var(--primary); font-weight: 600; line-height: 1.5; }
-        
-        #invoice-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 12px; background: #ffffff; }
-        #invoice-table th, #invoice-table td { padding: 12px 5px; text-align: left; color: var(--primary); border-bottom: 1px solid var(--primary-light); }
+        #invoice-id-date { font-size: 12px; color: #aaa; font-weight: 600; line-height: 1.5; }
+        #invoice-table { width: 100%; border-collapse: collapse; margin-bottom: 25px; font-size: 12px; background: transparent; }
+        #invoice-table th, #invoice-table td { padding: 12px 5px; text-align: left; color: #eee; border-bottom: 1px solid #333; }
         #invoice-table th { text-transform: uppercase; font-size: 12px; color: var(--primary); background: transparent; border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary); font-weight: 800; }
-        #invoice-table td.total-col { text-align: right; font-weight: 700; }
+        #invoice-table td.total-col { text-align: right; font-weight: 700; color: #fff; }
         #invoice-table th.total-col { text-align: right; }
-        
-        #invoice-totals { text-align: right; font-size: 13px; font-weight: 600; color: var(--primary); }
+        #invoice-totals { text-align: right; font-size: 13px; font-weight: 600; color: #aaa; }
         #invoice-totals div { display: flex; justify-content: flex-end; gap: 30px; margin-bottom: 8px; }
+        #invoice-totals div span:last-child { color: #fff; }
         #invoice-totals .grand-total { font-weight: 800; color: var(--primary); border-top: 2px solid var(--primary); border-bottom: 2px solid var(--primary); padding: 12px 0; margin-top: 10px; font-size: 18px; text-transform: uppercase; }
-        
+        #invoice-totals .grand-total span { color: var(--primary) !important; }
         .invoice-footer-msg { text-align: center; font-size: 14px; margin-top: 40px; color: var(--primary); font-weight: 600; }
 
-        .fade-in { animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
         /* COMPLETELY CLEAN FULLSCREEN SCREENSHOT MODAL */
-        .fullscreen-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #ffffff; /* Pure white background */
-            z-index: 999999;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            box-sizing: border-box;
-            overflow-y: auto;
-            padding: 40px 15px; /* Adds top and bottom space for the bill */
-        }
-        .fullscreen-bill-container {
-            width: 100%;
-            max-width: 600px;
-            background: #ffffff;
-            margin: auto;
-            box-sizing: border-box;
-            /* Remove outer dashed borders in fullscreen for a clean look */
-            border: none !important;
-            box-shadow: none !important;
-        }
-        
-        .fullscreen-modal #invoice-preview {
-            border: 2px solid var(--primary); /* Keep the pink border of the bill itself */
-            padding: 30px;
-        }
+        .fullscreen-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000000; z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; overflow-y: auto; padding: 40px 15px; }
+        .fullscreen-bill-container { width: 100%; max-width: 600px; background: #000000; margin: auto; box-sizing: border-box; border: none !important; box-shadow: none !important; }
+        .fullscreen-modal #invoice-preview { border: 2px solid var(--primary); padding: 30px; background: #0d0d0d; }
 
+        @media print {
+            body * { visibility: hidden; }
+            #invoice-preview-capture, #invoice-preview-capture * { visibility: visible; }
+            #invoice-preview-capture { position: absolute; left: 0; top: 0; width: 100%; border: none; background: #121212 !important; }
+            #invoice-preview { background: #121212 !important; }
+            .nav-tabs, .header, .card, .bill-switch-card, #invoice-action-btns { display: none !important; }
+        }
     </style>
 </head>
 <body>
@@ -257,6 +237,29 @@
     </div>
 </div>
 
+<div class="nav-tabs" id="bottom-nav" style="display: none;">
+    <button class="tab-btn active" id="tab-btn-entry" onclick="playTabSound(); showTabByIndex(0)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+        Home
+    </button>
+    <button class="tab-btn" id="tab-btn-orders" onclick="playTabSound(); showTabByIndex(1)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+        Orders
+    </button>
+    <button class="tab-btn" id="tab-btn-invoice" onclick="playTabSound(); showTabByIndex(2)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Invoice
+    </button>
+    <button class="tab-btn" id="tab-btn-bills" onclick="playTabSound(); showTabByIndex(3)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+        Bills
+    </button>
+    <button class="tab-btn" id="tab-btn-reports" onclick="playTabSound(); showTabByIndex(4)">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+        Reps
+    </button>
+</div>
+
 <div class="container" id="main-app" style="display: none;">
     <div class="header">
         <button class="lock-btn" onclick="playTabSound(); location.reload()">🔒</button>
@@ -265,268 +268,252 @@
         <p>Smart Finance</p>
     </div>
 
-    <div class="nav-tabs">
-        <button class="tab-btn active" id="tab-btn-entry" onclick="playTabSound(); showTabByIndex(0)">🏠 Home</button>
-        <button class="tab-btn" id="tab-btn-orders" onclick="playTabSound(); showTabByIndex(1)">✂️ Orders</button>
-        <button class="tab-btn" id="tab-btn-invoice" onclick="playTabSound(); showTabByIndex(2)">🧾 Invoice</button>
-        <button class="tab-btn" id="tab-btn-bills" onclick="playTabSound(); showTabByIndex(3)">🛒 Bills</button>
-        <button class="tab-btn" id="tab-btn-reports" onclick="playTabSound(); showTabByIndex(4)">📊 Reps</button>
-    </div>
-
-    <div class="swipe-tabs-wrapper" id="swipe-wrapper">
-        
-        <div id="tab-entry" class="swipe-tab">
-            <div class="card summary-box" style="margin-bottom: 20px;">
-                <h3>Today's Income 💰</h3>
-                <div class="profit-amount" id="home-today-income">Rs. 0.00</div>
-            </div>
-
-            <div class="card">
-                <div class="bill-switch-card">
-                    <span>📝 Prepare Bill? (Auto Add Items)</span>
-                    <label class="switch">
-                        <input type="checkbox" id="prepare-bill-switch" onchange="togglePrepareBillSound()">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-
-                <h3 id="entry-title">⚡ Quick Entry</h3>
-                
-                <div class="type-switch">
-                    <button id="btn-in" class="active-in" onclick="playTabSound(); setType('INCOME')">INCOME</button>
-                    <button id="btn-out" onclick="playTabSound(); setType('EXPENSE')">EXPENSE</button>
-                </div>
-                
-                <div class="cat-grid" id="grid-income">
-                    <div class="cat-item selected" id="cat-Tailoring" onclick="playTabSound(); setCat('Tailoring')"><span>✂️</span> Tailoring</div>
-                    <div class="cat-item" id="cat-Fabrics" onclick="playTabSound(); setCat('Fabrics')"><span>🧵</span> Fabric Sales</div>
-                </div>
-                <div class="cat-grid" id="grid-expense" style="display: none;">
-                    <div class="cat-item" id="cat-Shop" onclick="playTabSound(); setCat('Shop')"><span>🏪</span> Shop</div>
-                    <div class="cat-item" id="cat-Personal" onclick="playTabSound(); setCat('Personal')"><span>👤</span> Personal</div>
-                </div>
-
-                <div class="amount-wrapper">
-                    <span>Rs.</span><input type="number" id="amt" placeholder="0.00">
-                </div>
-                
-                <div class="bubble-scroll-container" id="home-bubbles"></div>
-                
-                <select id="note-select" style="display: none;">
-                    <option value="" disabled selected>Select Item</option>
-                    <option value="Frocks">Frocks</option>
-                    <option value="Skirts">Skirts</option>
-                    <option value="Pants">Pants</option>
-                    <option value="Shorts">Shorts</option>
-                    <option value="Night Dress">Night Dress</option>
-                    <option value="Jacket">Jacket</option>
-                    <option value="Underskirts">Underskirts</option>
-                    <option value="School Uniform (Frocks)">School Uniform (Frocks)</option>
-                    <option value="School Uniform (Shirt)">School Uniform (Shirt)</option>
-                    <option value="School Uniform (Short)">School Uniform (Short)</option>
-                    <option value="Lama Saree">Lama Saree</option>
-                    <option value="Saree Madeup">Saree Madeup</option>
-                    <option value="Kandyan Madeup">Kandyan Madeup</option>
-                    <option value="Curtains">Curtains</option>
-                    <option value="Pillow Case">Pillow Case</option>
-                    <option value="Blouse">Blouse</option>
-                    <option value="Kids Frocks">Kids Frocks</option>
-                    <option value="Jumper Suit">Jumper Suit</option>
-                    <option value="Wrap Dress">Wrap Dress</option>
-                    <option value="Wraparound">Wraparound</option>
-                    <option value="OTHER">✏️ Type Custom...</option>
-                </select>
-                
-                <input type="text" id="note-text" placeholder="Type detail here..." style="display: none;">
-                
-                <button class="btn-action" id="save-btn" onclick="saveData()">💾 Save Entry</button>
-                <button class="btn-action btn-cancel" id="cancel-edit-btn" style="display: none;" onclick="playTabSound(); cancelEdit()">❌ Cancel Edit</button>
-            </div>
-
-            <div class="card">
-                <h3>📝 Today's Activity</h3>
-                <div id="home-today-list">
-                    <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading data...</p>
-                </div>
-            </div>
+    <div id="tab-entry" class="tab-content active" style="display: block;">
+        <div class="card summary-box" style="margin-bottom: 20px;">
+            <h3>Today's Income 💰</h3>
+            <div class="profit-amount" id="home-today-income">Rs. 0.00</div>
         </div>
 
-        <div id="tab-orders" class="swipe-tab">
-            <div class="search-box">
-                <span>🔎</span>
-                <input type="text" id="search-order" placeholder="Search Order Code / Name..." onkeyup="searchOrders()">
+        <div class="card">
+            <div class="bill-switch-card">
+                <span>📝 Prepare Bill? (Auto Add Items)</span>
+                <label class="switch">
+                    <input type="checkbox" id="prepare-bill-switch" onchange="togglePrepareBillSound()">
+                    <span class="slider"></span>
+                </label>
             </div>
 
-            <div class="card" style="border-top: 4px solid var(--info);">
-                <h3 style="color: var(--info);">✂️ New Order</h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Add customer orders and advance payments.</p>
-                
-                <input type="text" id="ord-name" placeholder="Customer Name" onkeyup="searchPhoneByName('ord-name', 'ord-phone')">
-                <input type="number" id="ord-phone" placeholder="Phone Number (Optional)">
-                
-                <div class="bubble-scroll-container" id="ord-bubbles"></div>
-
-                <select id="ord-item" style="display: none;">
-                    <option value="" disabled selected>Select Category</option>
-                    <option value="Frocks">Frocks</option>
-                    <option value="Skirts">Skirts</option>
-                    <option value="Pants">Pants</option>
-                    <option value="Shorts">Shorts</option>
-                    <option value="Night Dress">Night Dress</option>
-                    <option value="Jacket">Jacket</option>
-                    <option value="Underskirts">Underskirts</option>
-                    <option value="School Uniform">School Uniform</option>
-                    <option value="Lama Saree">Lama Saree</option>
-                    <option value="Saree Madeup">Saree Madeup</option>
-                    <option value="Kandyan Madeup">Kandyan Madeup</option>
-                    <option value="Curtains">Curtains</option>
-                    <option value="Pillow Case">Pillow Case</option>
-                    <option value="Blouse">Blouse</option>
-                    <option value="Kids Frocks">Kids Frocks</option>
-                    <option value="Jumper Suit">Jumper Suit</option>
-                    <option value="Wrap Dress">Wrap Dress</option>
-                    <option value="OTHER">✏️ Type Custom...</option>
-                </select>
-                
-                <input type="text" id="ord-item-text" placeholder="Type custom category here..." style="display: none; margin-bottom: 20px;">
-
-                <div class="amount-wrapper" style="border-color: #cbd5e1; margin-bottom: 12px; padding-bottom: 5px;">
-                    <span style="color: var(--text-muted); font-size: 16px;">Total Rs.</span>
-                    <input type="number" id="ord-total" placeholder="0.00" style="color: var(--text-main); font-size: 28px;">
-                </div>
-
-                <div class="amount-wrapper" style="border-color: var(--info); margin-bottom: 24px; padding-bottom: 5px;">
-                    <span style="color: var(--info); font-size: 16px;">Advance Rs.</span>
-                    <input type="number" id="ord-adv" placeholder="0.00" style="color: var(--info); font-size: 28px;">
-                </div>
-                
-                <button class="btn-action" id="save-ord-btn" style="background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);" onclick="saveAdvance()">💾 Save Order</button>
-            </div>
-
-            <div class="card">
-                <h3>⏳ Pending Orders</h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Click Pay Bal or Bill to auto-generate Invoice!</p>
-                <div id="pending-orders-list">
-                    <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading orders...</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-invoice" class="swipe-tab">
-            <div class="card" style="border-top: 4px solid var(--primary);">
-                <h3>🧾 Invoice Generator</h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Create a beautiful bill to share via WhatsApp.</p>
-                
-                <input type="text" id="invoice-bill-name" placeholder="Customer Name" onkeyup="searchPhoneByName('invoice-bill-name', 'invoice-bill-whatsapp')">
-                <input type="number" id="invoice-bill-whatsapp" placeholder="WhatsApp Number (e.g. 071...)">
-                <input type="text" id="invoice-id-input" placeholder="Invoice Number">
-                
-                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
-                    <button class="btn-action" style="flex: 1; text-transform: uppercase;" onclick="generateBillPreview()">🖼️ Generate</button>
-                    <button class="btn-action btn-cancel" style="flex: 1; border-color: var(--danger); color: var(--danger);" onclick="clearBillBuffer()">❌ Clear</button>
-                </div>
-
-                <div id="invoice-preview-area">
-                    <p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #f9f5f7; padding: 15px; border-radius: 12px;">Add items in Home Tab with "Prepare Bill" ON, or Pay an Order Balance to see the bill here.</p>
-                </div>
-                
-                <div id="invoice-instruction" style="display:none; text-align:center; color:var(--primary); font-size:12px; font-weight:bold; margin-top:10px; animation: fadeIn 1s infinite alternate;">
-                    👆 බිල් එක උඩ ඔබලා Full Screen ගන්න.
-                </div>
-
-                <div id="invoice-action-btns" style="margin-top: 15px; display: none; flex-direction: column; gap: 10px;">
-                    <button class="btn-action" style="background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; font-size: 15px;" onclick="sendWhatsAppInvoice()">📱 Send WhatsApp Message</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-bills" class="swipe-tab">
-            <div class="card" style="border-top: 4px solid var(--warning);">
-                <h3 id="bill-title" style="color: #d97706;">🛒 Add Shop Bill</h3>
-                <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Enter your fabric and shop expenses here.</p>
-                
-                <div class="cat-grid" id="grid-bill">
-                    <div class="cat-item selected" id="cat-Fabric_Bill" onclick="playTabSound(); setBillCat('Fabric_Bill')"><span>🛍️</span> Fabric Bills</div>
-                    <div class="cat-item" id="cat-Other_Bill" onclick="playTabSound(); setBillCat('Other_Bill')"><span>📦</span> Other Bills</div>
-                </div>
-
-                <div class="amount-wrapper" style="border-color: var(--warning);">
-                    <span style="color: var(--warning);">Rs.</span>
-                    <input type="number" id="bill-amt" placeholder="0.00" style="color: var(--text-main);">
-                </div>
-                
-                <input type="text" id="bill-note" placeholder="Bill No. or Item Details">
-                
-                <button class="btn-action" id="save-bill-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);" onclick="saveBillData()">💾 Save Bill</button>
-                <button class="btn-action btn-cancel" id="cancel-bill-edit-btn" style="display: none;" onclick="playTabSound(); cancelBillEdit()">❌ Cancel Edit</button>
-            </div>
-
-            <div class="card">
-                <h3>📝 Today's Shop Bills</h3>
-                <div id="bills-today-list">
-                    <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading today's bills...</p>
-                </div>
-            </div>
-        </div>
-
-        <div id="tab-reports" class="swipe-tab">
-            <div class="card summary-box" style="margin-bottom: 20px;">
-                <h3 id="report-title">Monthly Summary</h3>
-                <div class="profit-amount" id="total-profit">Rs. 0.00</div>
-                <p id="total-bills" style="font-size: 13px; margin-top: 8px; background: rgba(0,0,0,0.15); padding: 6px 12px; border-radius: 8px; display: inline-block; font-weight: 600;">Total Bills: Rs. 0.00</p>
+            <h3 id="entry-title">⚡ Quick Entry</h3>
+            
+            <div class="type-switch">
+                <button id="btn-in" class="active-in" onclick="playTabSound(); setType('INCOME')">INCOME</button>
+                <button id="btn-out" onclick="playTabSound(); setType('EXPENSE')">EXPENSE</button>
             </div>
             
-            <div class="card">
-                <h3>🔍 Filter Past Records</h3>
-                <div style="margin-bottom: 16px;">
-                    <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">Record Type</label>
-                    
-                    <div class="bubble-scroll-container" id="filter-bubbles">
-                        <div class="bubble-item selected" data-val="ALL" onclick="playBubbleSound(); selectFilterBubble('ALL', this)">All Records</div>
-                        <div class="bubble-item" data-val="INCOME" onclick="playBubbleSound(); selectFilterBubble('INCOME', this)">Income & Orders 💰</div>
-                        <div class="bubble-item" data-val="BILL" onclick="playBubbleSound(); selectFilterBubble('BILL', this)">Bills Only 🧾</div>
-                        <div class="bubble-item" data-val="EXPENSE" onclick="playBubbleSound(); selectFilterBubble('EXPENSE', this)">Expense Only 📉</div>
-                    </div>
+            <div class="cat-grid" id="grid-income">
+                <div class="cat-item selected" id="cat-Tailoring" onclick="playTabSound(); setCat('Tailoring')"><span>✂️</span> Tailoring</div>
+                <div class="cat-item" id="cat-Fabrics" onclick="playTabSound(); setCat('Fabrics')"><span>🧵</span> Fabric Sales</div>
+            </div>
+            <div class="cat-grid" id="grid-expense" style="display: none;">
+                <div class="cat-item" id="cat-Shop" onclick="playTabSound(); setCat('Shop')"><span>🏪</span> Shop</div>
+                <div class="cat-item" id="cat-Personal" onclick="playTabSound(); setCat('Personal')"><span>👤</span> Personal</div>
+            </div>
 
-                    <select id="filter-type" style="display: none;" onchange="renderData()">
-                        <option value="ALL" selected>All Records</option>
-                        <option value="INCOME">Income & Orders 💰</option>
-                        <option value="BILL">Bills Only 🧾</option>
-                        <option value="EXPENSE">Expense Only 📉</option>
-                    </select>
-                </div>
-                <div class="filter-section">
-                    <div>
-                        <label>Month</label>
-                        <input type="month" id="filter-month" onchange="playTabSound(); renderData()">
-                    </div>
-                    <div>
-                        <label>Day</label>
-                        <input type="date" id="filter-date" onchange="playTabSound(); renderData()">
-                    </div>
-                </div>
-                <div id="report-list" style="margin-top: 20px;">
-                    <p style="text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500;">Please wait...</p>
-                </div>
+            <div class="amount-wrapper">
+                <span>Rs.</span><input type="number" id="amt" placeholder="0.00">
+            </div>
+            
+            <div class="bubble-scroll-container" id="home-bubbles"></div>
+            
+            <select id="note-select" style="display: none;">
+                <option value="" disabled selected>Select Item</option>
+                <option value="Frocks">Frocks</option>
+                <option value="Skirts">Skirts</option>
+                <option value="Pants">Pants</option>
+                <option value="Shorts">Shorts</option>
+                <option value="Night Dress">Night Dress</option>
+                <option value="Jacket">Jacket</option>
+                <option value="Underskirts">Underskirts</option>
+                <option value="School Uniform (Frocks)">School Uniform (Frocks)</option>
+                <option value="School Uniform (Shirt)">School Uniform (Shirt)</option>
+                <option value="School Uniform (Short)">School Uniform (Short)</option>
+                <option value="Lama Saree">Lama Saree</option>
+                <option value="Saree Madeup">Saree Madeup</option>
+                <option value="Kandyan Madeup">Kandyan Madeup</option>
+                <option value="Curtains">Curtains</option>
+                <option value="Pillow Case">Pillow Case</option>
+                <option value="Blouse">Blouse</option>
+                <option value="Kids Frocks">Kids Frocks</option>
+                <option value="Jumper Suit">Jumper Suit</option>
+                <option value="Wrap Dress">Wrap Dress</option>
+                <option value="Wraparound">Wraparound</option>
+                <option value="OTHER">✏️ Type Custom...</option>
+            </select>
+            
+            <input type="text" id="note-text" placeholder="Type detail here..." style="display: none;">
+            
+            <button class="btn-action" id="save-btn" onclick="saveData()">💾 Save Entry</button>
+            <button class="btn-action btn-cancel" id="cancel-edit-btn" style="display: none;" onclick="playTabSound(); cancelEdit()">❌ Cancel Edit</button>
+        </div>
+
+        <div class="card">
+            <h3>📝 Today's Activity</h3>
+            <div id="home-today-list">
+                <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading data...</p>
             </div>
         </div>
-    </div> 
+    </div>
+
+    <div id="tab-orders" class="tab-content">
+        <div class="search-box">
+            <span>🔎</span>
+            <input type="text" id="search-order" placeholder="Search Order Code / Name..." onkeyup="searchOrders()">
+        </div>
+
+        <div class="card" style="border-top: 4px solid var(--info);">
+            <h3 style="color: var(--info);">✂️ New Order</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Add customer orders and advance payments.</p>
+            
+            <input type="text" id="ord-name" placeholder="Customer Name" onkeyup="searchPhoneByName('ord-name', 'ord-phone')">
+            <input type="number" id="ord-phone" placeholder="Phone Number (Optional)">
+            
+            <div class="bubble-scroll-container" id="ord-bubbles"></div>
+
+            <select id="ord-item" style="display: none;">
+                <option value="" disabled selected>Select Category</option>
+                <option value="Frocks">Frocks</option>
+                <option value="Skirts">Skirts</option>
+                <option value="Pants">Pants</option>
+                <option value="Shorts">Shorts</option>
+                <option value="Night Dress">Night Dress</option>
+                <option value="Jacket">Jacket</option>
+                <option value="Underskirts">Underskirts</option>
+                <option value="School Uniform">School Uniform</option>
+                <option value="Lama Saree">Lama Saree</option>
+                <option value="Saree Madeup">Saree Madeup</option>
+                <option value="Kandyan Madeup">Kandyan Madeup</option>
+                <option value="Curtains">Curtains</option>
+                <option value="Pillow Case">Pillow Case</option>
+                <option value="Blouse">Blouse</option>
+                <option value="Kids Frocks">Kids Frocks</option>
+                <option value="Jumper Suit">Jumper Suit</option>
+                <option value="Wrap Dress">Wrap Dress</option>
+                <option value="OTHER">✏️ Type Custom...</option>
+            </select>
+            
+            <input type="text" id="ord-item-text" placeholder="Type custom category here..." style="display: none; margin-bottom: 20px;">
+
+            <div class="amount-wrapper" style="border-color: #cbd5e1; margin-bottom: 12px; padding-bottom: 5px;">
+                <span style="color: var(--text-muted); font-size: 16px;">Total Rs.</span>
+                <input type="number" id="ord-total" placeholder="0.00" style="color: var(--text-main); font-size: 28px;">
+            </div>
+
+            <div class="amount-wrapper" style="border-color: var(--info); margin-bottom: 24px; padding-bottom: 5px;">
+                <span style="color: var(--info); font-size: 16px;">Advance Rs.</span>
+                <input type="number" id="ord-adv" placeholder="0.00" style="color: var(--info); font-size: 28px;">
+            </div>
+            
+            <button class="btn-action" id="save-ord-btn" style="background: linear-gradient(135deg, #3b82f6, #2563eb); box-shadow: 0 8px 20px rgba(59, 130, 246, 0.25);" onclick="saveAdvance()">💾 Save Order</button>
+        </div>
+
+        <div class="card">
+            <h3>⏳ Pending Orders</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">Click Pay Bal or Bill to auto-generate Invoice!</p>
+            <div id="pending-orders-list">
+                <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading orders...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-invoice" class="tab-content">
+        <div class="card" style="border-top: 4px solid var(--primary);">
+            <h3>🧾 Invoice Generator</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Create a beautiful bill to share via WhatsApp.</p>
+            
+            <input type="text" id="invoice-bill-name" placeholder="Customer Name" onkeyup="searchPhoneByName('invoice-bill-name', 'invoice-bill-whatsapp')">
+            <input type="number" id="invoice-bill-whatsapp" placeholder="WhatsApp Number (e.g. 071...)">
+            <input type="text" id="invoice-id-input" placeholder="Invoice Number">
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <button class="btn-action" style="flex: 1; text-transform: uppercase;" onclick="generateBillPreview()">🖼️ Generate</button>
+                <button class="btn-action btn-cancel" style="flex: 1; border-color: var(--danger); color: var(--danger);" onclick="clearBillBuffer()">❌ Clear</button>
+            </div>
+
+            <div id="invoice-preview-area">
+                <p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #1a1a1a; padding: 15px; border-radius: 12px;">Add items in Home Tab with "Prepare Bill" ON, or Pay an Order Balance to see the bill here.</p>
+            </div>
+            
+            <div id="invoice-instruction" style="display:none; text-align:center; color:var(--primary); font-size:12px; font-weight:bold; margin-top:10px; animation: fadeIn 1s infinite alternate;">
+                👆 බිල් එක උඩ ඔබලා Full Screen ගන්න.<br>
+                <span style="font-size: 10px; opacity: 0.8;">(ආපසු එන්න බිල් එක උඩ දෙපාරක් ඔබන්න)</span>
+            </div>
+
+            <div id="invoice-action-btns" style="margin-top: 15px; display: none; flex-direction: column; gap: 10px;">
+                <button class="btn-action" style="background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; font-size: 15px;" onclick="saveAsPdf()">🖨️ Download PDF Bill</button>
+                <button class="btn-action" style="background:linear-gradient(135deg, #25D366, #128C7E); color:white; border:none; font-size: 15px;" onclick="sendWhatsAppInvoice()">📱 Send WhatsApp Message</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-bills" class="tab-content">
+        <div class="card" style="border-top: 4px solid var(--warning);">
+            <h3 id="bill-title" style="color: #d97706;">🛒 Add Shop Bill</h3>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 16px;">Enter your fabric and shop expenses here.</p>
+            
+            <div class="cat-grid" id="grid-bill">
+                <div class="cat-item selected" id="cat-Fabric_Bill" onclick="playTabSound(); setBillCat('Fabric_Bill')"><span>🛍️</span> Fabric Bills</div>
+                <div class="cat-item" id="cat-Other_Bill" onclick="playTabSound(); setBillCat('Other_Bill')"><span>📦</span> Other Bills</div>
+            </div>
+
+            <div class="amount-wrapper" style="border-color: var(--warning);">
+                <span style="color: var(--warning);">Rs.</span>
+                <input type="number" id="bill-amt" placeholder="0.00" style="color: var(--text-main);">
+            </div>
+            
+            <input type="text" id="bill-note" placeholder="Bill No. or Item Details">
+            
+            <button class="btn-action" id="save-bill-btn" style="background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 20px rgba(245, 158, 11, 0.25);" onclick="saveBillData()">💾 Save Bill</button>
+            <button class="btn-action btn-cancel" id="cancel-bill-edit-btn" style="display: none;" onclick="playTabSound(); cancelBillEdit()">❌ Cancel Edit</button>
+        </div>
+
+        <div class="card">
+            <h3>📝 Today's Shop Bills</h3>
+            <div id="bills-today-list">
+                <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading today's bills...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-reports" class="tab-content">
+        <div class="card summary-box" style="margin-bottom: 20px;">
+            <h3 id="report-title">Monthly Summary</h3>
+            <div class="profit-amount" id="total-profit">Rs. 0.00</div>
+            <p id="total-bills" style="font-size: 13px; margin-top: 8px; background: rgba(0,0,0,0.3); padding: 6px 12px; border-radius: 8px; display: inline-block; font-weight: 600;">Total Bills: Rs. 0.00</p>
+        </div>
+        
+        <div class="card">
+            <h3>🔍 Filter Past Records</h3>
+            <div style="margin-bottom: 16px;">
+                <label style="display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase;">Record Type</label>
+                
+                <div class="bubble-scroll-container" id="filter-bubbles">
+                    <div class="bubble-item selected" data-val="ALL" onclick="playBubbleSound(); selectFilterBubble('ALL', this)">All Records</div>
+                    <div class="bubble-item" data-val="INCOME" onclick="playBubbleSound(); selectFilterBubble('INCOME', this)">Income & Orders 💰</div>
+                    <div class="bubble-item" data-val="BILL" onclick="playBubbleSound(); selectFilterBubble('BILL', this)">Bills Only 🧾</div>
+                    <div class="bubble-item" data-val="EXPENSE" onclick="playBubbleSound(); selectFilterBubble('EXPENSE', this)">Expense Only 📉</div>
+                </div>
+
+                    <select id="filter-type" style="display: none;" onchange="renderData()">
+                    <option value="ALL" selected>All Records</option>
+                    <option value="INCOME">Income & Orders 💰</option>
+                    <option value="BILL">Bills Only 🧾</option>
+                    <option value="EXPENSE">Expense Only 📉</option>
+                </select>
+            </div>
+            <div class="filter-section">
+                <div>
+                    <label>Month</label>
+                    <input type="month" id="filter-month" onchange="playTabSound(); renderData()">
+                </div>
+                <div>
+                    <label>Day</label>
+                    <input type="date" id="filter-date" onchange="playTabSound(); renderData()">
+                </div>
+            </div>
+            <div id="report-list" style="margin-top: 20px;">
+                <p style="text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500;">Please wait...</p>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="fullscreen-modal" class="fullscreen-modal" style="display:none;" ontouchstart="handleDoubleTap(event)" ondblclick="closeFullscreen()">
      </div>
 
 <script>
-    // --- SOUND EFFECTS (Web Audio API) ---
+    // --- SOUND EFFECTS ---
     let audioCtx;
-    function initAudio() {
-        if (!audioCtx) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            audioCtx = new AudioContext();
-        }
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-    }
-
+    function initAudio() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } if (audioCtx.state === 'suspended') audioCtx.resume(); }
     function playTabSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'triangle'; osc.frequency.setValueAtTime(400, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); osc.start(); osc.stop(audioCtx.currentTime + 0.05); } catch(e) {} }
     function playBubbleSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} }
     function playSuccessSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); } catch(e) {} }
@@ -537,42 +524,51 @@
 
     function togglePrepareBillSound() { playPopSound(); }
 
-    // --- AUTO-SAVE CUSTOMER PHONE LOGIC ---
-    let customerDirectory = JSON.parse(localStorage.getItem('liora_customers')) || {};
+    // --- EMPTY STATE GRAPHIC GENERATOR (THE SLEEPING CAT) ---
+    function getEmptyState(msg) {
+        return `
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 10px; opacity:0.7; animation: fadeIn 0.5s ease-out;">
+            <svg width="65" height="65" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="margin-bottom:15px; opacity: 0.5;">
+                <path d="M18 4h3l-3 4h3" stroke-width="1"></path>
+                <path d="M22 1h2l-2 3h2" stroke-width="1"></path>
+                <path d="M12 5c.67 0 1.35.09 2 .26 1.78-2 5.03-2.84 6.42-2.26 1.4.58-.42 7-.42 7A8.04 8.04 0 0 1 21 12a8.13 8.13 0 0 1-2.96 6.36c-1.4 1.12-3.23 1.83-5.26 2.08-1.57.18-3.15-.15-4.48-1C6.26 18.25 5 16.27 5 14c0-1.63.66-3.15 1.79-4.29C8 8.44 9.94 7.6 12 7.6V5z"></path>
+                <path d="M7 14c.5.5 1.5.5 2 0"></path>
+                <path d="M15 14c.5.5 1.5.5 2 0"></path>
+                <path d="M11.25 16.25h1.5L12 17l-.75-.75z"></path>
+            </svg>
+            <p style="color:var(--text-muted); font-size:14px; font-weight:600; margin:0; letter-spacing: 0.5px;">${msg}</p>
+        </div>`;
+    }
 
+    // --- AUTO-SAVE CUSTOMER PHONE ---
+    let customerDirectory = JSON.parse(localStorage.getItem('liora_customers')) || {};
     function saveCustomerInfo(name, phone) {
         if(name && phone && phone.length >= 9) {
             customerDirectory[name.trim().toUpperCase()] = phone.trim();
             localStorage.setItem('liora_customers', JSON.stringify(customerDirectory));
         }
     }
-
     function searchPhoneByName(nameInputId, phoneInputId) {
         let name = document.getElementById(nameInputId).value.trim().toUpperCase();
-        if(customerDirectory[name]) {
-            document.getElementById(phoneInputId).value = customerDirectory[name];
-        }
+        if(customerDirectory[name]) document.getElementById(phoneInputId).value = customerDirectory[name];
     }
 
-    // --- INVOICE AUTO NUMBER LOGIC ---
+    // --- INVOICE AUTO NUMBER ---
     function setAutoInvoiceId() {
         let nextId = parseInt(localStorage.getItem('liora_inv_seq')) || 1;
         document.getElementById('invoice-id-input').value = nextId;
     }
-
     function incrementInvoiceSeq(usedId) {
         let currentSeq = parseInt(localStorage.getItem('liora_inv_seq')) || 1;
-        if (parseInt(usedId) === currentSeq) {
-            localStorage.setItem('liora_inv_seq', currentSeq + 1);
-        }
+        if (parseInt(usedId) === currentSeq) localStorage.setItem('liora_inv_seq', currentSeq + 1);
     }
 
-    // --- NATIVE BACK BUTTON & DOUBLE TAP TO CLOSE FULLSCREEN ---
+    // --- NATIVE BACK BUTTON & DOUBLE TAP ---
     window.addEventListener('popstate', function(event) {
         const fsModal = document.getElementById('fullscreen-modal');
         if (fsModal && fsModal.style.display === 'flex') {
             fsModal.style.display = 'none';
-            if (document.fullscreenElement) { document.exitFullscreen().catch(e => {}); }
+            if (document.fullscreenElement) document.exitFullscreen().catch(e => {});
         }
     });
 
@@ -581,8 +577,7 @@
         const currentTime = new Date().getTime();
         const tapLength = currentTime - lastTap;
         if (tapLength < 500 && tapLength > 0) {
-            closeFullscreen();
-            e.preventDefault();
+            closeFullscreen(); e.preventDefault();
         }
         lastTap = currentTime;
     }
@@ -590,78 +585,25 @@
     // --- APP LOGIC ---
     const scriptURL = 'https://script.google.com/macros/s/AKfycbxiNrs-TuIUmAYkefTKcXyZfeFqaoh_TLoeRDdiS5h5oGNs24E_6-_n0M_9HZTwHJhl/exec';
 
-    let editingId = null; 
-    let globalMaxOrderId = 1000;
-    let localData = [];
-    let billBuffer = []; 
-    let currentGeneratedBillData = null;
-    let isSeqIncremented = false; 
+    let editingId = null; let globalMaxOrderId = 1000; let localData = []; let billBuffer = []; let currentGeneratedBillData = null; let isSeqIncremented = false; 
 
-    const swipeWrapper = document.getElementById('swipe-wrapper');
     const tabsArr = ['tab-entry', 'tab-orders', 'tab-invoice', 'tab-bills', 'tab-reports'];
     const tabBtns = ['tab-btn-entry', 'tab-btn-orders', 'tab-btn-invoice', 'tab-btn-bills', 'tab-btn-reports'];
-    let currentTabIndex = 0;
-    let containerWidth = 0;
-    
-    let touchStartX = 0; let touchStartY = 0; let touchMoveX = 0; let isSwiping = false; let isVerticalScroll = false; 
-
-    function setupSwipeGestures() {
-        let mainApp = document.getElementById('main-app');
-        containerWidth = mainApp.offsetWidth;
-
-        window.addEventListener('resize', () => { 
-            containerWidth = document.getElementById('main-app').offsetWidth; 
-            updateTabPosition(currentTabIndex, false); 
-        });
-
-        swipeWrapper.addEventListener('touchstart', e => {
-            if(e.target.closest('.bubble-scroll-container') || e.target.closest('input') || e.target.closest('select') || e.target.closest('#invoice-preview-capture')) return;
-            isSwiping = true; isVerticalScroll = false;
-            touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; touchMoveX = touchStartX;
-        }, {passive: true});
-
-        swipeWrapper.addEventListener('touchmove', e => {
-            if (!isSwiping) return;
-            let currentX = e.touches[0].clientX; let currentY = e.touches[0].clientY;
-            let diffX = currentX - touchStartX; let diffY = currentY - touchStartY;
-            if (!isVerticalScroll && Math.abs(diffY) > Math.abs(diffX) && Math.abs(diffY) > 5) {
-                isVerticalScroll = true; isSwiping = false; 
-                swipeWrapper.classList.remove('swiping'); updateTabPosition(currentTabIndex, false); return;
-            }
-            if (!isVerticalScroll && Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 5) {
-                swipeWrapper.classList.add('swiping'); touchMoveX = currentX;
-                const currentTranslation = (-currentTabIndex * containerWidth) + diffX;
-                swipeWrapper.style.transform = `translateX(${currentTranslation}px)`;
-            }
-        }, {passive: true});
-
-        swipeWrapper.addEventListener('touchend', e => {
-            if (!isSwiping) return;
-            isSwiping = false; swipeWrapper.classList.remove('swiping');
-            const finalDeltaX = touchMoveX - touchStartX; const threshold = containerWidth * 0.2; 
-            if (touchMoveX !== 0 && finalDeltaX < -threshold && currentTabIndex < tabsArr.length - 1) { showTabByIndex(currentTabIndex + 1); } 
-            else if (touchMoveX !== 0 && finalDeltaX > threshold && currentTabIndex > 0) { showTabByIndex(currentTabIndex - 1); } 
-            else { updateTabPosition(currentTabIndex, true); }
-            touchMoveX = 0;
-        });
-    }
 
     function showTabByIndex(index) {
-        currentTabIndex = index;
         tabBtns.forEach((btnId, i) => {
-            if(document.getElementById(btnId)) document.getElementById(btnId).classList.toggle('active', i === index);
+            let btn = document.getElementById(btnId);
+            if(btn) btn.classList.toggle('active', i === index);
+            
+            let tab = document.getElementById(tabsArr[i]);
+            if(tab) {
+                if (i === index) { tab.style.display = 'block'; } else { tab.style.display = 'none'; }
+            }
         });
-        updateTabPosition(index, true);
+        
         if(editingId) cancelEdit(); 
         if(localData.length > 0) renderData(); 
-    }
-
-    function updateTabPosition(index, animate = true) {
-        containerWidth = document.getElementById('main-app').offsetWidth || window.innerWidth;
-        const offset = -index * containerWidth;
-        if(!animate) swipeWrapper.classList.add('swiping');
-        swipeWrapper.style.transform = `translateX(${offset}px)`;
-        if(!animate) requestAnimationFrame(() => swipeWrapper.classList.remove('swiping'));
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     let pin = localStorage.getItem('liora_pin');
@@ -675,6 +617,7 @@
         playSuccessSound(); 
         document.getElementById('pin-screen').style.display='none';
         document.getElementById('main-app').style.display='block';
+        document.getElementById('bottom-nav').style.display='flex';
         
         const now = new Date();
         const monthStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0');
@@ -686,27 +629,19 @@
         initBubbles('ord-item', 'ord-bubbles', 'orders');
         setAutoInvoiceId(); 
 
-        setTimeout(() => { setupSwipeGestures(); fetchInitialData(); }, 50);
+        setTimeout(() => { fetchInitialData(); }, 50);
     }
 
     function initBubbles(selectId, containerId, tabType) {
-        const selectEl = document.getElementById(selectId);
-        const container = document.getElementById(containerId);
-        let html = '';
-        for(let i=1; i<selectEl.options.length; i++) {
-            let opt = selectEl.options[i];
-            html += `<div class="bubble-item" data-val="${opt.value}" onclick="playBubbleSound(); selectBubble('${tabType}', '${opt.value}', this)">${opt.text}</div>`;
-        }
+        const selectEl = document.getElementById(selectId); const container = document.getElementById(containerId); let html = '';
+        for(let i=1; i<selectEl.options.length; i++) { let opt = selectEl.options[i]; html += `<div class="bubble-item" data-val="${opt.value}" onclick="playBubbleSound(); selectBubble('${tabType}', '${opt.value}', this)">${opt.text}</div>`; }
         container.innerHTML = html;
     }
 
     function selectBubble(tab, val, el) {
-        let containerId = tab === 'home' ? 'home-bubbles' : 'ord-bubbles';
-        let selectId = tab === 'home' ? 'note-select' : 'ord-item';
-
+        let containerId = tab === 'home' ? 'home-bubbles' : 'ord-bubbles'; let selectId = tab === 'home' ? 'note-select' : 'ord-item';
         document.querySelectorAll(`#${containerId} .bubble-item`).forEach(b => b.classList.remove('selected'));
         if(el) { el.classList.add('selected'); el.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); }
-        
         document.getElementById(selectId).value = val;
         if(tab === 'home') handleNoteSelect(); else handleOrdItemSelect();
     }
@@ -717,33 +652,17 @@
         document.getElementById('filter-type').value = val; renderData(); 
     }
 
-    function syncBubbles(selectId, containerId) {
-        const val = document.getElementById(selectId).value;
-        document.querySelectorAll(`#${containerId} .bubble-item`).forEach(b => {
-            if(b.getAttribute('data-val') === val) {
-                b.classList.add('selected'); b.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
-            } else { b.classList.remove('selected'); }
-        });
-    }
-
     function searchOrders() {
-        let input = document.getElementById('search-order').value.toUpperCase();
-        let items = document.querySelectorAll('#pending-orders-list .record-item');
-        items.forEach(item => {
-            let text = item.innerText.toUpperCase();
-            item.style.display = text.indexOf(input) > -1 ? 'flex' : 'none';
-        });
+        let input = document.getElementById('search-order').value.toUpperCase(); let items = document.querySelectorAll('#pending-orders-list .record-item');
+        items.forEach(item => { let text = item.innerText.toUpperCase(); item.style.display = text.indexOf(input) > -1 ? 'flex' : 'none'; });
     }
 
     let currentType = 'INCOME'; let currentCat = 'Tailoring'; let currentBillCat = 'Fabric_Bill';
 
     function setType(t) {
         currentType = t;
-        document.getElementById('btn-in').className = t==='INCOME' ? 'active-in' : '';
-        document.getElementById('btn-out').className = t==='EXPENSE' ? 'active-out' : '';
-        document.getElementById('grid-income').style.display = t==='INCOME' ? 'grid' : 'none';
-        document.getElementById('grid-expense').style.display = t==='EXPENSE' ? 'grid' : 'none';
-        
+        document.getElementById('btn-in').className = t==='INCOME' ? 'active-in' : ''; document.getElementById('btn-out').className = t==='EXPENSE' ? 'active-out' : '';
+        document.getElementById('grid-income').style.display = t==='INCOME' ? 'grid' : 'none'; document.getElementById('grid-expense').style.display = t==='EXPENSE' ? 'grid' : 'none';
         const txt = document.getElementById('note-text');
         if(t === 'INCOME') { setCat('Tailoring'); document.getElementById('home-bubbles').style.display = 'flex'; handleNoteSelect(); } 
         else { setCat('Shop'); document.getElementById('home-bubbles').style.display = 'none'; txt.style.display = 'block'; txt.placeholder = "Type Expense Detail..."; txt.value = ""; }
@@ -752,8 +671,7 @@
     function setCat(c) {
         currentCat = c;
         document.querySelectorAll('#grid-income .cat-item, #grid-expense .cat-item').forEach(el => el.classList.remove('selected'));
-        const catElement = document.getElementById('cat-' + c);
-        if(catElement) catElement.classList.add('selected');
+        const catElement = document.getElementById('cat-' + c); if(catElement) catElement.classList.add('selected');
     }
 
     function handleNoteSelect() {
@@ -769,14 +687,12 @@
     function setBillCat(c) {
         currentBillCat = c;
         document.querySelectorAll('#grid-bill .cat-item').forEach(el => el.classList.remove('selected'));
-        const catElement = document.getElementById('cat-' + c);
-        if(catElement) catElement.classList.add('selected');
+        const catElement = document.getElementById('cat-' + c); if(catElement) catElement.classList.add('selected');
     }
 
     async function fetchInitialData() {
         try {
-            const response = await fetch(scriptURL);
-            const data = await response.json();
+            const response = await fetch(scriptURL); const data = await response.json();
             if(Array.isArray(data)) { localData = data; } else { localData = []; }
             renderData();
         } catch (error) { document.getElementById('home-today-list').innerHTML = "<p style='text-align:center; color: var(--danger); font-weight:600;'>Offline or Sync Error. Try reloading.</p>"; }
@@ -804,11 +720,12 @@
             if(r.type === 'BALANCE' && noteStr.includes('|')) { const oId = noteStr.split('|')[0].trim(); if(ordersMap[oId]) ordersMap[oId].isCompleted = true; }
         });
 
+        let pendIndex = 0;
         Object.values(ordersMap).reverse().forEach(o => {
             if(!o.isCompleted) {
                 let balanceDue = o.totalAmt - o.advAmt; let dateDisplay = o.date ? o.date.split(',')[0] : "";
                 pendingHtml += `
-                <div class="record-item" style="border-left: 4px solid var(--info); align-items: flex-start; padding-right: 10px;" id="pending-${o.id}">
+                <div class="record-item stagger-item" style="border-left: 4px solid var(--info); align-items: flex-start; padding-right: 10px; animation-delay: ${pendIndex * 0.05}s" id="pending-${o.id}">
                     <div class="record-details">
                         <strong style="color:var(--info); font-size:15px;">Code: ${o.oId} | ${o.name}</strong>
                         <span>Tel: ${o.phone}</span>
@@ -818,15 +735,18 @@
                         <span style="font-size:10px; margin-top:6px; opacity:0.7;">${dateDisplay}</span>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; justify-content: center;">
-                        <button onclick="generateAdvanceBill('${o.oId}', '${o.name}', '${o.item}', ${o.totalAmt}, ${o.advAmt}, ${balanceDue}, '${o.phone}')" style="background:white; color:var(--primary); border:2px solid var(--primary); padding:10px 14px; border-radius:10px; font-weight:800; cursor:pointer; font-size:12px; box-shadow:var(--shadow-sm);">🧾 Bill</button>
+                        <button onclick="generateAdvanceBill('${o.oId}', '${o.name}', '${o.item}', ${o.totalAmt}, ${o.advAmt}, ${balanceDue}, '${o.phone}')" style="background:#1e1e1e; color:var(--primary); border:1px solid var(--primary); padding:10px 14px; border-radius:10px; font-weight:800; cursor:pointer; font-size:12px; box-shadow:var(--shadow-sm);">🧾 Bill</button>
                         <button onclick="payBalance('${o.oId}', '${o.name}', '${o.item}', ${o.totalAmt}, ${o.advAmt}, ${balanceDue}, '${o.phone}')" style="background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; font-size:12px; box-shadow: 0 4px 10px rgba(16,185,129,0.3);">💰 Pay Bal</button>
                     </div>
                 </div>`;
+                pendIndex++;
             }
         });
-        listOrders.innerHTML = pendingHtml || "<p style='text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500; padding: 20px 0;'>No pending orders.</p>";
+        listOrders.innerHTML = pendingHtml || getEmptyState("No pending orders right now.");
 
         let reversedData = [...localData].reverse();
+        let homeIndex = 0; let billIndex = 0;
+        
         reversedData.forEach(r => {
             if(!r) return;
             let rDate = new Date(r.date); if(isNaN(rDate.getTime())) return; 
@@ -849,16 +769,18 @@
                 if (r.type !== 'BILL') {
                     if(r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') todayIncome += val;
                     let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : 'amount-out'; let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-';
-                    htmlHome += `<div class="record-item" id="row-${r.id}"><div class="record-details"><strong>${catName}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div><div style="display:flex; align-items:center;"><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
+                    htmlHome += `<div class="record-item stagger-item" id="row-${r.id}" style="animation-delay: ${homeIndex * 0.05}s"><div class="record-details"><strong>${catName}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div><div style="display:flex; align-items:center;"><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
+                    homeIndex++;
                 } else {
-                    htmlBills += `<div class="record-item" id="row-${r.id}"><div class="record-details"><strong>${catName}</strong><span>${noteStr}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div><div style="display:flex; align-items:center;"><div class="amount-bill">- Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
+                    htmlBills += `<div class="record-item stagger-item" id="row-${r.id}" style="animation-delay: ${billIndex * 0.05}s"><div class="record-details"><strong>${catName}</strong><span>${noteStr}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div><div style="display:flex; align-items:center;"><div class="amount-bill">- Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
+                    billIndex++;
                 }
             }
         });
 
         document.getElementById('home-today-income').innerText = "Rs. " + todayIncome.toFixed(2);
-        listHome.innerHTML = htmlHome || "<p style='text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500; padding: 20px 0;'>No entries today yet.</p>";
-        listBills.innerHTML = htmlBills || "<p style='text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500; padding: 20px 0;'>No bills today yet.</p>";
+        listHome.innerHTML = htmlHome || getEmptyState("No entries added today.");
+        listBills.innerHTML = htmlBills || getEmptyState("No bills recorded today.");
         renderReports(); 
     }
 
@@ -894,7 +816,7 @@
             document.getElementById('invoice-bill-name').value = '';
             document.getElementById('invoice-bill-whatsapp').value = '';
             setAutoInvoiceId();
-            document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #fff0f5; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">Cleared. Add new items with "Prepare Bill" ON.</p>`;
+            document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">Cleared. Add new items with "Prepare Bill" ON.</p>`;
             document.getElementById('invoice-instruction').style.display = 'none';
             document.getElementById('invoice-action-btns').style.display = 'none';
         }
@@ -1009,24 +931,35 @@
     function renderReports() {
         const list = document.getElementById('report-list'); const title = document.getElementById('report-title'); const recordType = document.getElementById('filter-type').value; const monthInput = document.getElementById('filter-month').value; const dateInput = document.getElementById('filter-date').value;   
         if (monthInput) title.innerText = "Summary for " + monthInput; else if (dateInput) title.innerText = "Summary for " + dateInput;
+        
         let totalProfit = 0, totalBillsAmount = 0, html = ""; let reversedData = [...localData].reverse();
+        let repIndex = 0;
+
         reversedData.forEach(r => {
             if(!r) return; let rDate = new Date(r.date); if(isNaN(rDate.getTime())) return;
             const rMonthStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0'); const rDateStr = rDate.getFullYear() + "-" + String(rDate.getMonth() + 1).padStart(2, '0') + "-" + String(rDate.getDate()).padStart(2, '0');
             let matchDate = false; if(monthInput && rMonthStr === monthInput) matchDate = true; if(!monthInput && dateInput && rDateStr === dateInput) matchDate = true;
             if(matchDate) {
                 const val = parseFloat(r.amount) || 0; let noteStr = r.note ? String(r.note) : "-"; let categoryStr = (r.category || "").toString().replace('_', ' ').toUpperCase();
-                if(r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') totalProfit += val; else if(r.type === 'EXPENSE' || r.type === 'BILL') totalProfit -= val;
+                
+                if(r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') { totalProfit += val; } 
+                else if(r.type === 'EXPENSE' || r.type === 'BILL') { totalProfit -= val; }
+                
                 if(r.type === 'BILL') totalBillsAmount += val;
+                
                 let showByType = false; if(recordType === 'ALL') showByType = true; else if(recordType === 'INCOME' && (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE')) showByType = true; else if(recordType === r.type) showByType = true;
                 if(showByType) {
                     let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : (r.type === 'EXPENSE' ? 'amount-out' : 'amount-bill'); let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-'; let displayNote = noteStr;
                     if (r.type === 'ADVANCE' || r.type === 'BALANCE') { const parts = noteStr.split('|'); displayNote = "Code: <strong style='color:var(--text-main)'>" + parts[0] + "</strong> | " + (parts[1] || ''); }
-                    html += `<div class="record-item"><div class="record-details"><strong>${categoryStr}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${r.date}</span></div><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div></div>`;
+                    html += `<div class="record-item stagger-item" style="animation-delay: ${repIndex * 0.05}s"><div class="record-details"><strong>${categoryStr}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${r.date}</span></div><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div></div>`;
+                    repIndex++;
                 }
             }
         });
-        document.getElementById('total-profit').innerText = "Net: Rs. " + totalProfit.toFixed(2); document.getElementById('total-bills').innerText = "Total Bills: Rs. " + totalBillsAmount.toFixed(2); list.innerHTML = html || "<p style='text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500; padding: 20px 0;'>No records found.</p>";
+        
+        document.getElementById('total-profit').innerText = "Net: Rs. " + totalProfit.toFixed(2); 
+        document.getElementById('total-bills').innerText = "Total Bills: Rs. " + totalBillsAmount.toFixed(2); 
+        list.innerHTML = html || getEmptyState("No matching records found.");
     }
 
     // --- INVOICE GENERATION LOGIC ---
@@ -1038,7 +971,7 @@
 
         if(billBuffer.length === 0) {
             playPopSound(); 
-            document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500; background: #fff0f5; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">No items in buffer! Turn ON "Prepare Bill" in Home tab and add items first.</p>`;
+            document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500; background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">No items in buffer! Turn ON "Prepare Bill" in Home tab and add items first.</p>`;
             document.getElementById('invoice-action-btns').style.display = 'none';
             document.getElementById('invoice-instruction').style.display = 'none';
             return;
@@ -1179,12 +1112,12 @@
         document.getElementById('invoice-bill-name').value = '';
         document.getElementById('invoice-bill-whatsapp').value = '';
         setAutoInvoiceId();
-        document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #fff0f5; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">WhatsApp Message Sent! Ready for new bill.</p>`;
+        document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">WhatsApp Message Sent! Ready for new bill.</p>`;
         document.getElementById('invoice-instruction').style.display = 'none';
         document.getElementById('invoice-action-btns').style.display = 'none';
     }
 
-    // --- FULLSCREEN SCREENSHOT FEATURE WITH DOUBLE TAP ---
+    // --- CLEAN FULLSCREEN SCREENSHOT FEATURE WITH DOUBLE TAP ---
     function openFullscreen() {
         if(!currentGeneratedBillData) return;
         playPopSound();
@@ -1214,6 +1147,12 @@
             playPopSound();
             history.back(); // This safely hides the modal via the popstate listener
         }
+    }
+
+    function saveAsPdf() {
+        playTabSound();
+        incrementInvoiceSeqOnce();
+        window.print(); 
     }
 
     function incrementInvoiceSeqOnce() {
