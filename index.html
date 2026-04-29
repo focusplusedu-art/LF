@@ -19,17 +19,13 @@
             --primary-gradient: linear-gradient(135deg, #ff4081 0%, #e81e6d 100%);
             --primary-light: rgba(255, 64, 129, 0.15);   
             --bg: #0a0a0a;              
-            --card-bg: rgba(25, 25, 25, 0.95);         
             --text-main: #f1f5f9;       
             --text-muted: #9ca3af;      
             --success: #10b981;         
             --danger: #ef4444;          
             --warning: #f59e0b;         
             --info: #3b82f6;
-            --border: #333333;          
-            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
-            --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+            --border: rgba(255, 64, 129, 0.2);          
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -38,35 +34,28 @@
             background-attachment: fixed;
             color: var(--text-main); 
             padding: 15px; 
-            padding-bottom: 90px; /* Space for Bottom Nav Bar */
+            padding-bottom: 90px; 
             min-height: 100vh;
             overflow-x: hidden; 
         }
         .container { max-width: 600px; margin: 0 auto; position: relative; }
         
-        .header { text-align: center; margin-bottom: 24px; position: relative; display: flex; flex-direction: column; align-items: center; }
-        .logo-img { height: 85px; border-radius: 20px; margin-bottom: 8px; object-fit: contain; box-shadow: 0 0 20px rgba(255,64,129,0.2); background: #000; padding: 2px; border: 2px solid var(--primary); }
-        .header h2 { color: var(--primary); font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+        .header { text-align: center; margin-bottom: 24px; position: relative; display: flex; flex-direction: column; align-items: center; padding-top: 10px; }
+        .logo-img { height: 80px; border-radius: 20px; margin-bottom: 8px; object-fit: contain; box-shadow: 0 0 20px rgba(255,64,129,0.2); background: #000; padding: 2px; border: 2px solid var(--primary); }
+        .header h2 { color: #fff; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
         .header p { font-size: 11px; color: var(--text-muted); font-weight: 700; letter-spacing: 3px; text-transform: uppercase; margin-top: 2px; }
         
-        .lock-btn { position: absolute; right: 0; top: 15px; background: #1a1a1a; color: var(--primary); border: 1px solid var(--border); border-radius: 50%; width: 42px; height: 42px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-sm); transition: 0.3s; z-index: 10; }
+        .lock-btn { position: absolute; right: 0; top: 15px; background: rgba(30,30,30,0.6); backdrop-filter: blur(10px); color: var(--primary); border: 1px solid var(--border); border-radius: 50%; width: 42px; height: 42px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: 0.3s; z-index: 10; }
         .lock-btn:active { transform: scale(0.9); }
 
         /* PRO BOTTOM NAVIGATION BAR WITH SVG ICONS */
         .nav-tabs {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            background: rgba(15, 15, 15, 0.95);
-            backdrop-filter: blur(15px);
-            display: flex;
-            justify-content: space-around;
+            position: fixed; bottom: 0; left: 0; width: 100%;
+            background: rgba(10, 10, 10, 0.75); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            display: flex; justify-content: space-around;
             padding: 12px 5px calc(12px + env(safe-area-inset-bottom));
-            box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.5);
-            border-radius: 24px 24px 0 0;
-            z-index: 1000;
-            border-top: 1px solid rgba(255, 64, 129, 0.2);
+            box-shadow: 0 -4px 25px rgba(0, 0, 0, 0.6); border-radius: 24px 24px 0 0;
+            z-index: 1000; border-top: 1px solid rgba(255, 64, 129, 0.15);
         }
         .tab-btn {
             flex: 1; padding: 5px 0; border: none; border-radius: 12px;
@@ -74,49 +63,30 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex; flex-direction: column; align-items: center; gap: 5px;
         }
-        .tab-btn svg { 
-            width: 24px; height: 24px; 
-            transition: transform 0.3s, stroke 0.3s; 
-            stroke: #6b7280; 
-        }
+        .tab-btn svg { width: 24px; height: 24px; transition: transform 0.3s, stroke 0.3s; stroke: #6b7280; }
         .tab-btn.active { color: var(--primary); }
-        .tab-btn.active svg { 
-            transform: translateY(-4px) scale(1.1); 
-            stroke: var(--primary); 
-            filter: drop-shadow(0px 2px 4px rgba(255,64,129,0.4));
-        }
+        .tab-btn.active svg { transform: translateY(-4px) scale(1.1); stroke: var(--primary); filter: drop-shadow(0px 2px 4px rgba(255,64,129,0.4)); }
 
-        /* TAB CONTENT ANIMATION */
-        .tab-content { 
-            display: none; 
-            animation: fadeInTab 0.3s ease-out forwards;
-        }
-        @keyframes fadeInTab {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* SMOOTH LIST ENTRY ANIMATION (STAGGERED) */
-        .stagger-item {
-            opacity: 0;
-            transform: translateY(20px);
-            animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
-        }
+        .tab-content { display: none; animation: fadeInTab 0.3s ease-out forwards; }
+        @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .stagger-item { opacity: 0; transform: translateY(20px); animation: slideInUp 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; }
         @keyframes slideInUp { to { opacity: 1; transform: translateY(0); } }
 
+        /* GLASSMORPHISM CARDS */
         .card { 
-            background: var(--card-bg); border-radius: 24px; padding: 24px; margin-bottom: 20px; 
-            border: 1px solid #2a2a2a; box-shadow: var(--shadow-md); backdrop-filter: blur(10px); 
+            background: rgba(20, 20, 20, 0.5); border-radius: 24px; padding: 24px; margin-bottom: 20px; 
+            border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); 
         }
         .card h3 { font-size: 18px; margin-bottom: 16px; color: var(--primary); display: flex; align-items: center; gap: 8px; font-weight: 700; }
         
-        .type-switch { display: flex; background: #1a1a1a; border-radius: 14px; padding: 6px; margin-bottom: 20px; gap: 4px; border: 1px solid var(--border); }
+        .type-switch { display: flex; background: rgba(10,10,10,0.5); border-radius: 14px; padding: 6px; margin-bottom: 20px; gap: 4px; border: 1px solid var(--border); }
         .type-switch button { flex: 1; padding: 14px 5px; border: none; background: transparent; border-radius: 10px; font-weight: 700; font-size: 13px; cursor: pointer; transition: 0.3s; color: var(--text-muted); }
         .type-switch button.active-in { background: var(--success); color: white; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25); }
         .type-switch button.active-out { background: var(--danger); color: white; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25); }
 
         .cat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
-        .cat-item { padding: 16px; border: 2px solid transparent; background: #1a1a1a; border-radius: 16px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; color: var(--text-muted); transition: all 0.2s ease; }
+        .cat-item { padding: 16px; border: 1px solid rgba(255,255,255,0.05); background: rgba(30,30,30,0.4); border-radius: 16px; text-align: center; cursor: pointer; font-size: 13px; font-weight: 600; display: flex; flex-direction: column; align-items: center; color: var(--text-muted); transition: all 0.2s ease; }
         .cat-item span { font-size: 24px; margin-bottom: 6px; }
         .cat-item.selected { border-color: var(--primary); background: var(--primary-light); color: var(--primary); transform: translateY(-2px); box-shadow: var(--shadow-sm); }
 
@@ -126,50 +96,65 @@
         .amount-wrapper:focus-within span { color: var(--primary); }
         .amount-wrapper input { border: none; background: transparent; font-size: 40px; font-weight: 800; width: 100%; outline: none; margin: 0; padding: 0; color: var(--primary); letter-spacing: -1px; }
 
-        input[type="text"], input[type="number"], input[type="date"], input[type="month"], select {
-            width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 500; background: #1a1a1a; outline: none; margin-bottom: 16px; color: var(--text-main); transition: all 0.3s ease;
-        }
-        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, input[type="month"]:focus, select:focus {
-            border-color: var(--primary); background: #222; box-shadow: 0 0 0 4px var(--primary-light);
-        }
+        input[type="text"], input[type="number"], input[type="date"], input[type="month"], select { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 500; background: rgba(10,10,10,0.6); outline: none; margin-bottom: 16px; color: var(--text-main); transition: all 0.3s ease; }
+        input[type="text"]:focus, input[type="number"]:focus, input[type="date"]:focus, input[type="month"]:focus, select:focus { border-color: var(--primary); background: rgba(20,20,20,0.8); box-shadow: 0 0 0 4px var(--primary-light); }
         select option { background: #1a1a1a; color: #fff; }
 
-        .btn-action {
-            width: 100%; padding: 18px; background: var(--primary-gradient); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.2s ease; box-shadow: var(--shadow-md); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .btn-action:active { transform: scale(0.96); box-shadow: var(--shadow-sm); }
+        .btn-action { width: 100%; padding: 18px; background: var(--primary-gradient); color: white; border: none; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; transition: all 0.2s ease; box-shadow: 0 4px 15px rgba(255,64,129,0.4); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; position: relative; overflow: hidden; }
+        .btn-action:active { transform: scale(0.96); box-shadow: 0 2px 8px rgba(255,64,129,0.3); }
         .btn-cancel { background: transparent; color: var(--text-muted); border: 2px solid var(--border); box-shadow: none; padding: 14px; font-size: 14px; }
-        .btn-cancel:active { background: #1a1a1a; }
+        .btn-cancel:active { background: rgba(30,30,30,0.5); }
 
         .summary-box { background: var(--primary-gradient); color: white; text-align: center; border: none; padding: 28px 20px; position: relative; overflow: hidden; }
         .summary-box::after { content: ''; position: absolute; top: -50%; right: -50%; width: 100%; height: 100%; background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 60%); pointer-events: none; }
         .summary-box h3 { border: none; color: rgba(255,255,255,0.9); justify-content: center; font-size: 14px; margin-bottom: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
         .profit-amount { font-size: 42px; font-weight: 800; margin: 0; text-shadow: 0 2px 10px rgba(0,0,0,0.3); letter-spacing: -1px; }
 
-        .record-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border: 1px solid var(--border); background: #1e1e1e; border-radius: 16px; margin-bottom: 10px; transition: 0.3s; }
-        .record-item:hover { border-color: var(--primary-light); }
+        /* --- SWIPE TO DELETE / GLASSMORPHISM RECORDS --- */
+        .swipe-wrapper {
+            display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -ms-overflow-style: none; margin-bottom: 10px;
+            border-radius: 16px; background: rgba(20, 20, 20, 0.5); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .swipe-wrapper::-webkit-scrollbar { display: none; }
+        
+        .swipe-item {
+            min-width: 100%; scroll-snap-align: start; padding: 16px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .swipe-actions { display: flex; scroll-snap-align: end; }
+        .swipe-actions button { border: none; color: white; padding: 0 22px; font-size: 20px; cursor: pointer; }
+        .swipe-actions button.edit { background: var(--info); }
+        .swipe-actions button.del { background: var(--danger); border-radius: 0 16px 16px 0; }
+
+        /* Regular items (Pending Orders) */
+        .record-item { 
+            display: flex; justify-content: space-between; align-items: center; padding: 16px; 
+            border: 1px solid var(--border); background: rgba(20, 20, 20, 0.5); 
+            backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);
+            border-radius: 16px; margin-bottom: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); 
+        }
+        
         .record-details strong { display: block; font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
         .record-details span { font-size: 12px; color: var(--text-muted); display: block; line-height: 1.4; }
         
         .amount-in { color: var(--success); font-weight: 800; font-size: 15px; }
         .amount-out { color: var(--danger); font-weight: 800; font-size: 15px; }
         .amount-bill { color: var(--warning); font-weight: 800; font-size: 15px; }
-        
-        .action-btns button { background: #252525; border: 1px solid var(--border); font-size: 14px; cursor: pointer; margin-left: 8px; width: 32px; height: 32px; border-radius: 8px; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; }
-        .action-btns button:active { transform: scale(0.9); background: #333; }
 
         .filter-section { display: flex; gap: 12px; margin-bottom: 16px; }
         .filter-section > div { flex: 1; }
         .filter-section label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        .search-box { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 14px; background: #1a1a1a; padding: 4px 16px; margin-bottom: 20px; box-shadow: var(--shadow-sm); transition: 0.3s; }
+        .search-box { display: flex; align-items: center; border: 1px solid var(--border); border-radius: 14px; background: rgba(10,10,10,0.5); padding: 4px 16px; margin-bottom: 20px; box-shadow: var(--shadow-sm); transition: 0.3s; }
         .search-box:focus-within { box-shadow: 0 0 0 4px var(--primary-light); border-color: var(--primary); }
         .search-box span { font-size: 18px; opacity: 0.5; }
         .search-box input { border: none; background: transparent; margin-bottom: 0; padding: 12px 10px; outline: none; width: 100%; font-size: 15px; font-weight: 500; color: #fff; }
 
         .bubble-scroll-container { display: flex; overflow-x: auto; gap: 10px; padding: 8px 4px 16px 4px; margin-bottom: 8px; scrollbar-width: none; -ms-overflow-style: none; scroll-behavior: smooth; -webkit-overflow-scrolling: touch; }
         .bubble-scroll-container::-webkit-scrollbar { display: none; } 
-        .bubble-item { padding: 10px 20px; background: #1e1e1e; color: #ccc; border: 1px solid var(--border); border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.2); flex-shrink: 0; }
+        .bubble-item { padding: 10px 20px; background: rgba(30,30,30,0.6); backdrop-filter: blur(5px); color: #ccc; border: 1px solid var(--border); border-radius: 20px; font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 2px 4px rgba(0,0,0,0.2); flex-shrink: 0; }
         .bubble-item.selected { background: var(--primary-gradient); color: white; border-color: transparent; box-shadow: 0 6px 16px rgba(232, 30, 109, 0.4); transform: translateY(-2px); }
 
         #pin-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #111 0%, #1e1015 100%); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
@@ -177,7 +162,7 @@
         #pin-input { text-align: center; font-size: 36px; letter-spacing: 12px; font-weight: 800; margin-bottom: 30px; border: none; border-bottom: 3px solid var(--primary); background: transparent; width: 100%; outline: none; color: var(--text-main); padding-bottom: 10px; transition: 0.3s; }
         #pin-input:focus { border-bottom-color: #ff5e98; }
 
-        .bill-switch-card { display: flex; justify-content: space-between; align-items: center; background: rgba(30, 30, 30, 0.9); border: 2px solid var(--primary-light); border-radius: 16px; padding: 14px 20px; margin-bottom: 16px; box-shadow: var(--shadow-sm); font-size: 14px; font-weight: 700; color: var(--primary); }
+        .bill-switch-card { display: flex; justify-content: space-between; align-items: center; background: rgba(30, 30, 30, 0.5); backdrop-filter: blur(10px); border: 2px solid var(--primary-light); border-radius: 16px; padding: 14px 20px; margin-bottom: 16px; box-shadow: var(--shadow-sm); font-size: 14px; font-weight: 700; color: var(--primary); }
         .switch { position: relative; display: inline-block; width: 44px; height: 24px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #333; transition: .3s; border-radius: 24px; }
@@ -211,6 +196,8 @@
         #invoice-totals .grand-total span { color: var(--primary) !important; }
         .invoice-footer-msg { text-align: center; font-size: 14px; margin-top: 40px; color: var(--primary); font-weight: 600; }
 
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+
         /* COMPLETELY CLEAN FULLSCREEN SCREENSHOT MODAL */
         .fullscreen-modal { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000000; z-index: 999999; display: flex; flex-direction: column; align-items: center; justify-content: center; box-sizing: border-box; overflow-y: auto; padding: 40px 15px; }
         .fullscreen-bill-container { width: 100%; max-width: 600px; background: #000000; margin: auto; box-sizing: border-box; border: none !important; box-shadow: none !important; }
@@ -221,7 +208,7 @@
             #invoice-preview-capture, #invoice-preview-capture * { visibility: visible; }
             #invoice-preview-capture { position: absolute; left: 0; top: 0; width: 100%; border: none; background: #121212 !important; }
             #invoice-preview { background: #121212 !important; }
-            .nav-tabs, .header, .card, .bill-switch-card, #invoice-action-btns { display: none !important; }
+            .nav-tabs, .header, .card, .bill-switch-card, #invoice-action-btns, #ptr-indicator { display: none !important; }
         }
     </style>
 </head>
@@ -261,6 +248,11 @@
 </div>
 
 <div class="container" id="main-app" style="display: none;">
+    
+    <div id="ptr-indicator" style="height: 0; overflow: hidden; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); text-align: center; display: flex; align-items: center; justify-content: center;">
+        <span style="background: rgba(25,25,25,0.8); backdrop-filter: blur(10px); padding: 8px 16px; border-radius: 20px; border: 1px solid var(--primary); color: var(--primary); font-size: 12px; font-weight: 700; box-shadow: 0 4px 12px rgba(255,64,129,0.2);">↓ Pull to Refresh</span>
+    </div>
+
     <div class="header">
         <button class="lock-btn" onclick="playTabSound(); location.reload()">🔒</button>
         <img src="logo.jpg" class="logo-img" onerror="this.style.display='none'">
@@ -337,7 +329,7 @@
         </div>
 
         <div class="card">
-            <h3>📝 Today's Activity</h3>
+            <h3 style="font-size: 14px;">📝 Today's Activity <span style="font-size:10px; color:var(--text-muted); font-weight:normal; margin-left:auto;">👈 Swipe Left to Delete</span></h3>
             <div id="home-today-list">
                 <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading data...</p>
             </div>
@@ -420,12 +412,11 @@
             </div>
 
             <div id="invoice-preview-area">
-                <p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #1a1a1a; padding: 15px; border-radius: 12px;">Add items in Home Tab with "Prepare Bill" ON, or Pay an Order Balance to see the bill here.</p>
+                <p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: rgba(10,10,10,0.5); padding: 15px; border-radius: 12px;">Add items in Home Tab with "Prepare Bill" ON, or Pay an Order Balance to see the bill here.</p>
             </div>
             
             <div id="invoice-instruction" style="display:none; text-align:center; color:var(--primary); font-size:12px; font-weight:bold; margin-top:10px; animation: fadeIn 1s infinite alternate;">
-                👆 බිල් එක උඩ ඔබලා Full Screen ගන්න.<br>
-                <span style="font-size: 10px; opacity: 0.8;">(ආපසු එන්න බිල් එක උඩ දෙපාරක් ඔබන්න)</span>
+                👆 බිල් එක උඩ ඔබලා Full Screen ගන්න.
             </div>
 
             <div id="invoice-action-btns" style="margin-top: 15px; display: none; flex-direction: column; gap: 10px;">
@@ -457,7 +448,7 @@
         </div>
 
         <div class="card">
-            <h3>📝 Today's Shop Bills</h3>
+            <h3 style="font-size: 14px;">📝 Today's Shop Bills <span style="font-size:10px; color:var(--text-muted); font-weight:normal; margin-left:auto;">👈 Swipe Left</span></h3>
             <div id="bills-today-list">
                 <p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500;">Loading today's bills...</p>
             </div>
@@ -483,7 +474,7 @@
                     <div class="bubble-item" data-val="EXPENSE" onclick="playBubbleSound(); selectFilterBubble('EXPENSE', this)">Expense Only 📉</div>
                 </div>
 
-                    <select id="filter-type" style="display: none;" onchange="renderData()">
+                <select id="filter-type" style="display: none;" onchange="renderData()">
                     <option value="ALL" selected>All Records</option>
                     <option value="INCOME">Income & Orders 💰</option>
                     <option value="BILL">Bills Only 🧾</option>
@@ -500,7 +491,8 @@
                     <input type="date" id="filter-date" onchange="playTabSound(); renderData()">
                 </div>
             </div>
-            <div id="report-list" style="margin-top: 20px;">
+            <p style="font-size:10px; color:var(--text-muted); text-align:right; margin: 0 0 10px 0;">👈 Swipe Left to Delete</p>
+            <div id="report-list">
                 <p style="text-align:center; color: var(--text-muted); font-size: 14px; font-weight: 500;">Please wait...</p>
             </div>
         </div>
@@ -511,20 +503,28 @@
      </div>
 
 <script>
+    // --- VIBRATION HELPER ---
+    function vibratePhone(ms = 40) { if(navigator.vibrate) navigator.vibrate(ms); }
+
     // --- SOUND EFFECTS ---
     let audioCtx;
     function initAudio() { if (!audioCtx) { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } if (audioCtx.state === 'suspended') audioCtx.resume(); }
-    function playTabSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'triangle'; osc.frequency.setValueAtTime(400, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); osc.start(); osc.stop(audioCtx.currentTime + 0.05); } catch(e) {} }
-    function playBubbleSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} }
-    function playSuccessSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); } catch(e) {} }
-    function playDeleteSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2); osc.start(); osc.stop(audioCtx.currentTime + 0.2); } catch(e) {} }
-    function playPaySound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(1000, audioCtx.currentTime); osc.frequency.setValueAtTime(1500, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); } catch(e) {} }
-    function playErrorSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2); osc.start(); osc.stop(audioCtx.currentTime + 0.2); } catch(e) {} }
-    function playPopSound() { try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} }
+    function playTabSound() { vibratePhone(); try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'triangle'; osc.frequency.setValueAtTime(400, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.05); osc.start(); osc.stop(audioCtx.currentTime + 0.05); } catch(e) {} }
+    function playBubbleSound() { vibratePhone(30); try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(800, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(400, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} }
+    function playSuccessSound() { vibratePhone([30, 50, 30]); try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); } catch(e) {} }
+    function playDeleteSound() { vibratePhone(100); try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sawtooth'; osc.frequency.setValueAtTime(300, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(100, audioCtx.currentTime + 0.2); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2); osc.start(); osc.stop(audioCtx.currentTime + 0.2); } catch(e) {} }
+    function playPaySound() { vibratePhone(50); try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(1000, audioCtx.currentTime); osc.frequency.setValueAtTime(1500, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3); osc.start(); osc.stop(audioCtx.currentTime + 0.3); } catch(e) {} }
+    function playErrorSound() { vibratePhone([100, 50, 100]); try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'square'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2); osc.start(); osc.stop(audioCtx.currentTime + 0.2); } catch(e) {} }
+    function playPopSound() { vibratePhone(30); try { initAudio(); const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain(); osc.connect(gain); gain.connect(audioCtx.destination); osc.type = 'sine'; osc.frequency.setValueAtTime(600, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1); gain.gain.setValueAtTime(0.15, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1); osc.start(); osc.stop(audioCtx.currentTime + 0.1); } catch(e) {} }
 
     function togglePrepareBillSound() { playPopSound(); }
 
-    // --- EMPTY STATE GRAPHIC GENERATOR (THE SLEEPING CAT) ---
+    // --- PRO NUMBER FORMATTING ---
+    function formatNumber(num) {
+        return parseFloat(num).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+
+    // --- EMPTY STATE GRAPHIC (THE SLEEPING CAT) ---
     function getEmptyState(msg) {
         return `
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; padding:40px 10px; opacity:0.7; animation: fadeIn 0.5s ease-out;">
@@ -539,6 +539,35 @@
             <p style="color:var(--text-muted); font-size:14px; font-weight:600; margin:0; letter-spacing: 0.5px;">${msg}</p>
         </div>`;
     }
+
+    // --- PULL TO REFRESH LOGIC ---
+    let pStart = 0;
+    let ptrInd = document.getElementById('ptr-indicator');
+    window.addEventListener('touchstart', e => { 
+        if (window.scrollY === 0) pStart = e.touches[0].clientY; 
+    }, {passive: true});
+    
+    window.addEventListener('touchmove', e => {
+        if (window.scrollY === 0 && pStart > 0) {
+            let diff = e.touches[0].clientY - pStart;
+            if (diff > 70) {
+                ptrInd.style.height = '60px';
+                ptrInd.querySelector('span').innerText = '🔄 Release to Update...';
+            } else {
+                ptrInd.style.height = '0';
+                ptrInd.querySelector('span').innerText = '↓ Pull to Refresh';
+            }
+        }
+    }, {passive: true});
+    
+    window.addEventListener('touchend', e => {
+        if (ptrInd.style.height === '60px') {
+            vibratePhone([30, 50, 30]);
+            ptrInd.querySelector('span').innerText = '⏳ Syncing Data...';
+            setTimeout(() => location.reload(), 800);
+        }
+        pStart = 0;
+    });
 
     // --- AUTO-SAVE CUSTOMER PHONE ---
     let customerDirectory = JSON.parse(localStorage.getItem('liora_customers')) || {};
@@ -618,7 +647,7 @@
         document.getElementById('pin-screen').style.display='none';
         document.getElementById('main-app').style.display='block';
         document.getElementById('bottom-nav').style.display='flex';
-        
+
         const now = new Date();
         const monthStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0');
         const dateStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, '0') + "-" + String(now.getDate()).padStart(2, '0');
@@ -695,7 +724,7 @@
             const response = await fetch(scriptURL); const data = await response.json();
             if(Array.isArray(data)) { localData = data; } else { localData = []; }
             renderData();
-        } catch (error) { document.getElementById('home-today-list').innerHTML = "<p style='text-align:center; color: var(--danger); font-weight:600;'>Offline or Sync Error. Try reloading.</p>"; }
+        } catch (error) { document.getElementById('home-today-list').innerHTML = "<p style='text-align:center; color: var(--danger); font-weight:600;'>Offline or Sync Error. Pull down to refresh.</p>"; }
     }
 
     function renderData() {
@@ -730,12 +759,12 @@
                         <strong style="color:var(--info); font-size:15px;">Code: ${o.oId} | ${o.name}</strong>
                         <span>Tel: ${o.phone}</span>
                         <span>Item: ${o.item}</span>
-                        <span style="display:block; margin-top:6px; font-size:12px; color:var(--text-muted); font-weight:600;">Total: Rs. ${o.totalAmt.toFixed(2)} | Adv: Rs. ${o.advAmt.toFixed(2)}</span>
-                        <span style="color:var(--danger); font-weight:800; display:block; margin-top:2px; font-size: 13px;">Due Balance: Rs. ${balanceDue.toFixed(2)}</span>
+                        <span style="display:block; margin-top:6px; font-size:12px; color:var(--text-muted); font-weight:600;">Total: Rs. ${formatNumber(o.totalAmt)} | Adv: Rs. ${formatNumber(o.advAmt)}</span>
+                        <span style="color:var(--danger); font-weight:800; display:block; margin-top:2px; font-size: 13px;">Due Balance: Rs. ${formatNumber(balanceDue)}</span>
                         <span style="font-size:10px; margin-top:6px; opacity:0.7;">${dateDisplay}</span>
                     </div>
                     <div style="display: flex; flex-direction: column; gap: 8px; align-items: flex-end; justify-content: center;">
-                        <button onclick="generateAdvanceBill('${o.oId}', '${o.name}', '${o.item}', ${o.totalAmt}, ${o.advAmt}, ${balanceDue}, '${o.phone}')" style="background:#1e1e1e; color:var(--primary); border:1px solid var(--primary); padding:10px 14px; border-radius:10px; font-weight:800; cursor:pointer; font-size:12px; box-shadow:var(--shadow-sm);">🧾 Bill</button>
+                        <button onclick="generateAdvanceBill('${o.oId}', '${o.name}', '${o.item}', ${o.totalAmt}, ${o.advAmt}, ${balanceDue}, '${o.phone}')" style="background:rgba(10,10,10,0.8); color:var(--primary); border:1px solid var(--primary); padding:10px 14px; border-radius:10px; font-weight:800; cursor:pointer; font-size:12px; box-shadow:var(--shadow-sm);">🧾 Bill</button>
                         <button onclick="payBalance('${o.oId}', '${o.name}', '${o.item}', ${o.totalAmt}, ${o.advAmt}, ${balanceDue}, '${o.phone}')" style="background:linear-gradient(135deg, #10b981, #059669); color:white; border:none; padding:10px 14px; border-radius:10px; font-weight:700; cursor:pointer; font-size:12px; box-shadow: 0 4px 10px rgba(16,185,129,0.3);">💰 Pay Bal</button>
                     </div>
                 </div>`;
@@ -761,24 +790,49 @@
                     if(r.type === 'BALANCE') displayNote += " <span style='color:var(--success); font-weight:600;'>(Balance Paid)</span>";
                 }
 
-                let actionBtns = r.id ? `<div class="action-btns"><button onclick="playPopSound(); deleteEntry('${r.id}')">🗑️</button></div>` : "";
-                if(r.type === 'INCOME' || r.type === 'EXPENSE') { actionBtns = r.id ? `<div class="action-btns"><button onclick="playPopSound(); editEntry('${r.id}', '${r.type}', '${r.category}', '${r.amount}', '${noteStr}')">✏️</button><button onclick="deleteEntry('${r.id}')">🗑️</button></div>` : ""; }
+                let actionBtns = "";
+                if(r.type === 'INCOME' || r.type === 'EXPENSE') { 
+                    actionBtns = `<div class="swipe-actions"><button class="edit" onclick="playPopSound(); editEntry('${r.id}', '${r.type}', '${r.category}', '${r.amount}', '${noteStr}')">✏️</button><button class="del" onclick="deleteEntry('${r.id}')">🗑️</button></div>`; 
+                } else if (r.id) {
+                    actionBtns = `<div class="swipe-actions"><button class="del" style="width: 100%; border-radius: 0 16px 16px 0;" onclick="deleteEntry('${r.id}')">🗑️</button></div>`;
+                }
 
                 let timeStr = rDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
                 if (r.type !== 'BILL') {
                     if(r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') todayIncome += val;
                     let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : 'amount-out'; let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-';
-                    htmlHome += `<div class="record-item stagger-item" id="row-${r.id}" style="animation-delay: ${homeIndex * 0.05}s"><div class="record-details"><strong>${catName}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div><div style="display:flex; align-items:center;"><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
+                    
+                    htmlHome += `
+                    <div class="swipe-wrapper stagger-item" id="row-${r.id}" style="animation-delay: ${homeIndex * 0.05}s">
+                        <div class="swipe-item">
+                            <div class="record-details"><strong>${catName}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div>
+                            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                <div class="${amountClass}">${sign} Rs.${formatNumber(val)}</div>
+                                ${actionBtns ? '<span style="font-size:9px; color:var(--text-muted); margin-top:4px; opacity:0.4;">👈 Swipe</span>' : ''}
+                            </div>
+                        </div>
+                        ${actionBtns}
+                    </div>`;
                     homeIndex++;
                 } else {
-                    htmlBills += `<div class="record-item stagger-item" id="row-${r.id}" style="animation-delay: ${billIndex * 0.05}s"><div class="record-details"><strong>${catName}</strong><span>${noteStr}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div><div style="display:flex; align-items:center;"><div class="amount-bill">- Rs.${val.toFixed(2)}</div>${actionBtns}</div></div>`;
+                    htmlBills += `
+                    <div class="swipe-wrapper stagger-item" id="row-${r.id}" style="animation-delay: ${billIndex * 0.05}s">
+                        <div class="swipe-item">
+                            <div class="record-details"><strong>${catName}</strong><span>${noteStr}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${timeStr}</span></div>
+                            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                <div class="amount-bill">- Rs.${formatNumber(val)}</div>
+                                ${actionBtns ? '<span style="font-size:9px; color:var(--text-muted); margin-top:4px; opacity:0.4;">👈 Swipe</span>' : ''}
+                            </div>
+                        </div>
+                        ${actionBtns}
+                    </div>`;
                     billIndex++;
                 }
             }
         });
 
-        document.getElementById('home-today-income').innerText = "Rs. " + todayIncome.toFixed(2);
+        document.getElementById('home-today-income').innerText = "Rs. " + formatNumber(todayIncome);
         listHome.innerHTML = htmlHome || getEmptyState("No entries added today.");
         listBills.innerHTML = htmlBills || getEmptyState("No bills recorded today.");
         renderReports(); 
@@ -816,7 +870,7 @@
             document.getElementById('invoice-bill-name').value = '';
             document.getElementById('invoice-bill-whatsapp').value = '';
             setAutoInvoiceId();
-            document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">Cleared. Add new items with "Prepare Bill" ON.</p>`;
+            document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: rgba(10,10,10,0.5); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">Cleared. Add new items with "Prepare Bill" ON.</p>`;
             document.getElementById('invoice-instruction').style.display = 'none';
             document.getElementById('invoice-action-btns').style.display = 'none';
         }
@@ -858,16 +912,8 @@
         document.getElementById('invoice-bill-whatsapp').value = phone || '';
         document.getElementById('invoice-id-input').value = oId;
         
-        isSeqIncremented = false; // Reset incrementer
-        currentGeneratedBillData = { 
-            id: oId, 
-            name: name, 
-            items: [{category: item, amount: totalAmt}], 
-            total: totalAmt, 
-            adv: 0,        
-            paidNow: advAmt, 
-            bal: balDue 
-        };
+        isSeqIncremented = false; 
+        currentGeneratedBillData = { id: oId, name: name, items: [{category: item, amount: totalAmt}], total: totalAmt, adv: 0, paidNow: advAmt, bal: balDue };
         renderInvoicePreviewHTML();
     }
 
@@ -894,21 +940,11 @@
                 document.getElementById('invoice-bill-whatsapp').value = phone || '';
                 document.getElementById('invoice-id-input').value = oId;
                 
-                isSeqIncremented = false; // Reset incrementer
-                currentGeneratedBillData = { 
-                    id: oId, 
-                    name: name, 
-                    items: [{category: item, amount: totalAmt}], 
-                    total: totalAmt, 
-                    adv: advAmt,       
-                    paidNow: paidAmt,  
-                    bal: newBal        
-                };
+                isSeqIncremented = false; 
+                currentGeneratedBillData = { id: oId, name: name, items: [{category: item, amount: totalAmt}], total: totalAmt, adv: advAmt, paidNow: paidAmt, bal: newBal };
                 renderInvoicePreviewHTML();
                 
-            } else {
-                playErrorSound(); alert("Please enter a valid amount!");
-            }
+            } else { playErrorSound(); alert("Please enter a valid amount!"); }
         }
     }
 
@@ -951,18 +987,31 @@
                 if(showByType) {
                     let amountClass = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? 'amount-in' : (r.type === 'EXPENSE' ? 'amount-out' : 'amount-bill'); let sign = (r.type === 'INCOME' || r.type === 'ADVANCE' || r.type === 'BALANCE') ? '+' : '-'; let displayNote = noteStr;
                     if (r.type === 'ADVANCE' || r.type === 'BALANCE') { const parts = noteStr.split('|'); displayNote = "Code: <strong style='color:var(--text-main)'>" + parts[0] + "</strong> | " + (parts[1] || ''); }
-                    html += `<div class="record-item stagger-item" style="animation-delay: ${repIndex * 0.05}s"><div class="record-details"><strong>${categoryStr}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${r.date}</span></div><div class="${amountClass}">${sign} Rs.${val.toFixed(2)}</div></div>`;
+                    
+                    let actionBtns = "";
+                    if (r.id) actionBtns = `<div class="swipe-actions"><button class="del" style="width: 100%; border-radius: 0 16px 16px 0;" onclick="deleteEntry('${r.id}')">🗑️</button></div>`;
+
+                    html += `
+                    <div class="swipe-wrapper stagger-item" style="animation-delay: ${repIndex * 0.05}s">
+                        <div class="swipe-item">
+                            <div class="record-details"><strong>${categoryStr}</strong><span>${displayNote}</span><span style="font-size:10px; margin-top:4px; opacity:0.7;">${r.date}</span></div>
+                            <div style="display:flex; flex-direction:column; align-items:flex-end;">
+                                <div class="${amountClass}">${sign} Rs.${formatNumber(val)}</div>
+                                <span style="font-size:9px; color:var(--text-muted); margin-top:4px; opacity:0.4;">👈 Swipe</span>
+                            </div>
+                        </div>
+                        ${actionBtns}
+                    </div>`;
                     repIndex++;
                 }
             }
         });
         
-        document.getElementById('total-profit').innerText = "Net: Rs. " + totalProfit.toFixed(2); 
-        document.getElementById('total-bills').innerText = "Total Bills: Rs. " + totalBillsAmount.toFixed(2); 
+        document.getElementById('total-profit').innerText = "Net: Rs. " + formatNumber(totalProfit); 
+        document.getElementById('total-bills').innerText = "Total Bills: Rs. " + formatNumber(totalBillsAmount); 
         list.innerHTML = html || getEmptyState("No matching records found.");
     }
 
-    // --- INVOICE GENERATION LOGIC ---
     function generateBillPreview() {
         const customerName = document.getElementById('invoice-bill-name').value || "Customer Name";
         const invoiceId = document.getElementById('invoice-id-input').value || (parseInt(localStorage.getItem('liora_inv_seq')) || 1);
@@ -971,7 +1020,7 @@
 
         if(billBuffer.length === 0) {
             playPopSound(); 
-            document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500; background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">No items in buffer! Turn ON "Prepare Bill" in Home tab and add items first.</p>`;
+            document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 13px; font-weight: 500; background: rgba(10,10,10,0.5); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">No items in buffer! Turn ON "Prepare Bill" in Home tab and add items first.</p>`;
             document.getElementById('invoice-action-btns').style.display = 'none';
             document.getElementById('invoice-instruction').style.display = 'none';
             return;
@@ -982,7 +1031,7 @@
         let subtotal = 0;
         billBuffer.forEach(i => subtotal += (parseFloat(i.amount) || 0));
 
-        isSeqIncremented = false; // Reset incrementer
+        isSeqIncremented = false; 
         currentGeneratedBillData = { 
             id: invoiceId, 
             name: customerName, 
@@ -1007,21 +1056,21 @@
         currentGeneratedBillData.items.forEach((item, index) => {
             let desc = item.category;
             if(item.note && item.note !== "-") desc += ` <span style="font-size:10px; color:var(--primary); opacity: 0.8;">(${item.note})</span>`;
-            tableRows += `<tr><td>${index + 1}</td><td>${desc}</td><td class="total-col">Rs. ${parseFloat(item.amount).toFixed(2)}</td></tr>`;
+            tableRows += `<tr><td>${index + 1}</td><td>${desc}</td><td class="total-col">Rs. ${formatNumber(item.amount)}</td></tr>`;
         });
 
         let totalsHtml = ``;
         if (currentGeneratedBillData.bal > 0) {
-            totalsHtml += `<div><span>Sub Total:</span><span>Rs. ${currentGeneratedBillData.total.toFixed(2)}</span></div>`;
+            totalsHtml += `<div><span>Sub Total:</span><span>Rs. ${formatNumber(currentGeneratedBillData.total)}</span></div>`;
             if (currentGeneratedBillData.adv > 0) {
-                totalsHtml += `<div><span>Advance:</span><span>Rs. ${currentGeneratedBillData.adv.toFixed(2)}</span></div>`;
+                totalsHtml += `<div><span>Advance:</span><span>Rs. ${formatNumber(currentGeneratedBillData.adv)}</span></div>`;
             }
             if (currentGeneratedBillData.paidNow > 0 && currentGeneratedBillData.paidNow !== currentGeneratedBillData.total && currentGeneratedBillData.adv !== currentGeneratedBillData.paidNow) {
-                totalsHtml += `<div><span>Paid Now:</span><span>Rs. ${currentGeneratedBillData.paidNow.toFixed(2)}</span></div>`;
+                totalsHtml += `<div><span>Paid Now:</span><span>Rs. ${formatNumber(currentGeneratedBillData.paidNow)}</span></div>`;
             }
-            totalsHtml += `<div class="grand-total"><span>Balance Due:</span><span>Rs. ${currentGeneratedBillData.bal.toFixed(2)}</span></div>`;
+            totalsHtml += `<div class="grand-total"><span>Balance Due:</span><span>Rs. ${formatNumber(currentGeneratedBillData.bal)}</span></div>`;
         } else {
-            totalsHtml += `<div class="grand-total"><span>TOTAL AMOUNT:</span><span>Rs. ${currentGeneratedBillData.total.toFixed(2)}</span></div>`;
+            totalsHtml += `<div class="grand-total"><span>TOTAL AMOUNT:</span><span>Rs. ${formatNumber(currentGeneratedBillData.total)}</span></div>`;
         }
 
         const billHtml = `
@@ -1063,7 +1112,6 @@
         actionBtns.style.display = 'flex';
     }
 
-    // --- WHATSAPP PRO TEXT MESSAGE ---
     function sendWhatsAppInvoice() {
         if(!currentGeneratedBillData) { playPopSound(); return alert("මුලින්ම බිල් එක Generate කරන්න!"); }
         
@@ -1087,14 +1135,14 @@
             text += `🔸 ${i.category}${noteText}\n`; 
         });
         
-        text += `\n💰 *Sub Total:* Rs. ${currentGeneratedBillData.total.toFixed(2)}\n`;
+        text += `\n💰 *Sub Total:* Rs. ${formatNumber(currentGeneratedBillData.total)}\n`;
         
-        if (currentGeneratedBillData.adv > 0) text += `💵 *Advance Paid:* Rs. ${currentGeneratedBillData.adv.toFixed(2)}\n`;
-        if (currentGeneratedBillData.paidNow > 0 && currentGeneratedBillData.paidNow !== currentGeneratedBillData.total && currentGeneratedBillData.adv !== currentGeneratedBillData.paidNow) text += `💵 *Paid Now:* Rs. ${currentGeneratedBillData.paidNow.toFixed(2)}\n`;
+        if (currentGeneratedBillData.adv > 0) text += `💵 *Advance Paid:* Rs. ${formatNumber(currentGeneratedBillData.adv)}\n`;
+        if (currentGeneratedBillData.paidNow > 0 && currentGeneratedBillData.paidNow !== currentGeneratedBillData.total && currentGeneratedBillData.adv !== currentGeneratedBillData.paidNow) text += `💵 *Paid Now:* Rs. ${formatNumber(currentGeneratedBillData.paidNow)}\n`;
         
         text += `----------------------------------\n`;
         if (currentGeneratedBillData.bal > 0) {
-            text += `🔴 *AMOUNT DUE: Rs. ${currentGeneratedBillData.bal.toFixed(2)}*\n`;
+            text += `🔴 *AMOUNT DUE: Rs. ${formatNumber(currentGeneratedBillData.bal)}*\n`;
         } else {
             text += `🟢 *AMOUNT DUE: Rs. 0.00 (Fully Paid)*\n`;
         }
@@ -1112,12 +1160,11 @@
         document.getElementById('invoice-bill-name').value = '';
         document.getElementById('invoice-bill-whatsapp').value = '';
         setAutoInvoiceId();
-        document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: #1a1a1a; padding: 15px; border-radius: 12px; border: 1px solid var(--border);">WhatsApp Message Sent! Ready for new bill.</p>`;
+        document.getElementById('invoice-preview-area').innerHTML = `<p style="text-align:center; color: var(--text-muted); font-size: 12px; font-weight: 500; background: rgba(10,10,10,0.5); padding: 15px; border-radius: 12px; border: 1px solid var(--border);">WhatsApp Message Sent! Ready for new bill.</p>`;
         document.getElementById('invoice-instruction').style.display = 'none';
         document.getElementById('invoice-action-btns').style.display = 'none';
     }
 
-    // --- CLEAN FULLSCREEN SCREENSHOT FEATURE WITH DOUBLE TAP ---
     function openFullscreen() {
         if(!currentGeneratedBillData) return;
         playPopSound();
@@ -1145,7 +1192,7 @@
         const fsModal = document.getElementById('fullscreen-modal');
         if (fsModal.style.display === 'flex') {
             playPopSound();
-            history.back(); // This safely hides the modal via the popstate listener
+            history.back(); 
         }
     }
 
